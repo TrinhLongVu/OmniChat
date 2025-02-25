@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/widgets/input_field.dart';
 
-class LoginScreen extends StatelessWidget {
+class RegisterScreen extends StatelessWidget {
   final TextEditingController emailCtrlr = TextEditingController();
   final TextEditingController passwordCtrlr = TextEditingController();
 
-  LoginScreen({super.key});
+  RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,16 +23,16 @@ class LoginScreen extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                   children: [
                     TextSpan(
-                      text: "Welcome ",
+                      text: "Welcome to ",
                       style: TextStyle(color: Colors.black),
                     ),
-                    TextSpan(text: "Back", style: TextStyle(color: omniViolet)),
+                    TextSpan(text: "Omni", style: TextStyle(color: omniViolet)),
                   ],
                 ),
               ),
               const SizedBox(height: 10),
               Text(
-                "Omni's been waiting for you! Sign in to pick up right where we left off.",
+                "One step away from endless AI chats! Sign up and start our conversation.",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.black.withValues(alpha: 0.55)),
               ),
@@ -47,18 +47,22 @@ class LoginScreen extends StatelessWidget {
                   SizedBox(height: 10),
                   InputField(
                     controller: passwordCtrlr,
+                    placeholder: "Choose your username",
+                    prefixIcon: Icons.person,
+                  ),
+                  const SizedBox(height: 10),
+                  InputField(
+                    controller: passwordCtrlr,
                     placeholder: "Enter your password",
                     prefixIcon: Icons.lock,
                     isPassword: true,
                   ),
                   const SizedBox(height: 10),
-                  const SizedBox(
-                    width: double.infinity,
-                    child: Text(
-                      "Forgot Password?",
-                      textAlign: TextAlign.end,
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
+                  InputField(
+                    controller: passwordCtrlr,
+                    placeholder: "Confirm your password",
+                    prefixIcon: Icons.lock_reset,
+                    isPassword: true,
                   ),
                   const SizedBox(height: 20),
                   Container(
@@ -82,7 +86,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                       child: const Text(
-                        "Login",
+                        "Register",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -101,13 +105,13 @@ class LoginScreen extends StatelessWidget {
                   ),
                   children: [
                     TextSpan(
-                      text: "First time meet Omni? ",
+                      text: "Already met? ",
                       style: TextStyle(
                         color: Colors.black.withValues(alpha: .6),
                       ),
                     ),
                     TextSpan(
-                      text: "Sign Up",
+                      text: "Sign In",
                       style: const TextStyle(color: omniViolet),
                     ),
                   ],
