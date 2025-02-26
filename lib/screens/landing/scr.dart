@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:omni_chat/constants/color.dart';
 
@@ -39,7 +40,9 @@ class LandingScreen extends StatelessWidget {
                   ),
                   width: double.infinity,
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.push("/auth/login");
+                    },
                     style: ButtonStyle(
                       padding: WidgetStateProperty.all(
                         const EdgeInsets.symmetric(vertical: 15),

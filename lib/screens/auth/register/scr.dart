@@ -1,4 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/widgets/input_field.dart';
 
@@ -113,6 +115,11 @@ class RegisterScreen extends StatelessWidget {
                     TextSpan(
                       text: "Sign In",
                       style: const TextStyle(color: omniViolet),
+                      recognizer:
+                          TapGestureRecognizer()
+                            ..onTap = () {
+                              context.goNamed("login");
+                            },
                     ),
                   ],
                 ),
