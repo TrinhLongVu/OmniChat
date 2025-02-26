@@ -19,7 +19,7 @@ class LoginScreen extends StatelessWidget {
           children: [
             TextButton(
               onPressed: () {
-                context.pop();
+                context.goNamed("landing");
               },
               child: const Icon(Icons.arrow_back),
             ),
@@ -130,7 +130,7 @@ class LoginScreen extends StatelessWidget {
                           recognizer:
                               TapGestureRecognizer()
                                 ..onTap = () {
-                                  context.goNamed("register");
+                                  context.pushNamed("register");
                                 },
                         ),
                       ],

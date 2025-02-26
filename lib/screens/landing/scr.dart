@@ -41,7 +41,7 @@ class LandingScreen extends StatelessWidget {
                   width: double.infinity,
                   child: TextButton(
                     onPressed: () {
-                      context.push("/auth/login");
+                      context.pushNamed("login");
                     },
                     style: ButtonStyle(
                       padding: WidgetStateProperty.all(
