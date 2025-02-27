@@ -3,13 +3,13 @@ import 'package:go_router/go_router.dart';
 import 'package:omni_chat/screens/auth/login/scr.dart';
 import 'package:omni_chat/screens/auth/register/scr.dart';
 import 'package:omni_chat/screens/landing/scr.dart';
+import 'package:omni_chat/screens/main/layout.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
-final GlobalKey<NavigatorState> customerShellKey = GlobalKey<NavigatorState>();
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
-  initialLocation: "/",
+  initialLocation: "/chats",
   routes: [
     GoRoute(
       name: "landing",
@@ -25,6 +25,58 @@ final GoRouter appRouter = GoRouter(
       name: "register",
       path: "/auth/register",
       builder: (context, state) => RegisterScreen(),
+    ),
+    StatefulShellRoute.indexedStack(
+      builder:
+          (context, state, navigationShell) =>
+              MainLayout(navigationShell: navigationShell),
+      branches: [
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              name: "all-chats",
+              path: "/chats",
+              builder: (context, state) => const Text("All Chats"),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              name: "explore",
+              path: "/explore",
+              builder: (context, state) => const Text("Explore"),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              name: "create",
+              path: "/new",
+              builder: (context, state) => const Text("Create"),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              name: "messages",
+              path: "/messages",
+              builder: (context, state) => const Text("Messages"),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              name: "profile",
+              path: "/me",
+              builder: (context, state) => const Text("Profile"),
+            ),
+          ],
+        ),
+      ],
     ),
   ],
 );
