@@ -3,13 +3,14 @@ import 'package:go_router/go_router.dart';
 import 'package:omni_chat/screens/auth/login/scr.dart';
 import 'package:omni_chat/screens/auth/register/scr.dart';
 import 'package:omni_chat/screens/landing/scr.dart';
+import 'package:omni_chat/screens/main/chat/scr.dart';
 import 'package:omni_chat/screens/main/layout.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
-  initialLocation: "/chats",
+  initialLocation: "/",
   routes: [
     GoRoute(
       name: "landing",
@@ -36,7 +37,7 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               name: "all-chats",
               path: "/chats",
-              builder: (context, state) => const Text("All Chats"),
+              builder: (context, state) => const HomeScreen(),
             ),
           ],
         ),

@@ -83,7 +83,9 @@ class LoginScreen extends StatelessWidget {
                         margin: const EdgeInsets.symmetric(vertical: 15),
                         width: double.infinity,
                         child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            context.goNamed("all-chats");
+                          },
                           style: ButtonStyle(
                             padding: WidgetStateProperty.all(
                               const EdgeInsets.symmetric(vertical: 15),
