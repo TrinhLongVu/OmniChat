@@ -10,7 +10,19 @@ class ConversationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Conversation"),
+        titleSpacing: -10,
+        title: Row(
+          children: [
+            Icon(Icons.circle, size: 50),
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Text(
+                "StarryAI Bot",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+            ),
+          ],
+        ),
         backgroundColor: Colors.white,
       ),
       body: Container(
@@ -33,38 +45,24 @@ class ConversationScreen extends StatelessWidget {
                   ),
                   Column(
                     spacing: 10,
-                    children: [
-                      ConvoBox(
-                        message:
-                            "Hello, I'm your new friend, StarryAI Bot. How can I help you today?",
-                        isBot: true,
+                    children: List.generate(
+                      6,
+                      (index) => Column(
+                        spacing: 10,
+                        children: [
+                          ConvoBox(
+                            message:
+                                "Hello, I'm your new friend, StarryAI Bot. How can I help you today?",
+                            isBot: true,
+                          ),
+                          ConvoBox(
+                            message:
+                                "Can you help me write a blog post about my new book?",
+                            isBot: false,
+                          ),
+                        ],
                       ),
-                      ConvoBox(
-                        message:
-                            "Can you help me write a blog post about my new book?",
-                        isBot: false,
-                      ),
-                      ConvoBox(
-                        message:
-                            "Hello, I'm your new friend, StarryAI Bot. How can I help you today?",
-                        isBot: true,
-                      ),
-                      ConvoBox(
-                        message:
-                            "Can you help me write a blog post about my new book?",
-                        isBot: false,
-                      ),
-                      ConvoBox(
-                        message:
-                            "Hello, I'm your new friend, StarryAI Bot. How can I help you today?",
-                        isBot: true,
-                      ),
-                      ConvoBox(
-                        message:
-                            "Can you help me write a blog post about my new book?",
-                        isBot: false,
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),
@@ -75,16 +73,14 @@ class ConversationScreen extends StatelessWidget {
               bottom: 15,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white, // Background color
-                  borderRadius: BorderRadius.circular(10), // Rounded corners
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withValues(
-                        alpha: .5,
-                      ), // Shadow color with opacity
-                      spreadRadius: 2, // How much the shadow spreads
-                      blurRadius: 5, // Softness of the shadow
-                      offset: Offset(0, 3), // Position of shadow (x, y)
+                      color: Colors.grey.withValues(alpha: .5),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
                     ),
                   ],
                 ),
@@ -92,8 +88,7 @@ class ConversationScreen extends StatelessWidget {
                   controller: msgCtrlr,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor:
-                        Colors.white, // Ensure it matches the Container's color
+                    fillColor: Colors.white,
                     hintText: "Type your message...",
                     hintStyle: TextStyle(color: Colors.grey),
                     suffixIcon: IconButton(
