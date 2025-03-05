@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:omni_chat/screens/auth/login/scr.dart';
 import 'package:omni_chat/screens/auth/register/scr.dart';
 import 'package:omni_chat/screens/landing/scr.dart';
+import 'package:omni_chat/screens/main/chat/conversation/scr.dart';
 import 'package:omni_chat/screens/main/chat/scr.dart';
 import 'package:omni_chat/screens/main/layout.dart';
 
@@ -37,7 +38,14 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               name: "all-chats",
               path: "/chats",
-              builder: (context, state) => const HomeScreen(),
+              builder: (context, state) => const ChatScreen(),
+              routes: [
+                GoRoute(
+                  name: 'conversation',
+                  path: 'conversation',
+                  builder: (context, state) => ConversationScreen(),
+                ),
+              ],
             ),
           ],
         ),
