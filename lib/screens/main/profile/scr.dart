@@ -48,7 +48,9 @@ class ProfileScreen extends StatelessWidget {
                 ProfileBtn(
                   icon: Icons.stars_rounded,
                   title: "Subscription Plans",
-                  onNavi: () {},
+                  onNavi: () {
+                    context.go("/me/sub-plan");
+                  },
                 ),
                 ProfileBtn(
                   icon: Icons.edit,
