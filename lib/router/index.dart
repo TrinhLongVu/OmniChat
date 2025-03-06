@@ -6,6 +6,7 @@ import 'package:omni_chat/screens/landing/scr.dart';
 import 'package:omni_chat/screens/main/chat/conversation/scr.dart';
 import 'package:omni_chat/screens/main/chat/scr.dart';
 import 'package:omni_chat/screens/main/layout.dart';
+import 'package:omni_chat/screens/main/profile/scr.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -81,7 +82,7 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               name: "profile",
               path: "/me",
-              builder: (context, state) => const Text("Profile"),
+              builder: (context, state) => const ProfileScreen(),
             ),
           ],
         ),
