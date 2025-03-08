@@ -22,9 +22,8 @@ class MainLayout extends StatelessWidget {
               : NavigationBar(
                 selectedIndex: navigationShell.currentIndex,
                 onDestinationSelected: navigationShell.goBranch,
-                indicatorColor: omniViolet,
-                backgroundColor: Color(0xffE7E7FF),
-                overlayColor: WidgetStatePropertyAll(Colors.greenAccent),
+                indicatorColor: omniDarkBlue,
+                backgroundColor: Colors.grey.shade200,
                 destinations:
                     mainDestinations
                         .map(

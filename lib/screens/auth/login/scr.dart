@@ -41,7 +41,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                         TextSpan(
                           text: "Back",
-                          style: TextStyle(color: omniViolet),
+                          style: TextStyle(color: omniDarkBlue),
                         ),
                       ],
                     ),
@@ -91,7 +91,7 @@ class LoginScreen extends StatelessWidget {
                               const EdgeInsets.symmetric(vertical: 15),
                             ),
                             backgroundColor: const WidgetStatePropertyAll(
-                              omniViolet,
+                              omniDarkBlue,
                             ),
                             shape: WidgetStateProperty.all(
                               const RoundedRectangleBorder(
@@ -105,7 +105,7 @@ class LoginScreen extends StatelessWidget {
                             "Login",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 20,
+                              fontSize: 18,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -128,7 +128,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                         TextSpan(
                           text: "Sign Up",
-                          style: const TextStyle(color: omniViolet),
+                          style: const TextStyle(color: omniDarkBlue),
                           recognizer:
                               TapGestureRecognizer()
                                 ..onTap = () {

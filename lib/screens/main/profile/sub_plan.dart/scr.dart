@@ -33,7 +33,7 @@ class SubscriptionPlanScreen extends StatelessWidget {
                   indicatorSize: TabBarIndicatorSize.tab,
                   dividerColor: Colors.transparent,
                   indicator: BoxDecoration(
-                    color: omniViolet,
+                    color: omniDarkBlue,
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
                   labelColor: Colors.white,
@@ -142,7 +142,7 @@ class SubscriptionPlanScreen extends StatelessWidget {
                         onPressed: () {},
                         style: ButtonStyle(
                           backgroundColor: const WidgetStatePropertyAll(
-                            omniViolet,
+                            omniDarkBlue,
                           ),
                           shape: WidgetStateProperty.all(
                             const RoundedRectangleBorder(

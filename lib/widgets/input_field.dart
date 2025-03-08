@@ -33,18 +33,18 @@ class _InputFieldState extends State<InputField> {
       keyboardType: widget.isTelNum ? TextInputType.phone : TextInputType.text,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Color(0xffEDEDFF),
+        fillColor: Color(0xff98D2C0).withValues(alpha: 0.2),
         prefixIcon: Icon(widget.prefixIcon),
-        prefixIconColor: omniViolet,
-        focusColor: omniViolet,
+        prefixIconColor: omniDarkBlue,
+        focusColor: omniDarkBlue,
         hintText: widget.placeholder,
         hintStyle: const TextStyle(color: Colors.grey),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white, width: 2),
+          borderSide: BorderSide.none,
           borderRadius: BorderRadius.circular(20),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: omniViolet, width: 2),
+          borderSide: BorderSide(color: omniDarkBlue, width: 2),
           borderRadius: BorderRadius.circular(20),
         ),
         suffixIcon:
@@ -57,7 +57,7 @@ class _InputFieldState extends State<InputField> {
                   },
                   icon: Icon(
                     isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                    color: omniViolet,
+                    color: omniDarkBlue,
                   ),
                 )
                 : null,

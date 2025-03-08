@@ -1,3 +1,3 @@
 import 'package:flutter/material.dart';
 
-const omniViolet = Color(0xff675DFF);
+const omniDarkBlue = Color(0xff205781);

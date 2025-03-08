@@ -92,7 +92,7 @@ class ConversationScreen extends StatelessWidget {
                     hintText: "Type your message...",
                     hintStyle: TextStyle(color: Colors.grey),
                     suffixIcon: IconButton(
-                      icon: Icon(Icons.send_rounded, color: omniViolet),
+                      icon: Icon(Icons.send_rounded, color: omniDarkBlue),
                       onPressed: () {
                         if (msgCtrlr.text.isNotEmpty) {
                           msgCtrlr.clear();

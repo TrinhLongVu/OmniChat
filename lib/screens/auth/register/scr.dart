@@ -41,7 +41,7 @@ class RegisterScreen extends StatelessWidget {
                         ),
                         TextSpan(
                           text: "Omni",
-                          style: TextStyle(color: omniViolet),
+                          style: TextStyle(color: omniDarkBlue),
                         ),
                       ],
                     ),
@@ -93,7 +93,7 @@ class RegisterScreen extends StatelessWidget {
                               const EdgeInsets.symmetric(vertical: 15),
                             ),
                             backgroundColor: const WidgetStatePropertyAll(
-                              omniViolet,
+                              omniDarkBlue,
                             ),
                             shape: WidgetStateProperty.all(
                               const RoundedRectangleBorder(
@@ -107,7 +107,7 @@ class RegisterScreen extends StatelessWidget {
                             "Register",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 20,
+                              fontSize: 18,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -130,7 +130,7 @@ class RegisterScreen extends StatelessWidget {
                         ),
                         TextSpan(
                           text: "Sign In",
-                          style: const TextStyle(color: omniViolet),
+                          style: const TextStyle(color: omniDarkBlue),
                           recognizer:
                               TapGestureRecognizer()
                                 ..onTap = () {

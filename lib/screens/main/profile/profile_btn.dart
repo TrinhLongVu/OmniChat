@@ -18,7 +18,7 @@ class ProfileBtn extends StatelessWidget {
       onPressed: () => onNavi(),
       style: ButtonStyle(
         backgroundColor: WidgetStatePropertyAll(
-          omniViolet.withValues(alpha: 0.9),
+          omniDarkBlue.withValues(alpha: 0.9),
         ),
         shape: WidgetStateProperty.all(
           const RoundedRectangleBorder(

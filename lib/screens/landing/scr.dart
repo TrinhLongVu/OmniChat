@@ -47,7 +47,9 @@ class LandingScreen extends StatelessWidget {
                       padding: WidgetStateProperty.all(
                         const EdgeInsets.symmetric(vertical: 15),
                       ),
-                      backgroundColor: const WidgetStatePropertyAll(omniViolet),
+                      backgroundColor: const WidgetStatePropertyAll(
+                        omniDarkBlue,
+                      ),
                       shape: WidgetStateProperty.all(
                         const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(
@@ -60,7 +62,7 @@ class LandingScreen extends StatelessWidget {
                       "Login with email",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -104,7 +106,7 @@ class LandingScreen extends StatelessWidget {
                               "Continue with Google",
                               style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
