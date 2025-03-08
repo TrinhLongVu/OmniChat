@@ -2,11 +2,14 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/constants/color.dart';
+import 'package:omni_chat/widgets/common_btn.dart';
 import 'package:omni_chat/widgets/input_field.dart';
 
 class RegisterScreen extends StatelessWidget {
   final TextEditingController emailCtrlr = TextEditingController();
+  final TextEditingController nameCtrlr = TextEditingController();
   final TextEditingController passwordCtrlr = TextEditingController();
+  final TextEditingController confirmPwdCtrlr = TextEditingController();
 
   RegisterScreen({super.key});
 
@@ -64,7 +67,7 @@ class RegisterScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 10),
                       InputField(
-                        controller: passwordCtrlr,
+                        controller: nameCtrlr,
                         placeholder: "Choose your username",
                         prefixIcon: Icons.person,
                       ),
@@ -77,42 +80,13 @@ class RegisterScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
                       InputField(
-                        controller: passwordCtrlr,
+                        controller: confirmPwdCtrlr,
                         placeholder: "Confirm your password",
                         prefixIcon: Icons.lock_reset,
                         isPassword: true,
                       ),
                       const SizedBox(height: 20),
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 15),
-                        width: double.infinity,
-                        child: TextButton(
-                          onPressed: () {},
-                          style: ButtonStyle(
-                            padding: WidgetStateProperty.all(
-                              const EdgeInsets.symmetric(vertical: 15),
-                            ),
-                            backgroundColor: const WidgetStatePropertyAll(
-                              omniDarkBlue,
-                            ),
-                            shape: WidgetStateProperty.all(
-                              const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(30),
-                                ), // Sharp corners
-                              ),
-                            ),
-                          ),
-                          child: const Text(
-                            "Register",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
+                      CommonBtn(title: "Register", onTap: () {}),
                     ],
                   ),
                   RichText(

@@ -7,9 +7,8 @@ class Destination {
 }
 
 const List<Destination> mainDestinations = [
-  Destination(title: "Chat", icon: Icons.chat),
-  Destination(title: "Explore", icon: Icons.explore),
-  Destination(title: "Create", icon: Icons.add_circle),
-  Destination(title: "Message", icon: Icons.notifications),
+  Destination(title: "Bots", icon: Icons.smart_toy_outlined),
+  Destination(title: "Knowledge", icon: Icons.lightbulb),
+  Destination(title: "Mail", icon: Icons.mail),
   Destination(title: "Profile", icon: Icons.person),
 ];

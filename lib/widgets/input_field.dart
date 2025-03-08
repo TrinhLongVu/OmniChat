@@ -5,6 +5,8 @@ class InputField extends StatefulWidget {
   final TextEditingController controller;
   final String placeholder;
   final IconData prefixIcon;
+  final int minLns;
+  final int maxLns;
   final bool isPassword;
   final bool isTelNum;
 
@@ -15,6 +17,8 @@ class InputField extends StatefulWidget {
     required this.prefixIcon,
     this.isPassword = false,
     this.isTelNum = false,
+    this.minLns = 1,
+    this.maxLns = 1,
   });
 
   @override
@@ -31,9 +35,12 @@ class _InputFieldState extends State<InputField> {
       obscureText: !isPasswordVisible && widget.isPassword,
       textAlignVertical: TextAlignVertical.center,
       keyboardType: widget.isTelNum ? TextInputType.phone : TextInputType.text,
+      maxLines:
+          !widget.isPassword ? widget.maxLns : 1, // Allows unlimited lines
+      minLines: !widget.isPassword ? widget.minLns : null,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Color(0xff98D2C0).withValues(alpha: 0.2),
+        fillColor: omniLightCyan.withValues(alpha: 0.2),
         prefixIcon: Icon(widget.prefixIcon),
         prefixIconColor: omniDarkBlue,
         focusColor: omniDarkBlue,

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/constants/color.dart';
 
-class ChatScreen extends StatelessWidget {
-  const ChatScreen({super.key});
+class BotListScreen extends StatelessWidget {
+  const BotListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,9 @@ class ChatScreen extends StatelessWidget {
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  context.go("/chats/new");
+                },
                 icon: Icon(
                   Icons.add_circle_outline,
                   size: 32,

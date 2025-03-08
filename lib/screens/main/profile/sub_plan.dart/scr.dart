@@ -27,7 +27,7 @@ class SubscriptionPlanScreen extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  color: Colors.green.shade100,
+                  color: omniLightCyan,
                 ),
                 child: const TabBar(
                   indicatorSize: TabBarIndicatorSize.tab,

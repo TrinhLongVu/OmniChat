@@ -3,8 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:omni_chat/screens/auth/login/scr.dart';
 import 'package:omni_chat/screens/auth/register/scr.dart';
 import 'package:omni_chat/screens/landing/scr.dart';
-import 'package:omni_chat/screens/main/chat/conversation/scr.dart';
-import 'package:omni_chat/screens/main/chat/scr.dart';
+import 'package:omni_chat/screens/main/bots/new/scr.dart';
+import 'package:omni_chat/screens/main/bots/conversation/scr.dart';
+import 'package:omni_chat/screens/main/bots/scr.dart';
 import 'package:omni_chat/screens/main/layout.dart';
 import 'package:omni_chat/screens/main/profile/scr.dart';
 import 'package:omni_chat/screens/main/profile/sub_plan.dart/scr.dart';
@@ -40,8 +41,13 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               name: "all-chats",
               path: "/chats",
-              builder: (context, state) => const ChatScreen(),
+              builder: (context, state) => const BotListScreen(),
               routes: [
+                GoRoute(
+                  name: 'bot-create',
+                  path: 'new',
+                  builder: (context, state) => BotCreationScreen(),
+                ),
                 GoRoute(
                   name: 'conversation',
                   path: 'conversation',
@@ -54,18 +60,9 @@ final GoRouter appRouter = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              name: "explore",
-              path: "/explore",
-              builder: (context, state) => const Text("Explore"),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              name: "create",
-              path: "/new",
-              builder: (context, state) => const Text("Create"),
+              name: "knowledge library",
+              path: "/knowledge",
+              builder: (context, state) => const Text("Knowledge Library"),
             ),
           ],
         ),
@@ -74,7 +71,7 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               name: "messages",
               path: "/messages",
-              builder: (context, state) => const Text("Messages"),
+              builder: (context, state) => const Text("Mail Composer"),
             ),
           ],
         ),

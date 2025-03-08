@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/constants/color.dart';
+import 'package:omni_chat/widgets/common_btn.dart';
 import 'package:omni_chat/widgets/input_field.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -79,37 +80,11 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 15),
-                        width: double.infinity,
-                        child: TextButton(
-                          onPressed: () {
-                            context.goNamed("all-chats");
-                          },
-                          style: ButtonStyle(
-                            padding: WidgetStateProperty.all(
-                              const EdgeInsets.symmetric(vertical: 15),
-                            ),
-                            backgroundColor: const WidgetStatePropertyAll(
-                              omniDarkBlue,
-                            ),
-                            shape: WidgetStateProperty.all(
-                              const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(30),
-                                ), // Sharp corners
-                              ),
-                            ),
-                          ),
-                          child: const Text(
-                            "Login",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
+                      CommonBtn(
+                        title: "Login",
+                        onTap: () {
+                          context.goNamed("all-chats");
+                        },
                       ),
                     ],
                   ),

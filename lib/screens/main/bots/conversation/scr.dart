@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:omni_chat/constants/color.dart';
-import 'package:omni_chat/screens/main/chat/conversation/convo_box.dart';
+import 'package:omni_chat/screens/main/bots/conversation/convo_box.dart';
 
 class ConversationScreen extends StatelessWidget {
   final TextEditingController msgCtrlr = TextEditingController();

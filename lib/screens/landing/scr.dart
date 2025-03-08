@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:omni_chat/constants/color.dart';
+import 'package:omni_chat/widgets/common_btn.dart';
 
 class LandingScreen extends StatelessWidget {
   const LandingScreen({super.key});
@@ -33,39 +33,13 @@ class LandingScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 50),
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 25,
-                  ),
-                  width: double.infinity,
-                  child: TextButton(
-                    onPressed: () {
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: CommonBtn(
+                    title: "Login with email",
+                    onTap: () {
                       context.pushNamed("login");
                     },
-                    style: ButtonStyle(
-                      padding: WidgetStateProperty.all(
-                        const EdgeInsets.symmetric(vertical: 15),
-                      ),
-                      backgroundColor: const WidgetStatePropertyAll(
-                        omniDarkBlue,
-                      ),
-                      shape: WidgetStateProperty.all(
-                        const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(30),
-                          ), // Sharp corners
-                        ),
-                      ),
-                    ),
-                    child: const Text(
-                      "Login with email",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
                   ),
                 ),
                 Container(
