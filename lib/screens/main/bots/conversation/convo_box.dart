@@ -27,7 +27,7 @@ class ConvoBox extends StatelessWidget {
         ),
         child: Text(
           message,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
         ),
       ),
     );

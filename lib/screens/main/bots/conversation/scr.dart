@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/screens/main/bots/conversation/convo_box.dart';
+import 'package:omni_chat/screens/main/bots/conversation/prompt_modal.dart';
+import 'package:omni_chat/screens/main/bots/conversation/thread_drawer.dart';
+
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class ConversationScreen extends StatelessWidget {
   final TextEditingController msgCtrlr = TextEditingController();
@@ -9,11 +13,11 @@ class ConversationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         titleSpacing: -10,
         title: Row(
           children: [
-            Icon(Icons.circle, size: 50),
             Padding(
               padding: const EdgeInsets.only(left: 8),
               child: Text(
@@ -24,12 +28,32 @@ class ConversationScreen extends StatelessWidget {
           ],
         ),
         backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) {
+                  return PromptModal();
+                },
+              );
+            },
+            icon: Icon(Icons.note),
+          ),
+          IconButton(
+            onPressed: () {
+              _scaffoldKey.currentState!.openEndDrawer();
+            },
+            icon: Icon(Icons.message),
+          ),
+        ],
       ),
+      endDrawer: ThreadDrawer(),
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xffE7E7FF), Color(0xffF8F8FF)],
+            colors: [omniLightCyan, omniMilk],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -39,10 +63,7 @@ class ConversationScreen extends StatelessWidget {
             SingleChildScrollView(
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(25),
-                    child: Icon(Icons.circle, size: 200),
-                  ),
+                  SizedBox(height: 30),
                   Column(
                     spacing: 10,
                     children: List.generate(
@@ -64,6 +85,7 @@ class ConversationScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  SizedBox(height: 100),
                 ],
               ),
             ),
