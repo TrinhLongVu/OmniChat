@@ -33,6 +33,7 @@ class ConversationScreen extends StatelessWidget {
             onPressed: () {
               showModalBottomSheet(
                 context: context,
+                isScrollControlled: true,
                 builder: (context) {
                   return PromptModal();
                 },

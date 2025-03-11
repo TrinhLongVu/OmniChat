@@ -14,7 +14,7 @@ class SubscriptionPlanScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
-            'Subscription Plan',
+            'Subscription Plans',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
           centerTitle: true,

@@ -41,7 +41,7 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               name: "all-chats",
               path: "/chats",
-              builder: (context, state) => const BotListScreen(),
+              builder: (context, state) => BotListScreen(),
               routes: [
                 GoRoute(
                   name: 'bot-create',
