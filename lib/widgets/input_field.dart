@@ -4,7 +4,8 @@ import 'package:omni_chat/constants/color.dart';
 class InputField extends StatefulWidget {
   final TextEditingController controller;
   final String placeholder;
-  final IconData prefixIcon;
+  final IconData? prefixIcon;
+  final double? fontSz;
   final int minLns;
   final int maxLns;
   final bool isPassword;
@@ -14,7 +15,8 @@ class InputField extends StatefulWidget {
     super.key,
     required this.controller,
     required this.placeholder,
-    required this.prefixIcon,
+    this.prefixIcon,
+    this.fontSz = 16,
     this.isPassword = false,
     this.isTelNum = false,
     this.minLns = 1,
@@ -38,10 +40,11 @@ class _InputFieldState extends State<InputField> {
       maxLines:
           !widget.isPassword ? widget.maxLns : 1, // Allows unlimited lines
       minLines: !widget.isPassword ? widget.minLns : null,
+      style: TextStyle(fontSize: widget.fontSz),
       decoration: InputDecoration(
         filled: true,
         fillColor: omniLightCyan.withValues(alpha: 0.2),
-        prefixIcon: Icon(widget.prefixIcon),
+        prefixIcon: widget.prefixIcon != null ? Icon(widget.prefixIcon) : null,
         prefixIconColor: omniDarkBlue,
         focusColor: omniDarkBlue,
         hintText: widget.placeholder,

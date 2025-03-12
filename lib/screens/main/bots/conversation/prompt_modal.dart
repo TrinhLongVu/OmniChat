@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:omni_chat/constants/color.dart';
+import 'package:omni_chat/widgets/popup/prompt_new.dart';
 import 'package:omni_chat/widgets/search_box.dart';
 import 'package:omni_chat/widgets/tab_item.dart';
 
@@ -28,10 +30,22 @@ class PromptModal extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: Text(
-                "Prompt Library",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(width: 50),
+                  Text(
+                    "Prompt Library",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      context.pop();
+                    },
+                    icon: Icon(Icons.keyboard_arrow_down_sharp),
+                  ),
+                ],
               ),
             ),
             Row(
@@ -86,7 +100,12 @@ class PromptModal extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => PromptCreation(),
+                              );
+                            },
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               spacing: 10,
