@@ -4,11 +4,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/widgets/input_field.dart';
 
-class PromptCreation extends StatelessWidget {
+class PromptCreationPopUp extends StatelessWidget {
   final TextEditingController promptNameCtrlr = TextEditingController();
   final TextEditingController promptContentCtrlr = TextEditingController();
   final TextEditingController promptDescriptionCtrlr = TextEditingController();
-  PromptCreation({super.key});
+
+  PromptCreationPopUp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,6 @@ class PromptCreation extends StatelessWidget {
       insetPadding: EdgeInsets.all(10),
       child: Container(
         width: double.infinity,
-        // height: 300,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           color: Colors.white,
