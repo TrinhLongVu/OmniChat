@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:omni_chat/constants/color.dart';
-import 'package:omni_chat/screens/main/profile/sub_plan.dart/sub_detail_ln.dart';
-import 'package:omni_chat/screens/main/profile/sub_plan.dart/sub_header.dart';
+import 'package:omni_chat/screens/main/profile/sub_plan/sub_detail_ln.dart';
+import 'package:omni_chat/screens/main/profile/sub_plan/sub_header.dart';
 import 'package:omni_chat/widgets/tab_item.dart';
 
 class SubscriptionPlanScreen extends StatelessWidget {

@@ -7,8 +7,9 @@ import 'package:omni_chat/screens/main/bots/new/scr.dart';
 import 'package:omni_chat/screens/main/bots/conversation/scr.dart';
 import 'package:omni_chat/screens/main/bots/scr.dart';
 import 'package:omni_chat/screens/main/layout.dart';
+import 'package:omni_chat/screens/main/profile/reset_pw/scr.dart';
 import 'package:omni_chat/screens/main/profile/scr.dart';
-import 'package:omni_chat/screens/main/profile/sub_plan.dart/scr.dart';
+import 'package:omni_chat/screens/main/profile/sub_plan/scr.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -86,6 +87,11 @@ final GoRouter appRouter = GoRouter(
                   name: 'subscription',
                   path: 'sub-plan',
                   builder: (context, state) => const SubscriptionPlanScreen(),
+                ),
+                GoRoute(
+                  name: 'reset password',
+                  path: 'reset-pw',
+                  builder: (context, state) => ResetPasswordScreen(),
                 ),
               ],
             ),

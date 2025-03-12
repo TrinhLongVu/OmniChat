@@ -53,14 +53,11 @@ class ProfileScreen extends StatelessWidget {
                   },
                 ),
                 ProfileBtn(
-                  icon: Icons.edit,
-                  title: "Edit Profile",
-                  onNavi: () {},
-                ),
-                ProfileBtn(
                   icon: Icons.lock_reset,
                   title: "Reset Password",
-                  onNavi: () {},
+                  onNavi: () {
+                    context.go("/me/reset-pw");
+                  },
                 ),
                 ProfileBtn(
                   icon: Icons.logout_outlined,
