@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/constants/color.dart';
-import 'package:omni_chat/screens/main/bots/bot_archive_box.dart';
+import 'package:omni_chat/screens/main/bots/bot_rect.dart';
 import 'package:omni_chat/widgets/search_box.dart';
 
 class BotListScreen extends StatelessWidget {
@@ -41,7 +41,14 @@ class BotListScreen extends StatelessWidget {
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Column(
-              children: List.generate(12, (index) => BotArchiveBox()),
+              children: List.generate(
+                12,
+                (index) => BotRect(
+                  name: "Grammar Bot",
+                  description:
+                      "This is a grammar bot that can help you with grammar issues",
+                ),
+              ),
             ),
           ),
         ),

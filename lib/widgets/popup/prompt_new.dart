@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/widgets/input_field.dart';
+import 'package:omni_chat/widgets/input_header.dart';
 
 class PromptCreationPopUp extends StatelessWidget {
   final TextEditingController promptNameCtrlr = TextEditingController();
@@ -35,49 +35,13 @@ class PromptCreationPopUp extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child: RichText(
-                  text: TextSpan(
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
-                      fontFamily: GoogleFonts.poppins().fontFamily,
-                    ),
-                    children: [
-                      TextSpan(
-                        text: "Name",
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      TextSpan(text: " *", style: TextStyle(color: Colors.red)),
-                    ],
-                  ),
-                ),
-              ),
+              InputHeader(title: "Name", isRequired: true),
               InputField(
                 controller: promptNameCtrlr,
                 placeholder: "Name of the prompt",
                 fontSz: 14,
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child: RichText(
-                  text: TextSpan(
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
-                      fontFamily: GoogleFonts.poppins().fontFamily,
-                    ),
-                    children: [
-                      TextSpan(
-                        text: "Prompt",
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      TextSpan(text: " *", style: TextStyle(color: Colors.red)),
-                    ],
-                  ),
-                ),
-              ),
+              InputHeader(title: "Prompt", isRequired: true),
               Container(
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
@@ -106,13 +70,7 @@ class PromptCreationPopUp extends StatelessWidget {
                 maxLns: 5,
                 fontSz: 14,
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child: Text(
-                  "Description",
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
-                ),
-              ),
+              InputHeader(title: "Description"),
               InputField(
                 controller: promptDescriptionCtrlr,
                 placeholder: "Note for usage information",

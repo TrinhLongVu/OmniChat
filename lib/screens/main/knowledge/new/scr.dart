@@ -4,16 +4,16 @@ import 'package:omni_chat/widgets/common_btn.dart';
 import 'package:omni_chat/widgets/input_field.dart';
 import 'package:omni_chat/widgets/input_header.dart';
 
-class BotCreationScreen extends StatelessWidget {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController instructionController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
-  BotCreationScreen({super.key});
+class KnowledgeCreationScreen extends StatelessWidget {
+  final TextEditingController knowledgeNameCtrler = TextEditingController();
+  final TextEditingController knowledgeDescCtrler = TextEditingController();
+
+  KnowledgeCreationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Create Bot")),
+      appBar: AppBar(title: const Text("Create Knowledge")),
       body: SizedBox(
         height: double.infinity,
         child: Stack(
@@ -29,28 +29,21 @@ class BotCreationScreen extends StatelessWidget {
                 child: Column(
                   spacing: 20,
                   children: [
-                    Icon(Icons.smart_toy_outlined, size: 100),
+                    Icon(Icons.lightbulb_circle_rounded, size: 120),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 8,
                       children: [
                         InputHeader(title: "Name", isRequired: true),
                         InputField(
-                          controller: nameController,
-                          placeholder: "Bot's Name",
+                          controller: knowledgeNameCtrler,
+                          placeholder: "Name of the knowledge",
                         ),
-                        InputHeader(title: "Instructions", isRequired: false),
+                        InputHeader(title: "Description", isRequired: true),
                         InputField(
-                          controller: instructionController,
-                          placeholder: "Instruct the bot how to reply",
-                          minLns: 2,
-                          maxLns: 3,
-                        ),
-                        InputHeader(title: "Description", isRequired: false),
-                        InputField(
-                          controller: descriptionController,
-                          placeholder: "Description (Optional)",
-                          minLns: 2,
+                          controller: knowledgeDescCtrler,
+                          placeholder: "Everything about this knowledge base",
+                          minLns: 3,
                           maxLns: 5,
                         ),
                       ],

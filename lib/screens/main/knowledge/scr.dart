@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/constants/knowledge_type.dart';
 import 'package:omni_chat/screens/main/knowledge/knowledge_rect.dart';
@@ -24,7 +25,9 @@ class KnowledgeLibraryScreen extends StatelessWidget {
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  context.go("/knowledge/new");
+                },
                 icon: Icon(
                   Icons.add_circle_outline,
                   size: 32,
@@ -38,7 +41,7 @@ class KnowledgeLibraryScreen extends StatelessWidget {
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Column(
-              children: List.generate(3, (index) {
+              children: List.generate(2, (index) {
                 return Column(
                   children: [
                     KnowledgeRect(

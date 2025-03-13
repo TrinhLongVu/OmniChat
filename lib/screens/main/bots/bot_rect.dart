@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class BotArchiveBox extends StatelessWidget {
-  const BotArchiveBox({super.key});
+class BotRect extends StatelessWidget {
+  const BotRect({super.key, required this.name, required this.description});
+
+  final String name;
+  final String description;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +26,7 @@ class BotArchiveBox extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(10.0),
-              child: Icon(Icons.circle, size: 60),
+              child: Icon(Icons.smart_toy, size: 60),
             ),
             Expanded(
               child: Column(
@@ -31,11 +34,11 @@ class BotArchiveBox extends StatelessWidget {
                 spacing: 3,
                 children: [
                   Text(
-                    "StarryAI Bot",
+                    name,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   Text(
-                    "Hello! l can provide assistance with your writing needs.",
+                    description,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     softWrap: false,
