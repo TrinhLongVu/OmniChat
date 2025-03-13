@@ -6,6 +6,7 @@ import 'package:omni_chat/screens/landing/scr.dart';
 import 'package:omni_chat/screens/main/bots/new/scr.dart';
 import 'package:omni_chat/screens/main/bots/conversation/scr.dart';
 import 'package:omni_chat/screens/main/bots/scr.dart';
+import 'package:omni_chat/screens/main/knowledge/scr.dart';
 import 'package:omni_chat/screens/main/layout.dart';
 import 'package:omni_chat/screens/main/profile/reset_pw/scr.dart';
 import 'package:omni_chat/screens/main/profile/scr.dart';
@@ -63,7 +64,7 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               name: "knowledge library",
               path: "/knowledge",
-              builder: (context, state) => const Text("Knowledge Library"),
+              builder: (context, state) => KnowledgeLibraryScreen(),
             ),
           ],
         ),
