@@ -6,12 +6,59 @@ import 'package:omni_chat/screens/main/bots/conversation/thread_drawer.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-class ConversationScreen extends StatelessWidget {
+class ConversationScreen extends StatefulWidget {
+  const ConversationScreen({super.key});
+
+  @override
+  State<ConversationScreen> createState() => _ConversationScreenState();
+}
+
+class _ConversationScreenState extends State<ConversationScreen> {
   final TextEditingController msgCtrlr = TextEditingController();
-  ConversationScreen({super.key});
+  final FocusNode focusNod = FocusNode();
+  final ScrollController scrollCtrlr = ScrollController();
+
+  int tokenNum = 50;
+
+  @override
+  void initState() {
+    super.initState();
+    focusNod.addListener(scrollToBottom);
+  }
+
+  @override
+  void dispose() {
+    focusNod.removeListener(scrollToBottom);
+    msgCtrlr.dispose();
+    focusNod.dispose();
+    scrollCtrlr.dispose();
+    super.dispose();
+  }
+
+  void scrollToBottom() {
+    if (focusNod.hasFocus) {
+      Future.delayed(Duration(milliseconds: 300), () {
+        scrollCtrlr.animateTo(
+          scrollCtrlr.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      });
+    }
+  }
+
+  void sendMessage() {
+    if (msgCtrlr.text.isNotEmpty && tokenNum > 0) {
+      setState(() {
+        tokenNum--;
+        msgCtrlr.clear();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final viewport = MediaQuery.of(context).size;
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -61,33 +108,37 @@ class ConversationScreen extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(height: 30),
-                  Column(
-                    spacing: 10,
-                    children: List.generate(
-                      6,
-                      (index) => Column(
-                        spacing: 10,
-                        children: [
-                          ConvoBox(
-                            message:
-                                "Hello, I'm your new friend, StarryAI Bot. How can I help you today?",
-                            isBot: true,
-                          ),
-                          ConvoBox(
-                            message:
-                                "Can you help me write a blog post about my new book?",
-                            isBot: false,
-                          ),
-                        ],
+            GestureDetector(
+              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+              child: SingleChildScrollView(
+                controller: scrollCtrlr,
+                child: Column(
+                  children: [
+                    SizedBox(height: viewport.height * .03),
+                    Column(
+                      spacing: 10,
+                      children: List.generate(
+                        6,
+                        (index) => Column(
+                          spacing: 10,
+                          children: [
+                            ConvoBox(
+                              message:
+                                  "Hello, I'm your new friend, StarryAI Bot. How can I help you today?",
+                              isBot: true,
+                            ),
+                            ConvoBox(
+                              message:
+                                  "Can you help me write a blog post about my new book?",
+                              isBot: false,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 100),
-                ],
+                    SizedBox(height: viewport.height * .25),
+                  ],
+                ),
               ),
             ),
             Positioned(
@@ -107,26 +158,82 @@ class ConversationScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: TextField(
-                  controller: msgCtrlr,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    hintText: "Type your message...",
-                    hintStyle: TextStyle(color: Colors.grey),
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.send_rounded, color: omniDarkBlue),
-                      onPressed: () {
-                        if (msgCtrlr.text.isNotEmpty) {
-                          msgCtrlr.clear();
-                        }
-                      },
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: msgCtrlr,
+                      focusNode: focusNod,
+                      textInputAction: TextInputAction.newline,
+                      style: TextStyle(fontSize: 14),
+                      minLines: 1,
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: "Type your message...",
+                        hintStyle: TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
                     ),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(10),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Row(
+                              spacing: 4,
+                              children: [
+                                Icon(Icons.token_rounded, color: omniDarkBlue),
+                                Text("$tokenNum"),
+                              ],
+                            ),
+                          ),
+                          Row(
+                            spacing: 10,
+                            children: [
+                              IconButton(
+                                onPressed: () {},
+                                iconSize: 20,
+                                padding: EdgeInsets.all(5),
+                                constraints: const BoxConstraints(),
+                                style: const ButtonStyle(
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                ),
+                                icon: const Icon(
+                                  Icons.photo,
+                                  color: omniDarkBlue,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  sendMessage();
+                                },
+                                iconSize: 20,
+                                padding: EdgeInsets.all(5),
+                                constraints: const BoxConstraints(),
+                                style: const ButtonStyle(
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                ),
+                                icon: const Icon(
+                                  Icons.send_rounded,
+                                  color: omniDarkBlue,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             ),
