@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/widgets/common_btn.dart';
 import 'package:omni_chat/widgets/input_field.dart';
@@ -87,6 +88,39 @@ class LoginScreen extends StatelessWidget {
                         },
                       ),
                     ],
+                  ),
+                  const Row(
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          color: Colors.grey, // Line color
+                          thickness: 1, // Line thickness
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Text(
+                          "Or continue with",
+                          style: TextStyle(
+                            color: Colors.grey, // Text color
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          color: Colors.grey, // Line color
+                          thickness: 1, // Line thickness
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 30),
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: Brand(Brands.google, size: 50),
+                    ),
                   ),
                   RichText(
                     text: TextSpan(

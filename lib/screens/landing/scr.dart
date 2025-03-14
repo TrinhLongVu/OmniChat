@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:omni_chat/widgets/common_btn.dart';
@@ -23,7 +22,7 @@ class LandingScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.account_circle_rounded, size: 180),
+                Icon(Icons.smart_toy_outlined, size: 180),
                 Text(
                   "Hello\nIt's Omni Bot Here\nYour Own Chat Assistant",
                   style: TextStyle(
@@ -36,58 +35,10 @@ class LandingScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25),
                   child: CommonBtn(
-                    title: "Login with email",
+                    title: "Continue",
                     onTap: () {
                       context.pushNamed("login");
                     },
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 25,
-                  ),
-                  width: double.infinity,
-                  child: TextButton(
-                    onPressed: () {},
-                    style: ButtonStyle(
-                      padding: WidgetStateProperty.all(
-                        const EdgeInsets.symmetric(
-                          vertical: 15,
-                          horizontal: 20,
-                        ),
-                      ),
-                      backgroundColor: const WidgetStatePropertyAll(
-                        Colors.white,
-                      ),
-                      shape: WidgetStateProperty.all(
-                        const RoundedRectangleBorder(
-                          side: BorderSide(color: Color(0xffEEEEEE), width: 2),
-                          borderRadius: BorderRadius.all(Radius.circular(30)),
-                        ),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(
-                          "assets/icons/gg_icon.svg",
-                          height: 30,
-                          width: 30,
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: Text(
-                              "Continue with Google",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
                 SizedBox(height: 30),
