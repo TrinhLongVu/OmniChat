@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/constants/knowledge_type.dart';
 
@@ -17,7 +18,9 @@ class KnowledgeRect extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        context.go("/knowledge/info");
+      },
       child: Container(
         padding: const EdgeInsets.only(right: 8),
         decoration: BoxDecoration(

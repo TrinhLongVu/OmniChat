@@ -27,9 +27,13 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
   @override
   void initState() {
     super.initState();
-    nameController = TextEditingController();
-    instructionController = TextEditingController();
-    descriptionController = TextEditingController();
+    nameController = TextEditingController(text: widget.bot?.name ?? "");
+    instructionController = TextEditingController(
+      text: widget.bot?.instruction ?? "",
+    );
+    descriptionController = TextEditingController(
+      text: widget.bot?.description ?? "",
+    );
   }
 
   @override

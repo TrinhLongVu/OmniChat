@@ -11,7 +11,7 @@ class MainLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     final String currentRoute = GoRouterState.of(context).uri.toString();
     final bool isConversationScreen = currentRoute.contains(
-      '/chats/conversation',
+      '/bots/conversation',
     );
 
     return Scaffold(
