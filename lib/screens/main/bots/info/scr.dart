@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/bot_model.dart';
 import 'package:omni_chat/widgets/common_btn.dart';
 import 'package:omni_chat/widgets/info_field.dart';
 import 'package:omni_chat/widgets/input_field.dart';
 import 'package:omni_chat/widgets/input_header.dart';
+import 'package:omni_chat/widgets/popup/publish_bot.dart';
 
 class BotInfoScreen extends StatefulWidget {
   final Bot? bot;
@@ -25,13 +27,9 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
   @override
   void initState() {
     super.initState();
-    nameController = TextEditingController(text: widget.bot?.name ?? "");
-    instructionController = TextEditingController(
-      text: widget.bot?.instruction ?? "",
-    );
-    descriptionController = TextEditingController(
-      text: widget.bot?.description ?? "",
-    );
+    nameController = TextEditingController();
+    instructionController = TextEditingController();
+    descriptionController = TextEditingController();
   }
 
   @override
@@ -46,7 +44,22 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
   Widget build(BuildContext context) {
     bool editable = widget.bot != null;
     return Scaffold(
-      appBar: AppBar(title: Text(editable ? "Bot's Info" : "Create New Bot")),
+      appBar: AppBar(
+        title: Text(editable ? "Bot's Information" : "Create New Bot"),
+        actions: [
+          (editable)
+              ? IconButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => BotPublishingPopUp(),
+                  );
+                },
+                icon: Icon(Icons.lan_sharp, color: omniDarkBlue),
+              )
+              : Container(),
+        ],
+      ),
       body: SizedBox(
         height: double.infinity,
         child: Stack(
