@@ -83,7 +83,7 @@ class LoginScreen extends StatelessWidget {
                       CommonBtn(
                         title: "Login",
                         onTap: () {
-                          context.goNamed("all-chats");
+                          context.goNamed("all-bots");
                         },
                       ),
                     ],

@@ -10,7 +10,7 @@ class BotRect extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => {context.go("/chats/conversation")},
+      onTap: () => {context.go("/bots/conversation")},
       child: Container(
         padding: const EdgeInsets.only(right: 8),
         decoration: BoxDecoration(
@@ -53,7 +53,12 @@ class BotRect extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(10.0),
-              child: Icon(Icons.more_vert, size: 20),
+              child: IconButton(
+                onPressed: () {
+                  context.go("/bots/info");
+                },
+                icon: Icon(Icons.more_vert, size: 20),
+              ),
             ),
           ],
         ),

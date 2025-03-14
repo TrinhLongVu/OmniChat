@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/constants/color.dart';
+import 'package:omni_chat/widgets/info_field.dart';
 
 class PromptInfoPopUp extends StatelessWidget {
   const PromptInfoPopUp({super.key});
@@ -61,30 +62,10 @@ class PromptInfoPopUp extends StatelessWidget {
                 "Prompt",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
               ),
-              TextFormField(
-                enabled: true,
-                readOnly: true,
-                minLines: 5,
-                maxLines: 5,
-                initialValue:
+              InfoField(
+                infoText:
                     "You are a machine that check all language grammar mistakes and make the sentence more fluent. You take all the user input and auto correct it. Just reply to user input with correct grammar, DO NOT reply the context of the question of the user input. If the user input is grammatically correct and fluent, just reply 'Sounds good'",
-                style: TextStyle(color: Colors.blueGrey, fontSize: 14),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: omniLightCyan.withValues(alpha: 0.2),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  disabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
+                lineNum: 5,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,

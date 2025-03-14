@@ -26,7 +26,7 @@ class BotListScreen extends StatelessWidget {
               ),
               IconButton(
                 onPressed: () {
-                  context.go("/chats/new");
+                  context.go("/bots/new");
                 },
                 icon: Icon(
                   Icons.add_circle_outline,

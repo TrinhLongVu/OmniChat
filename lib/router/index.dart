@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:omni_chat/models/bot_model.dart';
 import 'package:omni_chat/screens/auth/login/scr.dart';
 import 'package:omni_chat/screens/auth/register/scr.dart';
 import 'package:omni_chat/screens/landing/scr.dart';
-import 'package:omni_chat/screens/main/bots/new/scr.dart';
+import 'package:omni_chat/screens/main/bots/info/scr.dart';
 import 'package:omni_chat/screens/main/bots/conversation/scr.dart';
 import 'package:omni_chat/screens/main/bots/scr.dart';
 import 'package:omni_chat/screens/main/knowledge/new/scr.dart';
@@ -42,14 +43,27 @@ final GoRouter appRouter = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              name: "all-chats",
-              path: "/chats",
+              name: "all-bots",
+              path: "/bots",
               builder: (context, state) => BotListScreen(),
               routes: [
                 GoRoute(
                   name: 'bot-create',
                   path: 'new',
-                  builder: (context, state) => BotCreationScreen(),
+                  builder: (context, state) => BotInfoScreen(),
+                ),
+                GoRoute(
+                  name: 'bot-info',
+                  path: 'info',
+                  builder: (context, state) {
+                    final bot = Bot(
+                      id: '123',
+                      name: 'Starry Bot',
+                      instruction: 'Respond politely and helpfully.',
+                      description: 'A dummy bot for debugging purposes.',
+                    );
+                    return BotInfoScreen(bot: bot);
+                  },
                 ),
                 GoRoute(
                   name: 'conversation',
