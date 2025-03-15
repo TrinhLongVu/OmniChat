@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:omni_chat/screens/landing/scr.dart';
+import 'package:omni_chat/router/index.dart';
 
 void main() => runApp(const OmniChatApp());
 
@@ -9,7 +9,7 @@ class OmniChatApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Omni Chat',
       theme: ThemeData(
@@ -17,7 +17,7 @@ class OmniChatApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xffF9F9F9),
         useMaterial3: true,
       ),
-      home: const LandingScreen(),
+      routerConfig: appRouter,
     );
   }
 }

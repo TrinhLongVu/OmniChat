@@ -1,0 +1,140 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:omni_chat/models/bot_model.dart';
+import 'package:omni_chat/models/knowledge_model.dart';
+import 'package:omni_chat/screens/auth/login/scr.dart';
+import 'package:omni_chat/screens/auth/register/scr.dart';
+import 'package:omni_chat/screens/landing/scr.dart';
+import 'package:omni_chat/screens/main/bots/info/scr.dart';
+import 'package:omni_chat/screens/main/bots/conversation/scr.dart';
+import 'package:omni_chat/screens/main/bots/scr.dart';
+import 'package:omni_chat/screens/main/knowledge/info/scr.dart';
+import 'package:omni_chat/screens/main/knowledge/scr.dart';
+import 'package:omni_chat/screens/main/layout.dart';
+import 'package:omni_chat/screens/main/mail/scr.dart';
+import 'package:omni_chat/screens/main/profile/reset_pw/scr.dart';
+import 'package:omni_chat/screens/main/profile/scr.dart';
+import 'package:omni_chat/screens/main/profile/sub_plan/scr.dart';
+
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
+
+final GoRouter appRouter = GoRouter(
+  navigatorKey: rootNavigatorKey,
+  initialLocation: "/",
+  routes: [
+    GoRoute(
+      name: "landing",
+      path: "/",
+      builder: (context, state) => LandingScreen(),
+    ),
+    GoRoute(
+      name: "login",
+      path: "/auth/login",
+      builder: (context, state) => LoginScreen(),
+    ),
+    GoRoute(
+      name: "register",
+      path: "/auth/register",
+      builder: (context, state) => RegisterScreen(),
+    ),
+    StatefulShellRoute.indexedStack(
+      builder:
+          (context, state, navigationShell) =>
+              MainLayout(navigationShell: navigationShell),
+      branches: [
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              name: "all-bots",
+              path: "/bots",
+              builder: (context, state) => BotListScreen(),
+              routes: [
+                GoRoute(
+                  name: 'bot-create',
+                  path: 'new',
+                  builder: (context, state) => BotInfoScreen(),
+                ),
+                GoRoute(
+                  name: 'bot-info',
+                  path: 'info',
+                  builder: (context, state) {
+                    final bot = Bot(
+                      id: '123',
+                      name: 'Starry Bot',
+                      instruction: 'Respond politely and helpfully.',
+                      description: 'A dummy bot for debugging purposes.',
+                    );
+                    return BotInfoScreen(bot: bot);
+                  },
+                ),
+                GoRoute(
+                  name: 'conversation',
+                  path: 'conversation',
+                  builder: (context, state) => ConversationScreen(),
+                ),
+              ],
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              name: "knowledge library",
+              path: "/knowledge",
+              builder: (context, state) => KnowledgeLibraryScreen(),
+              routes: [
+                GoRoute(
+                  name: 'knowledge-create',
+                  path: 'new',
+                  builder: (context, state) => KnowledgeInfoScreen(),
+                ),
+                GoRoute(
+                  name: 'knowledge-info',
+                  path: 'info',
+                  builder: (context, state) {
+                    final techKnowledge = Knowledge(
+                      name: 'Tech Overview',
+                      description:
+                          'Technology is a vast field that encompasses hardware, software, networks, AI, cybersecurity, and much more.',
+                    );
+                    return KnowledgeInfoScreen(knowledge: techKnowledge);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              name: "mail",
+              path: "/mail",
+              builder: (context, state) => MailComposerScreen(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              name: "profile",
+              path: "/me",
+              builder: (context, state) => const ProfileScreen(),
+              routes: [
+                GoRoute(
+                  name: 'subscription',
+                  path: 'sub-plan',
+                  builder: (context, state) => const SubscriptionPlanScreen(),
+                ),
+                GoRoute(
+                  name: 'reset password',
+                  path: 'reset-pw',
+                  builder: (context, state) => ResetPasswordScreen(),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    ),
+  ],
+);
