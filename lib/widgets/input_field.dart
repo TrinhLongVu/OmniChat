@@ -10,6 +10,7 @@ class InputField extends StatefulWidget {
   final int maxLns;
   final bool isPassword;
   final bool isTelNum;
+  final bool isNewLineAction;
 
   const InputField({
     super.key,
@@ -21,6 +22,7 @@ class InputField extends StatefulWidget {
     this.isTelNum = false,
     this.minLns = 1,
     this.maxLns = 1,
+    this.isNewLineAction = false,
   });
 
   @override
@@ -35,10 +37,16 @@ class _InputFieldState extends State<InputField> {
     return TextField(
       controller: widget.controller,
       obscureText: !isPasswordVisible && widget.isPassword,
+      textInputAction:
+          widget.isNewLineAction
+              ? TextInputAction.newline
+              : TextInputAction.done,
       textAlignVertical: TextAlignVertical.center,
-      keyboardType: widget.isTelNum ? TextInputType.phone : TextInputType.text,
-      maxLines:
-          !widget.isPassword ? widget.maxLns : 1, // Allows unlimited lines
+      keyboardType:
+          widget.isNewLineAction
+              ? TextInputType.multiline
+              : (widget.isTelNum ? TextInputType.phone : TextInputType.text),
+      maxLines: !widget.isPassword ? widget.maxLns : 1,
       minLines: !widget.isPassword ? widget.minLns : null,
       style: TextStyle(fontSize: widget.fontSz),
       decoration: InputDecoration(

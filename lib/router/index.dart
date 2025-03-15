@@ -11,6 +11,7 @@ import 'package:omni_chat/screens/main/bots/scr.dart';
 import 'package:omni_chat/screens/main/knowledge/info/scr.dart';
 import 'package:omni_chat/screens/main/knowledge/scr.dart';
 import 'package:omni_chat/screens/main/layout.dart';
+import 'package:omni_chat/screens/main/mail/scr.dart';
 import 'package:omni_chat/screens/main/profile/reset_pw/scr.dart';
 import 'package:omni_chat/screens/main/profile/scr.dart';
 import 'package:omni_chat/screens/main/profile/sub_plan/scr.dart';
@@ -106,9 +107,9 @@ final GoRouter appRouter = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              name: "messages",
-              path: "/messages",
-              builder: (context, state) => const Text("Mail Composer"),
+              name: "mail",
+              path: "/mail",
+              builder: (context, state) => MailComposerScreen(),
             ),
           ],
         ),
