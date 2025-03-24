@@ -1,13 +1,16 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:omni_chat/apis/auth/register.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/widgets/common_btn.dart';
 import 'package:omni_chat/widgets/input_field.dart';
+import 'package:validatorless/validatorless.dart';
+
+final registerFormKey = GlobalKey<FormState>();
 
 class RegisterScreen extends StatelessWidget {
   final TextEditingController emailCtrlr = TextEditingController();
-  final TextEditingController nameCtrlr = TextEditingController();
   final TextEditingController passwordCtrlr = TextEditingController();
   final TextEditingController confirmPwdCtrlr = TextEditingController();
 
@@ -58,36 +61,66 @@ class RegisterScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  Column(
-                    children: [
-                      InputField(
-                        controller: emailCtrlr,
-                        placeholder: "Enter your email",
-                        prefixIcon: Icons.mail,
-                      ),
-                      SizedBox(height: 10),
-                      InputField(
-                        controller: nameCtrlr,
-                        placeholder: "Choose your username",
-                        prefixIcon: Icons.person,
-                      ),
-                      const SizedBox(height: 10),
-                      InputField(
-                        controller: passwordCtrlr,
-                        placeholder: "Enter your password",
-                        prefixIcon: Icons.lock,
-                        isPassword: true,
-                      ),
-                      const SizedBox(height: 10),
-                      InputField(
-                        controller: confirmPwdCtrlr,
-                        placeholder: "Confirm your password",
-                        prefixIcon: Icons.lock_reset,
-                        isPassword: true,
-                      ),
-                      const SizedBox(height: 20),
-                      CommonBtn(title: "Register", onTap: () {}),
-                    ],
+                  Form(
+                    key: registerFormKey,
+                    child: Column(
+                      spacing: 15,
+                      children: [
+                        InputField(
+                          controller: emailCtrlr,
+                          placeholder: "Enter your email",
+                          prefixIcon: Icons.mail,
+                          validateFunc: Validatorless.multiple([
+                            Validatorless.required("Email is required"),
+                            Validatorless.email("Please enter a valid email"),
+                          ]),
+                          formKey: registerFormKey,
+                        ),
+                        InputField(
+                          controller: passwordCtrlr,
+                          placeholder: "Enter your password",
+                          prefixIcon: Icons.lock,
+                          isPassword: true,
+                          validateFunc: Validatorless.multiple([
+                            Validatorless.required("Password is required"),
+                            Validatorless.min(
+                              6,
+                              "Password must be at least 6 characters long",
+                            ),
+                          ]),
+                          formKey: registerFormKey,
+                        ),
+                        InputField(
+                          controller: confirmPwdCtrlr,
+                          placeholder: "Confirm your password",
+                          prefixIcon: Icons.lock_reset,
+                          isPassword: true,
+                          validateFunc: Validatorless.multiple([
+                            Validatorless.compare(
+                              passwordCtrlr,
+                              "Passwords do not match",
+                            ),
+                            Validatorless.required(
+                              "Confirm password is required",
+                            ),
+                          ]),
+                          formKey: registerFormKey,
+                        ),
+                        const SizedBox(height: 5),
+                        CommonBtn(
+                          title: "Register",
+                          onTap: () {
+                            if (registerFormKey.currentState!.validate()) {
+                              register(
+                                emailCtrlr.text,
+                                passwordCtrlr.text,
+                                confirmPwdCtrlr.text,
+                              );
+                            }
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                   RichText(
                     text: TextSpan(

@@ -11,6 +11,8 @@ class InputField extends StatefulWidget {
   final bool isPassword;
   final bool isTelNum;
   final bool isNewLineAction;
+  final FormFieldValidator<String>? validateFunc;
+  final GlobalKey<FormState>? formKey;
 
   const InputField({
     super.key,
@@ -23,6 +25,8 @@ class InputField extends StatefulWidget {
     this.minLns = 1,
     this.maxLns = 1,
     this.isNewLineAction = false,
+    this.validateFunc,
+    this.formKey,
   });
 
   @override
@@ -34,7 +38,7 @@ class _InputFieldState extends State<InputField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: widget.controller,
       obscureText: !isPasswordVisible && widget.isPassword,
       textInputAction:
@@ -79,7 +83,21 @@ class _InputFieldState extends State<InputField> {
                   ),
                 )
                 : null,
+        errorStyle: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red, width: 1.5),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: omniDarkBlue, width: 2),
+          borderRadius: BorderRadius.circular(20),
+        ),
       ),
+      validator: widget.validateFunc,
+      onEditingComplete: () {
+        widget.formKey?.currentState?.validate();
+        FocusScope.of(context).unfocus();
+      },
     );
   }
 }

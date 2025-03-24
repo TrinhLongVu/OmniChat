@@ -33,6 +33,7 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => LoginScreen(),
     ),
     GoRoute(
+      parentNavigatorKey: rootNavigatorKey,
       name: "register",
       path: "/auth/register",
       builder: (context, state) => RegisterScreen(),
