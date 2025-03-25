@@ -111,11 +111,7 @@ class RegisterScreen extends StatelessWidget {
                           title: "Register",
                           onTap: () {
                             if (registerFormKey.currentState!.validate()) {
-                              register(
-                                emailCtrlr.text,
-                                passwordCtrlr.text,
-                                confirmPwdCtrlr.text,
-                              );
+                              register(emailCtrlr.text, passwordCtrlr.text);
                             }
                           },
                         ),

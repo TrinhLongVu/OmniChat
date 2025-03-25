@@ -2,9 +2,13 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:omni_chat/apis/auth/login.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/widgets/common_btn.dart';
 import 'package:omni_chat/widgets/input_field.dart';
+import 'package:validatorless/validatorless.dart';
+
+final loginFormKey = GlobalKey<FormState>();
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController emailCtrlr = TextEditingController();
@@ -57,37 +61,51 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  Column(
-                    children: [
-                      InputField(
-                        controller: emailCtrlr,
-                        placeholder: "Enter your email",
-                        prefixIcon: Icons.mail,
-                      ),
-                      SizedBox(height: 10),
-                      InputField(
-                        controller: passwordCtrlr,
-                        placeholder: "Enter your password",
-                        prefixIcon: Icons.lock,
-                        isPassword: true,
-                      ),
-                      const SizedBox(height: 10),
-                      const SizedBox(
-                        width: double.infinity,
-                        child: Text(
-                          "Forgot Password?",
-                          textAlign: TextAlign.end,
-                          style: TextStyle(fontWeight: FontWeight.w500),
+                  Form(
+                    key: loginFormKey,
+                    child: Column(
+                      spacing: 10,
+                      children: [
+                        InputField(
+                          controller: emailCtrlr,
+                          placeholder: "Enter your email",
+                          prefixIcon: Icons.mail,
+                          validateFunc: Validatorless.multiple([
+                            Validatorless.required("Email is required"),
+                            Validatorless.email("Please enter a valid email"),
+                          ]),
+                          formKey: loginFormKey,
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      CommonBtn(
-                        title: "Login",
-                        onTap: () {
-                          context.goNamed("all-bots");
-                        },
-                      ),
-                    ],
+                        InputField(
+                          controller: passwordCtrlr,
+                          placeholder: "Enter your password",
+                          prefixIcon: Icons.lock,
+                          isPassword: true,
+                          validateFunc: Validatorless.required(
+                            "Password is required",
+                          ),
+                          formKey: loginFormKey,
+                        ),
+                        const SizedBox(
+                          width: double.infinity,
+                          child: Text(
+                            "Forgot Password?",
+                            textAlign: TextAlign.end,
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        CommonBtn(
+                          title: "Login",
+                          onTap: () {
+                            if (loginFormKey.currentState!.validate()) {
+                              login(emailCtrlr.text, passwordCtrlr.text);
+                              // context.goNamed("all-bots");
+                            }
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                   const Row(
                     children: [
