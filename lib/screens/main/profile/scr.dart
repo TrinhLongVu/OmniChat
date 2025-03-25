@@ -1,9 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:omni_chat/apis/auth/get_me.dart';
+import 'package:omni_chat/models/api/auth/auth_entity.dart';
 import 'package:omni_chat/screens/main/profile/profile_btn.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String username = "Loading...";
+  String email = "example@example.com";
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserData();
+  }
+
+  Future<void> loadUserData() async {
+    AuthEntity? fetchedUser = await getMe();
+    if (mounted && fetchedUser != null) {
+      setState(() {
+        username = fetchedUser.username;
+        email = fetchedUser.email;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +63,10 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
             Text(
-              "Someone's Name",
+              username,
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
             ),
-            Text("email_123@example.com", style: const TextStyle(fontSize: 20)),
+            Text(email, style: const TextStyle(fontSize: 20)),
             const SizedBox(height: 30),
             Wrap(
               runSpacing: 20,
