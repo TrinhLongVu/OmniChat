@@ -84,8 +84,8 @@ class RegisterScreen extends StatelessWidget {
                           validateFunc: Validatorless.multiple([
                             Validatorless.required("Password is required"),
                             Validatorless.min(
-                              6,
-                              "Password must be at least 6 characters long",
+                              8,
+                              "Password must contain at least 6 characters long",
                             ),
                           ]),
                           formKey: registerFormKey,
