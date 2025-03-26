@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:omni_chat/models/bot_model.dart';
+// import 'package:omni_chat/models/bot_model.dart';
 import 'package:omni_chat/models/knowledge_model.dart';
 import 'package:omni_chat/screens/auth/login/scr.dart';
 import 'package:omni_chat/screens/auth/register/scr.dart';
@@ -55,19 +55,19 @@ final GoRouter appRouter = GoRouter(
                   path: 'new',
                   builder: (context, state) => BotInfoScreen(),
                 ),
-                GoRoute(
-                  name: 'bot-info',
-                  path: 'info',
-                  builder: (context, state) {
-                    final bot = Bot(
-                      id: '123',
-                      name: 'Starry Bot',
-                      instruction: 'Respond politely and helpfully.',
-                      description: 'A dummy bot for debugging purposes.',
-                    );
-                    return BotInfoScreen(bot: bot);
-                  },
-                ),
+                // GoRoute(
+                //   name: 'bot-info',
+                //   path: 'info',
+                //   builder: (context, state) {
+                //     final bot = Bot(
+                //       id: '123',
+                //       name: 'Starry Bot',
+                //       instruction: 'Respond politely and helpfully.',
+                //       description: 'A dummy bot for debugging purposes.',
+                //     );
+                //     return BotInfoScreen(bot: bot);
+                //   },
+                // ),
                 GoRoute(
                   name: 'conversation',
                   path: 'conversation',

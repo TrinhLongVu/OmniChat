@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class BotRect extends StatelessWidget {
-  const BotRect({super.key, required this.name, required this.description});
+  const BotRect({super.key, required this.title, this.subtitle});
 
-  final String name;
-  final String description;
+  final String title;
+  final String? subtitle;
 
   @override
   Widget build(BuildContext context) {
@@ -34,20 +34,22 @@ class BotRect extends StatelessWidget {
                 spacing: 3,
                 children: [
                   Text(
-                    name,
+                    title,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
-                  Text(
-                    description,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    softWrap: false,
-                    style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 14,
-                      color: Colors.black.withValues(alpha: 0.6),
-                    ),
-                  ),
+                  subtitle != null
+                      ? Text(
+                        subtitle.toString(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: false,
+                        style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          fontSize: 14,
+                          color: Colors.black.withValues(alpha: 0.6),
+                        ),
+                      )
+                      : SizedBox(),
                 ],
               ),
             ),
