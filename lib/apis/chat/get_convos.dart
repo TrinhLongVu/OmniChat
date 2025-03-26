@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:omni_chat/constants/base_urls.dart';
-import 'package:omni_chat/models/api/auth/auth_entity.dart';
+import 'package:omni_chat/models/api/chat/get_convos_res.dart';
 import 'package:omni_chat/services/dio_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<AuthEntity?> getMe() async {
+Future<GetConvosResponse?> getConversations(String assistantId) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
 
@@ -15,13 +15,14 @@ Future<AuthEntity?> getMe() async {
 
   try {
     Response response = await dio.get(
-      "/api/v1/auth/me",
+      "/api/v1/ai-chat/conversations?assistantId=$assistantId&assistantModel=dify",
       options: Options(headers: headers),
     );
+    debugPrint(response.data.toString());
+    debugPrint(response.statusCode.toString());
     switch (response.statusCode) {
       case 200:
-        final data = response.data as Map<String, dynamic>;
-        AuthEntity meObj = AuthEntity.fromJson(data);
+        GetConvosResponse meObj = GetConvosResponse.fromJson(response.data);
         return meObj;
       default:
         return null;

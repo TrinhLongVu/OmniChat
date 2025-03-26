@@ -42,7 +42,7 @@ class BotListScreen extends StatelessWidget {
             scrollDirection: Axis.vertical,
             child: Column(
               children: List.generate(
-                12,
+                3,
                 (index) => BotRect(
                   name: "Grammar Bot",
                   description:

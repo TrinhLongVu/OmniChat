@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:omni_chat/constants/color.dart';
+import 'package:omni_chat/models/api/chat/get_convos_res.dart';
 import 'package:omni_chat/widgets/chat_thread_rect.dart';
 
 class ThreadDrawer extends StatelessWidget {
-  const ThreadDrawer({super.key});
+  const ThreadDrawer({super.key, required this.conversations});
+
+  final List<ConvoItem> conversations;
 
   @override
   Widget build(BuildContext context) {
@@ -30,18 +33,22 @@ class ThreadDrawer extends StatelessWidget {
               ],
             ),
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  spacing: 10,
-                  children: List.generate(
-                    20,
-                    (index) => ChatThreadRect(
-                      title:
-                          "You: Can you help me write a blog post about my new book?",
-                    ),
-                  ),
-                ),
-              ),
+              child:
+                  conversations.isEmpty
+                      ? Center(
+                        child: Text(
+                          "No chat threads available.",
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        ),
+                      )
+                      : SingleChildScrollView(
+                        child: Column(
+                          children:
+                              conversations.map((convo) {
+                                return ChatThreadRect(title: convo.title);
+                              }).toList(),
+                        ),
+                      ),
             ),
           ],
         ),
