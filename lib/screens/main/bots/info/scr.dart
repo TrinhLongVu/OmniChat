@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:omni_chat/apis/bot/create_bot.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/bot_model.dart';
 import 'package:omni_chat/widgets/common_btn.dart';
@@ -7,6 +7,9 @@ import 'package:omni_chat/widgets/info_field.dart';
 import 'package:omni_chat/widgets/input_field.dart';
 import 'package:omni_chat/widgets/input_header.dart';
 import 'package:omni_chat/widgets/popup/publish_bot.dart';
+import 'package:validatorless/validatorless.dart';
+
+final editBotFormKey = GlobalKey<FormState>();
 
 class BotInfoScreen extends StatefulWidget {
   final Bot? bot;
@@ -66,84 +69,97 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
       ),
       body: SizedBox(
         height: double.infinity,
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 20,
-                right: 20,
-                top: 20,
-                bottom: 100,
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  spacing: 10,
-                  children: [
-                    const Icon(Icons.smart_toy_outlined, size: 80),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 8,
-                      children: [
-                        InputHeader(title: "Name", isRequired: !editable),
-                        (editable && !editing)
-                            ? InfoField(
-                              infoText: widget.bot?.name ?? "",
-                              fontSz: 16,
-                            )
-                            : InputField(
-                              controller: nameController,
-                              placeholder: "Bot's Name",
-                            ),
-                        InputHeader(title: "Instructions", isRequired: false),
-                        (editable && !editing)
-                            ? InfoField(
-                              infoText: widget.bot?.instruction ?? "",
-                              fontSz: 16,
-                              lineNum: 4,
-                            )
-                            : InputField(
-                              controller: instructionController,
-                              placeholder: "Instruct the bot how to reply",
-                              minLns: 2,
-                              maxLns: 3,
-                            ),
-                        InputHeader(title: "Description", isRequired: false),
-                        (editable && !editing)
-                            ? InfoField(
-                              infoText: widget.bot?.description ?? "",
-                              fontSz: 16,
-                              lineNum: 3,
-                            )
-                            : InputField(
-                              controller: descriptionController,
-                              placeholder: "Description (Optional)",
-                              minLns: 2,
-                              maxLns: 5,
-                            ),
-                      ],
-                    ),
-                  ],
+        child: Form(
+          key: editBotFormKey,
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                  top: 20,
+                  bottom: 100,
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    spacing: 10,
+                    children: [
+                      const Icon(Icons.smart_toy_outlined, size: 80),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 8,
+                        children: [
+                          InputHeader(title: "Name", isRequired: !editable),
+                          (editable && !editing)
+                              ? InfoField(
+                                infoText: widget.bot?.name ?? "",
+                                fontSz: 16,
+                              )
+                              : InputField(
+                                controller: nameController,
+                                placeholder: "Bot's Name",
+                                validateFunc: Validatorless.required(
+                                  "Name of the bot is required",
+                                ),
+                                formKey: editBotFormKey,
+                              ),
+                          InputHeader(title: "Instructions", isRequired: false),
+                          (editable && !editing)
+                              ? InfoField(
+                                infoText: widget.bot?.instruction ?? "",
+                                fontSz: 16,
+                                lineNum: 4,
+                              )
+                              : InputField(
+                                controller: instructionController,
+                                placeholder: "Instruct the bot how to reply",
+                                minLns: 2,
+                                maxLns: 3,
+                              ),
+                          InputHeader(title: "Description", isRequired: false),
+                          (editable && !editing)
+                              ? InfoField(
+                                infoText: widget.bot?.description ?? "",
+                                fontSz: 16,
+                                lineNum: 3,
+                              )
+                              : InputField(
+                                controller: descriptionController,
+                                placeholder: "Description (Optional)",
+                                minLns: 2,
+                                maxLns: 5,
+                              ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              right: 20,
-              left: 20,
-              bottom: 20,
-              child: CommonBtn(
-                title: editable && !editing ? "Edit" : "Save",
-                onTap: () {
-                  if (!editable) {
-                    context.pop();
-                  } else {
-                    setState(() {
-                      editing = !editing;
-                    });
-                  }
-                },
+              Positioned(
+                right: 20,
+                left: 20,
+                bottom: 20,
+                child: CommonBtn(
+                  title: editable && !editing ? "Edit" : "Save",
+                  onTap: () {
+                    if (!editable) {
+                      if (editBotFormKey.currentState!.validate()) {
+                        createBot(
+                          nameController.text,
+                          instructionController.text,
+                          descriptionController.text,
+                        );
+                      }
+                    } else {
+                      setState(() {
+                        editing = !editing;
+                      });
+                    }
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
