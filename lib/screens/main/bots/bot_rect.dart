@@ -2,11 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class BotRect extends StatelessWidget {
-  const BotRect({super.key,required this.id, required this.title, this.subtitle});
+  const BotRect({
+    super.key,
+    required this.id,
+    required this.title,
+    this.subtitle,
+    required this.navigateToInfo,
+  });
 
   final String id;
   final String title;
   final String? subtitle;
+  final Function navigateToInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +44,9 @@ class BotRect extends StatelessWidget {
                   Text(
                     title,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
                   ),
                   subtitle != null
                       ? Text(
@@ -57,9 +67,7 @@ class BotRect extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: IconButton(
-                onPressed: () {
-                  context.go("/bots/$id");
-                },
+                onPressed: () => navigateToInfo(),
                 icon: Icon(Icons.more_vert, size: 20),
               ),
             ),

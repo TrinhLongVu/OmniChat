@@ -50,8 +50,11 @@ class _BotListScreenState extends State<BotListScreen> {
                 ),
               ),
               IconButton(
-                onPressed: () {
-                  context.go("/bots/new");
+                onPressed: () async {
+                  final result = await context.push("/bots/new");
+                  if (result == true) {
+                    loadBotList();
+                  }
                 },
                 icon: Icon(
                   Icons.add_circle_outline,
@@ -72,6 +75,12 @@ class _BotListScreenState extends State<BotListScreen> {
                       title: bot.name,
                       subtitle: bot.description,
                       id: bot.id,
+                      navigateToInfo: () async {
+                        final result = await context.push("/bots/${bot.id}");
+                        if (result == null) {
+                          loadBotList();
+                        }
+                      },
                     );
                   }).toList(),
             ),

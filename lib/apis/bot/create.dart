@@ -42,9 +42,7 @@ Future<void> createBot(
           onConfirmBtnTap:
               () => {
                 GoRouter.of(rootNavigatorKey.currentContext!).pop(),
-                GoRouter.of(
-                  rootNavigatorKey.currentContext!,
-                ).goNamed("all-bots"),
+                GoRouter.of(rootNavigatorKey.currentContext!).pop(true),
               },
         );
         break;
