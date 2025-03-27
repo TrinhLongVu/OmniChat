@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:omni_chat/apis/bot/create_bot.dart';
+import 'package:omni_chat/apis/bot/create.dart';
+import 'package:omni_chat/apis/bot/get_info.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/bot_model.dart';
 import 'package:omni_chat/widgets/common_btn.dart';
@@ -12,9 +13,9 @@ import 'package:validatorless/validatorless.dart';
 final editBotFormKey = GlobalKey<FormState>();
 
 class BotInfoScreen extends StatefulWidget {
-  final Bot? bot;
+  final String? id;
 
-  const BotInfoScreen({super.key, this.bot});
+  const BotInfoScreen({super.key, this.id});
 
   @override
   State<BotInfoScreen> createState() => _BotInfoScreenState();
@@ -26,17 +27,23 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
   late TextEditingController descriptionController;
 
   bool editing = false;
+  bool isLoading = true;
+  Bot? bot;
+  String botNameInfoTxt = "";
+  String botInstructionInfoTxt = "";
+  String botDescriptionInfoTxt = "";
 
   @override
   void initState() {
     super.initState();
-    nameController = TextEditingController(text: widget.bot?.name ?? "");
-    instructionController = TextEditingController(
-      text: widget.bot?.instruction ?? "",
-    );
-    descriptionController = TextEditingController(
-      text: widget.bot?.description ?? "",
-    );
+    if (widget.id == null) {
+      nameController = TextEditingController();
+      instructionController = TextEditingController();
+      descriptionController = TextEditingController();
+      isLoading = false;
+    } else {
+      loadBotInfo();
+    }
   }
 
   @override
@@ -47,9 +54,31 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
     super.dispose();
   }
 
+  Future<void> loadBotInfo() async {
+    Bot? botInfo = await getBotInfo(widget.id!);
+    if (mounted && botInfo != null) {
+      setState(() {
+        bot = botInfo;
+        botNameInfoTxt = bot!.name;
+        botInstructionInfoTxt = bot!.instruction;
+        botDescriptionInfoTxt = bot!.description ?? "";
+        isLoading = false;
+      });
+      nameController = TextEditingController(text: bot!.name);
+      instructionController = TextEditingController(text: bot!.instruction);
+      descriptionController = TextEditingController(text: bot!.description);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    bool editable = widget.bot != null;
+    if (isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: const Text("Loading...")),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+    bool editable = widget.id != null;
     return Scaffold(
       appBar: AppBar(
         title: Text(editable ? "Bot's Information" : "Create New Bot"),
@@ -91,10 +120,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                         children: [
                           InputHeader(title: "Name", isRequired: !editable),
                           (editable && !editing)
-                              ? InfoField(
-                                infoText: widget.bot?.name ?? "",
-                                fontSz: 16,
-                              )
+                              ? InfoField(infoText: botNameInfoTxt, fontSz: 16)
                               : InputField(
                                 controller: nameController,
                                 placeholder: "Bot's Name",
@@ -106,7 +132,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                           InputHeader(title: "Instructions", isRequired: false),
                           (editable && !editing)
                               ? InfoField(
-                                infoText: widget.bot?.instruction ?? "",
+                                infoText: botInstructionInfoTxt,
                                 fontSz: 16,
                                 lineNum: 4,
                               )
@@ -119,13 +145,14 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                           InputHeader(title: "Description", isRequired: false),
                           (editable && !editing)
                               ? InfoField(
-                                infoText: widget.bot?.description ?? "",
+                                infoText: botDescriptionInfoTxt,
                                 fontSz: 16,
                                 lineNum: 3,
                               )
                               : InputField(
                                 controller: descriptionController,
-                                placeholder: "Description (Optional)",
+                                placeholder:
+                                    "Description of how you would use the bot for",
                                 minLns: 2,
                                 maxLns: 5,
                               ),

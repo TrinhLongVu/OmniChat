@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:omni_chat/apis/bot/get_bot_list.dart';
+import 'package:omni_chat/apis/bot/get_list.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/api/bot/bot_list_res.dart';
 import 'package:omni_chat/models/bot_model.dart';
@@ -68,7 +68,11 @@ class _BotListScreenState extends State<BotListScreen> {
             child: Column(
               children:
                   botList.map((bot) {
-                    return BotRect(title: bot.name, subtitle: bot.description);
+                    return BotRect(
+                      title: bot.name,
+                      subtitle: bot.description,
+                      id: bot.id,
+                    );
                   }).toList(),
             ),
           ),

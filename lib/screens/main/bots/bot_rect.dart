@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class BotRect extends StatelessWidget {
-  const BotRect({super.key, required this.title, this.subtitle});
+  const BotRect({super.key,required this.id, required this.title, this.subtitle});
 
+  final String id;
   final String title;
   final String? subtitle;
 
@@ -57,7 +58,7 @@ class BotRect extends StatelessWidget {
               padding: const EdgeInsets.all(10.0),
               child: IconButton(
                 onPressed: () {
-                  context.go("/bots/info");
+                  context.go("/bots/$id");
                 },
                 icon: Icon(Icons.more_vert, size: 20),
               ),
