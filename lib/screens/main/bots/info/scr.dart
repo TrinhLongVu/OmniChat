@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:omni_chat/apis/bot/create.dart';
 import 'package:omni_chat/apis/bot/delete.dart';
 import 'package:omni_chat/apis/bot/get_info.dart';
+import 'package:omni_chat/apis/bot/update.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/bot_model.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
@@ -30,7 +31,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
   late TextEditingController instructionController;
   late TextEditingController descriptionController;
 
-  bool editing = false;
+  String screenState = "";
   bool isLoading = true;
   Bot? bot;
   String botNameInfoTxt = "";
@@ -41,11 +42,13 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
   void initState() {
     super.initState();
     if (widget.id == null) {
+      screenState = "create";
       nameController = TextEditingController();
       instructionController = TextEditingController();
       descriptionController = TextEditingController();
       isLoading = false;
     } else {
+      screenState = "info";
       loadBotInfo();
     }
   }
@@ -86,12 +89,13 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
         body: const Center(child: CircularProgressIndicator()),
       );
     }
-    bool editable = widget.id != null;
     return Scaffold(
       appBar: AppBar(
-        title: Text(editable ? "Bot's Information" : "Create New Bot"),
+        title: Text(
+          screenState == "create" ? "Create New Bot" : "Bot's Information",
+        ),
         actions: [
-          (editable)
+          (screenState != "create")
               ? IconButton(
                 onPressed: () {
                   showDialog(
@@ -126,8 +130,8 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         spacing: 8,
                         children: [
-                          InputHeader(title: "Name", isRequired: !editable),
-                          (editable && !editing)
+                          InputHeader(title: "Name", isRequired: true),
+                          (screenState == "info")
                               ? InfoField(infoText: botNameInfoTxt, fontSz: 16)
                               : InputField(
                                 controller: nameController,
@@ -138,7 +142,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                                 formKey: editBotFormKey,
                               ),
                           InputHeader(title: "Instructions", isRequired: false),
-                          (editable && !editing)
+                          (screenState == "info")
                               ? InfoField(
                                 infoText: botInstructionInfoTxt,
                                 fontSz: 16,
@@ -151,7 +155,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                                 maxLns: 3,
                               ),
                           InputHeader(title: "Description", isRequired: false),
-                          (editable && !editing)
+                          (screenState == "info")
                               ? InfoField(
                                 infoText: botDescriptionInfoTxt,
                                 fontSz: 16,
@@ -175,7 +179,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                 left: 20,
                 bottom: 20,
                 child:
-                    editable && !editing
+                    (screenState == "info")
                         ? Row(
                           spacing: 10,
                           children: [
@@ -183,7 +187,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                               title: "Edit",
                               onTap: () {
                                 setState(() {
-                                  editing = !editing;
+                                  screenState = "edit";
                                 });
                               },
                             ),
@@ -209,7 +213,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                         : CommonBtn(
                           title: "Save",
                           onTap: () {
-                            if (!editable) {
+                            if (screenState == "create") {
                               if (editBotFormKey.currentState!.validate()) {
                                 createBot(
                                   nameController.text,
@@ -217,8 +221,34 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                                   descriptionController.text,
                                 );
                               }
-                            } else {
-                              // print("Bot updated");
+                            } else if (screenState == "edit") {
+                              if (editBotFormKey.currentState!.validate()) {
+                                QuickAlert.show(
+                                  context: context,
+                                  type: QuickAlertType.confirm,
+                                  text:
+                                      "Are you sure you want to update this bot?",
+                                  onCancelBtnTap: () => context.pop(),
+                                  onConfirmBtnTap: () async {
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+                                    context.pop();
+                                    bool updateResult = await updateBot(
+                                      widget.id!,
+                                      nameController.text,
+                                      instructionController.text,
+                                      descriptionController.text,
+                                    );
+                                    if (updateResult) {
+                                      isLoading = true;
+                                      loadBotInfo();
+                                      setState(() {
+                                        screenState = "info";
+                                      });
+                                    }
+                                  },
+                                );
+                              }
                             }
                           },
                         ),
