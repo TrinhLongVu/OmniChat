@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:omni_chat/apis/bot/create.dart';
+import 'package:omni_chat/apis/bot/delete.dart';
 import 'package:omni_chat/apis/bot/get_info.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/bot_model.dart';
-import 'package:omni_chat/widgets/common_btn.dart';
+import 'package:omni_chat/widgets/button/common_btn.dart';
+import 'package:omni_chat/widgets/button/flex_common_btn.dart';
 import 'package:omni_chat/widgets/info_field.dart';
 import 'package:omni_chat/widgets/input_field.dart';
 import 'package:omni_chat/widgets/input_header.dart';
 import 'package:omni_chat/widgets/popup/publish_bot.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:validatorless/validatorless.dart';
 
 final editBotFormKey = GlobalKey<FormState>();
@@ -64,9 +68,13 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
         botDescriptionInfoTxt = bot!.description ?? "";
         isLoading = false;
       });
-      nameController = TextEditingController(text: bot!.name);
-      instructionController = TextEditingController(text: bot!.instruction);
-      descriptionController = TextEditingController(text: bot!.description);
+      nameController = TextEditingController(text: bot?.name ?? "");
+      instructionController = TextEditingController(
+        text: bot?.instruction ?? "",
+      );
+      descriptionController = TextEditingController(
+        text: bot?.description ?? "",
+      );
     }
   }
 
@@ -166,24 +174,54 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                 right: 20,
                 left: 20,
                 bottom: 20,
-                child: CommonBtn(
-                  title: editable && !editing ? "Edit" : "Save",
-                  onTap: () {
-                    if (!editable) {
-                      if (editBotFormKey.currentState!.validate()) {
-                        createBot(
-                          nameController.text,
-                          instructionController.text,
-                          descriptionController.text,
-                        );
-                      }
-                    } else {
-                      setState(() {
-                        editing = !editing;
-                      });
-                    }
-                  },
-                ),
+                child:
+                    editable && !editing
+                        ? Row(
+                          spacing: 10,
+                          children: [
+                            FlexCommonBtn(
+                              title: "Edit",
+                              onTap: () {
+                                setState(() {
+                                  editing = !editing;
+                                });
+                              },
+                            ),
+                            FlexCommonBtn(
+                              title: "Delete",
+                              bgColor: Colors.red,
+                              onTap: () {
+                                QuickAlert.show(
+                                  context: context,
+                                  type: QuickAlertType.confirm,
+                                  text:
+                                      "Are you sure you want to delete this bot?",
+                                  onCancelBtnTap: () => context.pop(),
+                                  onConfirmBtnTap: () {
+                                    context.pop();
+                                    deleteBot(widget.id!);
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        )
+                        : CommonBtn(
+                          title: "Save",
+                          onTap: () {
+                            if (!editable) {
+                              if (editBotFormKey.currentState!.validate()) {
+                                createBot(
+                                  nameController.text,
+                                  instructionController.text,
+                                  descriptionController.text,
+                                );
+                              }
+                            } else {
+                              // print("Bot updated");
+                            }
+                          },
+                        ),
               ),
             ],
           ),

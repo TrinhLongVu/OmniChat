@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/models/knowledge_model.dart';
-import 'package:omni_chat/widgets/common_btn.dart';
+import 'package:omni_chat/widgets/button/common_btn.dart';
 import 'package:omni_chat/widgets/info_field.dart';
 import 'package:omni_chat/widgets/input_field.dart';
 import 'package:omni_chat/widgets/input_header.dart';

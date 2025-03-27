@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:omni_chat/apis/auth/login.dart';
 import 'package:omni_chat/constants/color.dart';
-import 'package:omni_chat/widgets/common_btn.dart';
+import 'package:omni_chat/widgets/button/common_btn.dart';
 import 'package:omni_chat/widgets/input_field.dart';
 import 'package:validatorless/validatorless.dart';
 

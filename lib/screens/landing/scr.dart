@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:omni_chat/widgets/common_btn.dart';
+import 'package:omni_chat/widgets/button/common_btn.dart';
 
 class LandingScreen extends StatelessWidget {
   const LandingScreen({super.key});
