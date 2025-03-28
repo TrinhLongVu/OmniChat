@@ -5,7 +5,7 @@ import 'package:omni_chat/models/bot_model.dart';
 import 'package:omni_chat/services/dio_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<Bot?> getBotInfo(String id) async {
+Future<Bot?> getBotInfo({required String id}) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
 

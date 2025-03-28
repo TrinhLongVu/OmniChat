@@ -7,12 +7,12 @@ import 'package:omni_chat/services/dio_client.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<bool> updateBot(
-  String id,
-  String name,
-  String instruction,
-  String description,
-) async {
+Future<bool> updateBot({
+  required String id,
+  required String name,
+  required String instruction,
+  required String description,
+}) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
 

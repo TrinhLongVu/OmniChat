@@ -62,7 +62,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
   }
 
   Future<void> loadBotInfo() async {
-    Bot? botInfo = await getBotInfo(widget.id!);
+    Bot? botInfo = await getBotInfo(id: widget.id!);
     if (mounted && botInfo != null) {
       setState(() {
         bot = botInfo;
@@ -203,7 +203,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                                   onCancelBtnTap: () => context.pop(),
                                   onConfirmBtnTap: () {
                                     context.pop();
-                                    deleteBot(widget.id!);
+                                    deleteBot(id: widget.id!);
                                   },
                                 );
                               },
@@ -216,9 +216,9 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                             if (screenState == "create") {
                               if (editBotFormKey.currentState!.validate()) {
                                 createBot(
-                                  nameController.text,
-                                  instructionController.text,
-                                  descriptionController.text,
+                                  name: nameController.text,
+                                  instruction: instructionController.text,
+                                  description: descriptionController.text,
                                 );
                               }
                             } else if (screenState == "edit") {
@@ -234,10 +234,10 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                                         ?.unfocus();
                                     context.pop();
                                     bool updateResult = await updateBot(
-                                      widget.id!,
-                                      nameController.text,
-                                      instructionController.text,
-                                      descriptionController.text,
+                                      id: widget.id!,
+                                      name: nameController.text,
+                                      instruction: instructionController.text,
+                                      description: descriptionController.text,
                                     );
                                     if (updateResult) {
                                       isLoading = true;
