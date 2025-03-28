@@ -24,13 +24,14 @@ class _PromptModalState extends State<PromptModal> {
   @override
   void initState() {
     super.initState();
-    loadPromptList();
+    loadPromptList("");
   }
 
-  Future<void> loadPromptList() async {
+  Future<void> loadPromptList(String query) async {
     PromptListResponse? promptListResponse = await getPromptList(
       isFavorite: false,
       isPublic: true,
+      query: query,
     );
     if (mounted && promptListResponse != null) {
       setState(() {
@@ -83,6 +84,9 @@ class _PromptModalState extends State<PromptModal> {
                   child: SearchBox(
                     ctrlr: searchPromptCtrlr,
                     placeholder: "Search Prompts...",
+                    onSearch: (value) {
+                      loadPromptList(value);
+                    },
                   ),
                 ),
                 IconButton(

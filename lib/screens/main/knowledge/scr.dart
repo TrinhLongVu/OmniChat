@@ -22,6 +22,7 @@ class KnowledgeLibraryScreen extends StatelessWidget {
                 child: SearchBox(
                   ctrlr: searchKnowledgeCtrlr,
                   placeholder: "Search Knowledges...",
+                  onSearch: () {},
                 ),
               ),
               IconButton(

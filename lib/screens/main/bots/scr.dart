@@ -47,6 +47,7 @@ class _BotListScreenState extends State<BotListScreen> {
                 child: SearchBox(
                   ctrlr: searchBotCtrlr,
                   placeholder: "Search Bots...",
+                  onSearch: () {},
                 ),
               ),
               IconButton(
