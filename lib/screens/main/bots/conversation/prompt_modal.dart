@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/apis/prompt/get_list.dart';
 import 'package:omni_chat/constants/color.dart';
+import 'package:omni_chat/constants/prompt_category.dart';
 import 'package:omni_chat/models/api/prompt/prompt_list_res.dart';
 import 'package:omni_chat/models/prompt.dart';
+import 'package:omni_chat/widgets/button/category_btn.dart';
 import 'package:omni_chat/widgets/popup/prompt_new.dart';
 import 'package:omni_chat/widgets/prompt_rect.dart';
 import 'package:omni_chat/widgets/search_box.dart';
@@ -20,6 +22,7 @@ class _PromptModalState extends State<PromptModal> {
   final TextEditingController searchPromptCtrlr = TextEditingController();
 
   List<Prompt> prompts = [];
+  String filteredCategory = "";
 
   @override
   void initState() {
@@ -32,6 +35,7 @@ class _PromptModalState extends State<PromptModal> {
       isFavorite: false,
       isPublic: true,
       query: query,
+      category: filteredCategory,
     );
     if (mounted && promptListResponse != null) {
       setState(() {
@@ -114,18 +118,58 @@ class _PromptModalState extends State<PromptModal> {
             Expanded(
               child: TabBarView(
                 children: [
-                  SingleChildScrollView(
-                    child: Column(
-                      children:
-                          prompts
-                              .map(
-                                (prompt) => PromptRect(
-                                  title: prompt.title,
-                                  description: prompt.description.toString(),
-                                ),
-                              )
-                              .toList(),
-                    ),
+                  // PUBLIC
+                  Column(
+                    children: [
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ToggleButtons(
+                            splashColor: Colors.transparent,
+                            renderBorder: false,
+                            fillColor: Colors.transparent,
+                            isSelected:
+                                PromptCategory.values
+                                    .map((e) => e.name == filteredCategory)
+                                    .toList(),
+                            onPressed: (int index) {
+                              setState(() {
+                                filteredCategory =
+                                    PromptCategory.values[index].name;
+                              });
+                              loadPromptList(searchPromptCtrlr.text);
+                            },
+                            borderRadius: BorderRadius.circular(30),
+                            children:
+                                PromptCategory.values
+                                    .map(
+                                      (e) => CategoryBtn(
+                                        title: e.name,
+                                        filtered: e.name == filteredCategory,
+                                      ),
+                                    )
+                                    .toList(),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children:
+                                prompts
+                                    .map(
+                                      (prompt) => PromptRect(
+                                        title: prompt.title,
+                                        description:
+                                            prompt.description.toString(),
+                                      ),
+                                    )
+                                    .toList(),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   SingleChildScrollView(
                     child: Column(

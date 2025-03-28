@@ -9,6 +9,7 @@ Future<PromptListResponse?> getPromptList({
   required bool isFavorite,
   required bool isPublic,
   String? query = "",
+  String? category = "",
 }) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
@@ -19,7 +20,7 @@ Future<PromptListResponse?> getPromptList({
 
   try {
     Response response = await dio.get(
-      "/api/v1/prompts?query=$query&isFavorite=$isFavorite&isPublic=$isPublic",
+      "/api/v1/prompts?query=$query&category=$category&isFavorite=$isFavorite&isPublic=$isPublic",
       options: Options(headers: headers),
     );
     switch (response.statusCode) {
