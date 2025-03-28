@@ -1,15 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:omni_chat/apis/prompt/get_list.dart';
 import 'package:omni_chat/constants/color.dart';
+import 'package:omni_chat/models/api/prompt/prompt_list_res.dart';
+import 'package:omni_chat/models/prompt.dart';
 import 'package:omni_chat/widgets/popup/prompt_new.dart';
 import 'package:omni_chat/widgets/prompt_rect.dart';
 import 'package:omni_chat/widgets/search_box.dart';
 import 'package:omni_chat/widgets/tab_item.dart';
 
-class PromptModal extends StatelessWidget {
+class PromptModal extends StatefulWidget {
+  const PromptModal({super.key});
+
+  @override
+  State<PromptModal> createState() => _PromptModalState();
+}
+
+class _PromptModalState extends State<PromptModal> {
   final TextEditingController searchPromptCtrlr = TextEditingController();
 
-  PromptModal({super.key});
+  List<Prompt> prompts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadPromptList();
+  }
+
+  Future<void> loadPromptList() async {
+    PromptListResponse? promptListResponse = await getPromptList(
+      isFavorite: false,
+      isPublic: true,
+    );
+    if (mounted && promptListResponse != null) {
+      setState(() {
+        prompts = promptListResponse.items;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,14 +112,15 @@ class PromptModal extends StatelessWidget {
                 children: [
                   SingleChildScrollView(
                     child: Column(
-                      children: List.generate(
-                        9,
-                        (index) => PromptRect(
-                          title: "Grammar Corrector",
-                          description:
-                              "Improve your spelling and grammar by checking your text for errors.",
-                        ),
-                      ),
+                      children:
+                          prompts
+                              .map(
+                                (prompt) => PromptRect(
+                                  title: prompt.title,
+                                  description: prompt.description.toString(),
+                                ),
+                              )
+                              .toList(),
                     ),
                   ),
                   SingleChildScrollView(
