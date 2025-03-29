@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:omni_chat/constants/color.dart';
-import 'package:omni_chat/models/api/chat/get_convos_res.dart';
+import 'package:omni_chat/models/convo_item.dart';
 import 'package:omni_chat/widgets/chat_thread_rect.dart';
 
 class ThreadDrawer extends StatelessWidget {
-  const ThreadDrawer({super.key, required this.conversations});
+  const ThreadDrawer({
+    super.key,
+    required this.conversations,
+    this.currentThread,
+  });
 
   final List<ConvoItem> conversations;
+  final String? currentThread;
 
   @override
   Widget build(BuildContext context) {
@@ -43,9 +48,13 @@ class ThreadDrawer extends StatelessWidget {
                       )
                       : SingleChildScrollView(
                         child: Column(
+                          spacing: 10,
                           children:
                               conversations.map((convo) {
-                                return ChatThreadRect(title: convo.title);
+                                return ChatThreadRect(
+                                  title: convo.title,
+                                  isCurrent: convo.id == currentThread,
+                                );
                               }).toList(),
                         ),
                       ),

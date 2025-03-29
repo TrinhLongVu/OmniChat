@@ -3,6 +3,7 @@ import 'package:omni_chat/apis/chat/get_convos.dart';
 import 'package:omni_chat/apis/chat/send_msg.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/api/chat/get_convos_res.dart';
+import 'package:omni_chat/models/convo_item.dart';
 import 'package:omni_chat/screens/main/bots/conversation/convo_box.dart';
 import 'package:omni_chat/screens/main/bots/conversation/prompt_modal.dart';
 import 'package:omni_chat/screens/main/bots/conversation/thread_drawer.dart';
@@ -23,6 +24,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   final ScrollController scrollCtrlr = ScrollController();
 
   List<ConvoItem> convoList = [];
+  String currentConvoId = "";
   int tokenNum = 50;
 
   @override
@@ -69,6 +71,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
     GetConvosResponse? convosResponse = await getConversations("gpt-4o-mini");
     if (mounted && convosResponse != null) {
       setState(() {
+        currentConvoId = convosResponse.cursor;
         convoList = convosResponse.items;
       });
     }
@@ -114,7 +117,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
           ),
         ],
       ),
-      endDrawer: ThreadDrawer(conversations: convoList),
+      endDrawer: ThreadDrawer(
+        conversations: convoList,
+        currentThread: currentConvoId,
+      ),
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(

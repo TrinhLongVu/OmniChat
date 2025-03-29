@@ -19,7 +19,6 @@ Future<GetConvosResponse?> getConversations(String assistantId) async {
       options: Options(headers: headers),
     );
     debugPrint(response.data.toString());
-    debugPrint(response.statusCode.toString());
     switch (response.statusCode) {
       case 200:
         GetConvosResponse meObj = GetConvosResponse.fromJson(response.data);

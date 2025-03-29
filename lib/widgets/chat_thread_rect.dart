@@ -3,8 +3,13 @@ import 'package:omni_chat/constants/color.dart';
 
 class ChatThreadRect extends StatelessWidget {
   final String title;
+  final bool isCurrent;
 
-  const ChatThreadRect({super.key, required this.title});
+  const ChatThreadRect({
+    super.key,
+    required this.title,
+    required this.isCurrent,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -12,31 +17,23 @@ class ChatThreadRect extends StatelessWidget {
       padding: EdgeInsets.only(left: 8),
       width: double.infinity,
       decoration: BoxDecoration(
-        color: omniLightCyan,
+        color: isCurrent ? omniDarkCyan : omniLightCyan,
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(
-            width: 225,
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              softWrap: true,
-            ),
+      child: Container(
+        padding: EdgeInsets.all(15),
+        width: 225,
+        child: Text(
+          title,
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
           ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.delete, color: Colors.red, size: 20),
-          ),
-        ],
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          softWrap: true,
+        ),
       ),
     );
   }
