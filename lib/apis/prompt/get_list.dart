@@ -19,10 +19,13 @@ Future<PromptListResponse?> getPromptList({
   Dio dio = DioClient(baseUrl: BaseUrls.jarvis).dio;
 
   try {
-    Response response = await dio.get(
-      "/api/v1/prompts?query=$query&category=$category&isFavorite=$isFavorite&isPublic=$isPublic",
-      options: Options(headers: headers),
-    );
+    String url =
+        "/api/v1/prompts?query=$query&isFavorite=$isFavorite&isPublic=$isPublic";
+    if (category != null && category.isNotEmpty) {
+      url += "&category=$category";
+    }
+
+    Response response = await dio.get(url, options: Options(headers: headers));
     switch (response.statusCode) {
       case 200:
         PromptListResponse promptListRes = PromptListResponse.fromJson(

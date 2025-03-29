@@ -29,7 +29,7 @@ Future<void> sendMessage(String convoId, String msgContent) async {
             "id": convoId,
             "messages": [
               {
-                "role": "model",
+                "role": "assistant",
                 "content": "Hi again! What's on your mind?",
                 "files": [],
                 "assistant": {

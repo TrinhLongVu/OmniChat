@@ -134,9 +134,15 @@ class _PromptModalState extends State<PromptModal> {
                                     .map((e) => e.name == filteredCategory)
                                     .toList(),
                             onPressed: (int index) {
+                              String strToFilter = "";
+                              if (PromptCategory.values[index].name ==
+                                  filteredCategory) {
+                                strToFilter = "";
+                              } else {
+                                strToFilter = PromptCategory.values[index].name;
+                              }
                               setState(() {
-                                filteredCategory =
-                                    PromptCategory.values[index].name;
+                                filteredCategory = strToFilter;
                               });
                               loadPromptList(searchPromptCtrlr.text);
                             },
