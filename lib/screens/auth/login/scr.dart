@@ -100,7 +100,6 @@ class LoginScreen extends StatelessWidget {
                           onTap: () {
                             if (loginFormKey.currentState!.validate()) {
                               login(emailCtrlr.text, passwordCtrlr.text);
-                              // context.goNamed("all-bots");
                             }
                           },
                         ),
