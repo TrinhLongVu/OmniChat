@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:omni_chat/apis/prompt/add_to_fav.dart';
+import 'package:omni_chat/apis/prompt/fav_add.dart';
+import 'package:omni_chat/apis/prompt/fav_remove.dart';
 import 'package:omni_chat/apis/prompt/get_list.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/constants/prompt_category.dart';
@@ -51,6 +52,14 @@ class _PromptModalState extends State<PromptModal> {
           privatePrompts = promptListResponse.items;
         });
       }
+    }
+  }
+
+  Future<void> toggleFavorite(Prompt prompt) async {
+    if (prompt.isFavorite) {
+      await removeFromFavorite(id: prompt.id);
+    } else {
+      await addToFavorite(id: prompt.id);
     }
   }
 
@@ -110,6 +119,7 @@ class _PromptModalState extends State<PromptModal> {
                       favFiltered = !favFiltered;
                     });
                     loadPromptList(true, "");
+                    loadPromptList(false, "");
                   },
                   icon: Icon(
                     favFiltered ? Icons.favorite : Icons.favorite_border,
@@ -185,9 +195,10 @@ class _PromptModalState extends State<PromptModal> {
                                         title: prompt.title,
                                         description:
                                             prompt.description.toString(),
+                                        content: prompt.content.toString(),
                                         isFav: prompt.isFavorite,
                                         onHeartTap: () async {
-                                          await addToFavorite(id: prompt.id);
+                                          await toggleFavorite(prompt);
                                           loadPromptList(true, "");
                                         },
                                       ),
@@ -234,9 +245,10 @@ class _PromptModalState extends State<PromptModal> {
                                       title: prompt.title,
                                       description:
                                           prompt.description.toString(),
+                                      content: prompt.content.toString(),
                                       isFav: prompt.isFavorite,
                                       onHeartTap: () async {
-                                        await addToFavorite(id: prompt.id);
+                                        await toggleFavorite(prompt);
                                         loadPromptList(false, "");
                                       },
                                     ),

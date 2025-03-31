@@ -6,12 +6,14 @@ class PromptRect extends StatelessWidget {
     super.key,
     required this.title,
     required this.description,
+    required this.content,
     required this.isFav,
     required this.onHeartTap,
   });
 
   final String title;
   final String description;
+  final String content;
   final bool isFav;
   final Function onHeartTap;
 
@@ -66,7 +68,13 @@ class PromptRect extends StatelessWidget {
                 onPressed: () {
                   showDialog(
                     context: context,
-                    builder: (context) => PromptInfoPopUp(),
+                    builder:
+                        (context) => PromptInfoPopUp(
+                          name: title,
+                          description: description,
+                          content: content,
+                          isFav: isFav,
+                        ),
                   );
                 },
                 icon: Icon(Icons.info_outline_rounded, size: 18),

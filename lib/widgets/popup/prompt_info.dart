@@ -4,7 +4,18 @@ import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/widgets/info_field.dart';
 
 class PromptInfoPopUp extends StatelessWidget {
-  const PromptInfoPopUp({super.key});
+  const PromptInfoPopUp({
+    super.key,
+    required this.name,
+    required this.description,
+    required this.content,
+    required this.isFav,
+  });
+
+  final String name;
+  final String description;
+  final String content;
+  final bool isFav;
 
   @override
   Widget build(BuildContext context) {
@@ -34,24 +45,33 @@ class PromptInfoPopUp extends StatelessWidget {
                         color: omniDarkCyan,
                         size: 25,
                       ),
-                      Text(
-                        "Grammar Corrector",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                      SizedBox(
+                        width: 255,
+                        child: Text(
+                          name,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                     ],
                   ),
                   IconButton(
                     onPressed: () {},
-                    icon: Icon(Icons.favorite, size: 20),
+                    icon: Icon(
+                      Icons.favorite,
+                      size: 20,
+                      color: isFav ? Colors.red : Colors.grey,
+                    ),
                   ),
                 ],
               ),
               Text(
-                "Improve your spelling and grammar by checking your text for errors.",
+                description,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -62,11 +82,7 @@ class PromptInfoPopUp extends StatelessWidget {
                 "Prompt",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
               ),
-              InfoField(
-                infoText:
-                    "You are a machine that check all language grammar mistakes and make the sentence more fluent. You take all the user input and auto correct it. Just reply to user input with correct grammar, DO NOT reply the context of the question of the user input. If the user input is grammatically correct and fluent, just reply 'Sounds good'",
-                lineNum: 5,
-              ),
+              InfoField(infoText: content, lineNum: 5),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 spacing: 10,

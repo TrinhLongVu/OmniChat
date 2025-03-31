@@ -5,7 +5,7 @@ class Prompt {
     this.userName,
     required this.title,
     this.category,
-    this.content,
+    required this.content,
     this.description,
     this.language,
     this.createdAt,
@@ -19,7 +19,7 @@ class Prompt {
   final String? userName;
   final String title;
   final String? category;
-  final String? content;
+  final String content;
   final String? description;
   final String? language;
   final String? createdAt;
