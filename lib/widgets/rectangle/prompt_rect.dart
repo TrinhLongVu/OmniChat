@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:omni_chat/apis/prompt/delete.dart';
+import 'package:omni_chat/models/prompt.dart';
 import 'package:omni_chat/widgets/popup/prompt_info.dart';
+import 'package:quickalert/quickalert.dart';
 
 class PromptRect extends StatelessWidget {
   const PromptRect({
     super.key,
-    required this.title,
-    required this.description,
-    required this.content,
-    required this.isFav,
+    required this.prompt,
     required this.onHeartTap,
+    required this.onReload,
   });
 
-  final String title;
-  final String description;
-  final String content;
-  final bool isFav;
+  final Prompt prompt;
   final Function onHeartTap;
+  final Function onReload;
 
   @override
   Widget build(BuildContext context) {
@@ -41,14 +41,14 @@ class PromptRect extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  prompt.title,
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,
                 ),
                 Text(
-                  description,
+                  prompt.description.toString(),
                   style: TextStyle(fontSize: 13, color: Colors.black54),
                 ),
               ],
@@ -61,7 +61,7 @@ class PromptRect extends StatelessWidget {
                 icon: Icon(
                   Icons.favorite,
                   size: 18,
-                  color: isFav ? Colors.red : Colors.grey,
+                  color: prompt.isFavorite ? Colors.red : Colors.grey,
                 ),
               ),
               IconButton(
@@ -70,10 +70,23 @@ class PromptRect extends StatelessWidget {
                     context: context,
                     builder:
                         (context) => PromptInfoPopUp(
-                          name: title,
-                          description: description,
-                          content: content,
-                          isFav: isFav,
+                          prompt: prompt,
+                          onDelete: () {
+                            QuickAlert.show(
+                              context: context,
+                              type: QuickAlertType.confirm,
+                              text:
+                                  'Are you sure you want to delete this prompt?',
+                              onCancelBtnTap: () {
+                                context.pop();
+                              },
+                              onConfirmBtnTap: () async {
+                                context.pop();
+                                await deletePrompt(id: prompt.id);
+                                onReload();
+                              },
+                            );
+                          },
                         ),
                   );
                 },

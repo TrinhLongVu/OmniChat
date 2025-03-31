@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/constants/color.dart';
+import 'package:omni_chat/models/prompt.dart';
 import 'package:omni_chat/widgets/info_field.dart';
 
 class PromptInfoPopUp extends StatelessWidget {
   const PromptInfoPopUp({
     super.key,
-    required this.name,
-    required this.description,
-    required this.content,
-    required this.isFav,
+    required this.prompt,
+    required this.onDelete,
   });
 
-  final String name;
-  final String description;
-  final String content;
-  final bool isFav;
+  final Prompt prompt;
+  final Function onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +45,7 @@ class PromptInfoPopUp extends StatelessWidget {
                       SizedBox(
                         width: 255,
                         child: Text(
-                          name,
+                          prompt.title,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -60,39 +57,77 @@ class PromptInfoPopUp extends StatelessWidget {
                       ),
                     ],
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
                       Icons.favorite,
                       size: 20,
-                      color: isFav ? Colors.red : Colors.grey,
+                      color: prompt.isFavorite ? Colors.red : Colors.grey,
                     ),
                   ),
                 ],
               ),
-              Text(
-                description,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black45,
-                ),
-              ),
+              prompt.description != ""
+                  ? Text(
+                    prompt.description.toString(),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black45,
+                    ),
+                  )
+                  : SizedBox.shrink(),
               Text(
                 "Prompt",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
               ),
-              InfoField(infoText: content, lineNum: 5),
+              InfoField(infoText: prompt.content, lineNum: 5),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment:
+                    prompt.isPublic
+                        ? MainAxisAlignment.end
+                        : MainAxisAlignment.spaceBetween,
                 spacing: 10,
                 children: [
-                  TextButton(
-                    onPressed: () {
-                      context.pop();
-                    },
-                    child: Text("Cancel"),
-                  ),
+                  prompt.isPublic
+                      ? TextButton(
+                        onPressed: () {
+                          context.pop();
+                        },
+                        child: Text("Cancel"),
+                      )
+                      : TextButton(
+                        onPressed: () => onDelete(),
+                        style: ButtonStyle(
+                          padding: WidgetStateProperty.all(
+                            const EdgeInsets.all(15),
+                          ),
+                          backgroundColor: const WidgetStatePropertyAll(
+                            Colors.red,
+                          ),
+                          shape: WidgetStateProperty.all(
+                            const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(5),
+                              ), // Sharp corners
+                            ),
+                          ),
+                        ),
+                        child: Row(
+                          spacing: 10,
+                          children: [
+                            Icon(Icons.delete, color: Colors.white),
+                            Text(
+                              "Delete",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                   TextButton(
                     onPressed: () {
                       context.pop();

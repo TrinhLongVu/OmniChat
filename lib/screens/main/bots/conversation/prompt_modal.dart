@@ -192,15 +192,12 @@ class _PromptModalState extends State<PromptModal> {
                                 publicPrompts
                                     .map(
                                       (prompt) => PromptRect(
-                                        title: prompt.title,
-                                        description:
-                                            prompt.description.toString(),
-                                        content: prompt.content.toString(),
-                                        isFav: prompt.isFavorite,
+                                        prompt: prompt,
                                         onHeartTap: () async {
                                           await toggleFavorite(prompt);
                                           loadPromptList(true, "");
                                         },
+                                        onReload: () {},
                                       ),
                                     )
                                     .toList(),
@@ -242,13 +239,12 @@ class _PromptModalState extends State<PromptModal> {
                               privatePrompts
                                   .map(
                                     (prompt) => PromptRect(
-                                      title: prompt.title,
-                                      description:
-                                          prompt.description.toString(),
-                                      content: prompt.content.toString(),
-                                      isFav: prompt.isFavorite,
+                                      prompt: prompt,
                                       onHeartTap: () async {
                                         await toggleFavorite(prompt);
+                                        loadPromptList(false, "");
+                                      },
+                                      onReload: () {
                                         loadPromptList(false, "");
                                       },
                                     ),
