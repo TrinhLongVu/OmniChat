@@ -7,7 +7,7 @@ import 'package:omni_chat/models/api/prompt/prompt_list_res.dart';
 import 'package:omni_chat/models/prompt.dart';
 import 'package:omni_chat/widgets/button/category_btn.dart';
 import 'package:omni_chat/widgets/popup/prompt_new.dart';
-import 'package:omni_chat/widgets/prompt_rect.dart';
+import 'package:omni_chat/widgets/rectangle/prompt_rect.dart';
 import 'package:omni_chat/widgets/search_box.dart';
 import 'package:omni_chat/widgets/tab_item.dart';
 

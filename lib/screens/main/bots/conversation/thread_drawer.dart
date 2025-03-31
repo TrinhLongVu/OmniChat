@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/convo_item.dart';
-import 'package:omni_chat/widgets/chat_thread_rect.dart';
+import 'package:omni_chat/widgets/rectangle/chat_thread_rect.dart';
 
 class ThreadDrawer extends StatelessWidget {
   const ThreadDrawer({

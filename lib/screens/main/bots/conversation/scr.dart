@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:omni_chat/apis/chat/get_convo_history.dart';
 import 'package:omni_chat/apis/chat/get_convos.dart';
 import 'package:omni_chat/apis/chat/send_msg.dart';
 import 'package:omni_chat/constants/color.dart';
+import 'package:omni_chat/models/api/chat/get_convo_history_res.dart';
 import 'package:omni_chat/models/api/chat/get_convos_res.dart';
 import 'package:omni_chat/models/convo_item.dart';
 import 'package:omni_chat/screens/main/bots/conversation/convo_box.dart';
@@ -24,6 +26,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   final ScrollController scrollCtrlr = ScrollController();
 
   List<ConvoItem> convoList = [];
+  List<ConvoHistoryItem> convoHistoryList = [];
   String currentConvoId = "";
   int tokenNum = 50;
 
@@ -67,6 +70,17 @@ class _ConversationScreenState extends State<ConversationScreen> {
     }
   }
 
+  Future<void> loadCurrentConvo() async {
+    GetConvoHistoryResponse? convoHistoryResponse =
+        await getConversationHistory(convoId: currentConvoId);
+
+    if (mounted && convoHistoryResponse != null) {
+      setState(() {
+        convoHistoryList = convoHistoryResponse.items;
+      });
+    }
+  }
+
   Future<void> loadConvoList() async {
     GetConvosResponse? convosResponse = await getConversations("gpt-4o-mini");
     if (mounted && convosResponse != null) {
@@ -74,6 +88,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
         currentConvoId = convosResponse.cursor;
         convoList = convosResponse.items;
       });
+      loadCurrentConvo();
     }
   }
 
