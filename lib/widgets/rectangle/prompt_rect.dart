@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/apis/prompt/delete.dart';
+import 'package:omni_chat/apis/prompt/fav_add.dart';
+import 'package:omni_chat/apis/prompt/fav_remove.dart';
 import 'package:omni_chat/models/prompt.dart';
+import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/widgets/popup/prompt_info.dart';
+import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 
 class PromptRect extends StatelessWidget {
-  const PromptRect({
-    super.key,
-    required this.prompt,
-    required this.onHeartTap,
-    required this.onReload,
-  });
+  const PromptRect({super.key, required this.prompt});
 
   final Prompt prompt;
-  final Function onHeartTap;
-  final Function onReload;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +57,23 @@ class PromptRect extends StatelessWidget {
           Row(
             children: [
               IconButton(
-                onPressed: () => onHeartTap(),
+                onPressed: () async {
+                  if (prompt.isFavorite) {
+                    await removeFromFavorite(
+                      id: prompt.id,
+                      onSuccess: () {
+                        context.read<PromptProvider>().load2List();
+                      },
+                    );
+                  } else {
+                    await addToFavorite(
+                      id: prompt.id,
+                      onSuccess: () {
+                        context.read<PromptProvider>().load2List();
+                      },
+                    );
+                  }
+                },
                 icon: Icon(
                   Icons.favorite,
                   size: 18,
@@ -85,8 +98,14 @@ class PromptRect extends StatelessWidget {
                               },
                               onConfirmBtnTap: () async {
                                 context.pop();
-                                await deletePrompt(id: prompt.id);
-                                onReload();
+                                await deletePrompt(
+                                  id: prompt.id,
+                                  onSuccess: () {
+                                    context.read<PromptProvider>().loadList(
+                                      isPublic: false,
+                                    );
+                                  },
+                                );
                               },
                             );
                           },

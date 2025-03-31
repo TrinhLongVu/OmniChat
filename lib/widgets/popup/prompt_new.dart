@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/apis/prompt/create.dart';
 import 'package:omni_chat/constants/color.dart';
+import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/widgets/input_field.dart';
 import 'package:omni_chat/widgets/input_header.dart';
+import 'package:provider/provider.dart';
 import 'package:validatorless/validatorless.dart';
 
 final newPromptFormKey = GlobalKey<FormState>();
@@ -110,6 +112,11 @@ class PromptCreationPopUp extends StatelessWidget {
                             title: promptNameCtrlr.text,
                             content: promptContentCtrlr.text,
                             description: promptDescriptionCtrlr.text,
+                            onSuccess: () {
+                              context.read<PromptProvider>().loadList(
+                                isPublic: false,
+                              );
+                            },
                           );
                         }
                       },

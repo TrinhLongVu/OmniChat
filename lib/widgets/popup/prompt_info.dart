@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:omni_chat/apis/prompt/fav_add.dart';
+import 'package:omni_chat/apis/prompt/fav_remove.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/prompt.dart';
+import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/widgets/info_field.dart';
+import 'package:provider/provider.dart';
 
-class PromptInfoPopUp extends StatelessWidget {
+class PromptInfoPopUp extends StatefulWidget {
   const PromptInfoPopUp({
     super.key,
     required this.prompt,
@@ -13,6 +17,43 @@ class PromptInfoPopUp extends StatelessWidget {
 
   final Prompt prompt;
   final Function onDelete;
+
+  @override
+  State<PromptInfoPopUp> createState() => _PromptInfoPopUpState();
+}
+
+class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
+  late bool isFavorite;
+
+  @override
+  void initState() {
+    super.initState();
+    isFavorite = widget.prompt.isFavorite;
+  }
+
+  void toggleFavorite() async {
+    if (isFavorite) {
+      await removeFromFavorite(
+        id: widget.prompt.id,
+        onSuccess: () {
+          context.read<PromptProvider>().load2List();
+          setState(() {
+            isFavorite = !isFavorite;
+          });
+        },
+      );
+    } else {
+      await addToFavorite(
+        id: widget.prompt.id,
+        onSuccess: () {
+          context.read<PromptProvider>().load2List();
+          setState(() {
+            isFavorite = !isFavorite;
+          });
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +86,7 @@ class PromptInfoPopUp extends StatelessWidget {
                       SizedBox(
                         width: 255,
                         child: Text(
-                          prompt.title,
+                          widget.prompt.title,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -57,19 +98,19 @@ class PromptInfoPopUp extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(
+                  IconButton(
+                    onPressed: () => toggleFavorite(),
+                    icon: Icon(
                       Icons.favorite,
                       size: 20,
-                      color: prompt.isFavorite ? Colors.red : Colors.grey,
+                      color: isFavorite ? Colors.red : Colors.grey,
                     ),
                   ),
                 ],
               ),
-              prompt.description != ""
+              widget.prompt.description != ""
                   ? Text(
-                    prompt.description.toString(),
+                    widget.prompt.description.toString(),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -81,15 +122,15 @@ class PromptInfoPopUp extends StatelessWidget {
                 "Prompt",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
               ),
-              InfoField(infoText: prompt.content, lineNum: 5),
+              InfoField(infoText: widget.prompt.content, lineNum: 5),
               Row(
                 mainAxisAlignment:
-                    prompt.isPublic
+                    widget.prompt.isPublic
                         ? MainAxisAlignment.end
                         : MainAxisAlignment.spaceBetween,
                 spacing: 10,
                 children: [
-                  prompt.isPublic
+                  widget.prompt.isPublic
                       ? TextButton(
                         onPressed: () {
                           context.pop();
@@ -97,7 +138,7 @@ class PromptInfoPopUp extends StatelessWidget {
                         child: Text("Cancel"),
                       )
                       : TextButton(
-                        onPressed: () => onDelete(),
+                        onPressed: () => widget.onDelete(),
                         style: ButtonStyle(
                           padding: WidgetStateProperty.all(
                             const EdgeInsets.all(15),

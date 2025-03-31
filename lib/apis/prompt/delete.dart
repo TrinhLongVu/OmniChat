@@ -7,7 +7,10 @@ import 'package:omni_chat/services/dio_client.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> deletePrompt({required String id}) async {
+Future<void> deletePrompt({
+  required String id,
+  required VoidCallback onSuccess,
+}) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
 
@@ -32,6 +35,7 @@ Future<void> deletePrompt({required String id}) async {
                 GoRouter.of(rootNavigatorKey.currentContext!).pop(),
               },
         );
+        onSuccess();
         break;
       default:
         QuickAlert.show(

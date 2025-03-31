@@ -6,7 +6,10 @@ import 'package:omni_chat/services/dio_client.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> addToFavorite({required String id}) async {
+Future<void> addToFavorite({
+  required String id,
+  required VoidCallback onSuccess,
+}) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
 
@@ -21,6 +24,7 @@ Future<void> addToFavorite({required String id}) async {
     );
     switch (response.statusCode) {
       case 201:
+        onSuccess();
         break;
       default:
         QuickAlert.show(

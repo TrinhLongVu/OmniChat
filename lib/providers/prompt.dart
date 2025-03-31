@@ -6,18 +6,16 @@ import 'package:omni_chat/models/prompt.dart';
 class PromptProvider extends ChangeNotifier {
   List<Prompt> publicPrompts;
   List<Prompt> privatePrompts;
+  String query = "";
+  String filteredCategory = "";
+  bool favFiltered = false;
 
   PromptProvider({
     this.publicPrompts = const [],
     this.privatePrompts = const [],
   });
 
-  Future<void> loadPromptList({
-    required bool isPublic,
-    required String query,
-    required String filteredCategory,
-    required bool favFiltered,
-  }) async {
+  Future<void> loadList({required bool isPublic}) async {
     PromptListResponse? promptListResponse = await getPromptList(
       isFavorite: favFiltered,
       isPublic: isPublic,
@@ -32,5 +30,34 @@ class PromptProvider extends ChangeNotifier {
       }
     }
     notifyListeners();
+  }
+
+  void load2List() {
+    loadList(isPublic: true);
+    loadList(isPublic: false);
+  }
+
+  void toggleFavoriteFilter() {
+    favFiltered = !favFiltered;
+    load2List();
+  }
+
+  void setFilteredCategory(String category) {
+    filteredCategory = category;
+    loadList(isPublic: true);
+  }
+
+  void searchPrompt(String queryStr) {
+    query = queryStr;
+    load2List();
+  }
+
+  void initPromptProvider() {
+    publicPrompts = [];
+    privatePrompts = [];
+    query = "";
+    filteredCategory = "";
+    favFiltered = false;
+    load2List();
   }
 }

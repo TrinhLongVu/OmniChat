@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:omni_chat/apis/prompt/fav_add.dart';
-import 'package:omni_chat/apis/prompt/fav_remove.dart';
-import 'package:omni_chat/apis/prompt/get_list.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/constants/prompt_category.dart';
-import 'package:omni_chat/models/api/prompt/prompt_list_res.dart';
-import 'package:omni_chat/models/prompt.dart';
 import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/widgets/button/category_btn.dart';
 import 'package:omni_chat/widgets/popup/prompt_new.dart';
@@ -25,47 +20,10 @@ class PromptModal extends StatefulWidget {
 class _PromptModalState extends State<PromptModal> {
   final TextEditingController searchPromptCtrlr = TextEditingController();
 
-  List<Prompt> privatePrompts = [];
-  String filteredCategory = "";
-  bool favFiltered = false;
-
   @override
   void initState() {
     super.initState();
-    context.read<PromptProvider>().loadPromptList(
-      isPublic: true,
-      query: "",
-      filteredCategory: "",
-      favFiltered: false,
-    );
-    context.read<PromptProvider>().loadPromptList(
-      isPublic: false,
-      query: "",
-      filteredCategory: "",
-      favFiltered: false,
-    );
-  }
-
-  Future<void> loadPromptList(bool isPublic, String query) async {
-    PromptListResponse? promptListResponse = await getPromptList(
-      isFavorite: favFiltered,
-      isPublic: isPublic,
-      query: query,
-      category: filteredCategory,
-    );
-    if (mounted && promptListResponse != null) {
-      setState(() {
-        privatePrompts = promptListResponse.items;
-      });
-    }
-  }
-
-  Future<void> toggleFavorite(Prompt prompt) async {
-    if (prompt.isFavorite) {
-      await removeFromFavorite(id: prompt.id);
-    } else {
-      await addToFavorite(id: prompt.id);
-    }
+    context.read<PromptProvider>().initPromptProvider();
   }
 
   @override
@@ -113,21 +71,18 @@ class _PromptModalState extends State<PromptModal> {
                     ctrlr: searchPromptCtrlr,
                     placeholder: "Search Prompts...",
                     onSearch: (value) {
-                      loadPromptList(true, value);
-                      loadPromptList(false, value);
+                      context.read<PromptProvider>().searchPrompt(value);
                     },
                   ),
                 ),
                 IconButton(
                   onPressed: () {
-                    setState(() {
-                      favFiltered = !favFiltered;
-                    });
-                    loadPromptList(true, "");
-                    loadPromptList(false, "");
+                    context.read<PromptProvider>().toggleFavoriteFilter();
                   },
                   icon: Icon(
-                    favFiltered ? Icons.favorite : Icons.favorite_border,
+                    context.watch<PromptProvider>().favFiltered
+                        ? Icons.favorite
+                        : Icons.favorite_border,
                     size: 25,
                     color: Colors.red,
                   ),
@@ -162,20 +117,29 @@ class _PromptModalState extends State<PromptModal> {
                             fillColor: Colors.transparent,
                             isSelected:
                                 PromptCategory.values
-                                    .map((e) => e.name == filteredCategory)
+                                    .map(
+                                      (e) =>
+                                          e.name ==
+                                          context
+                                              .watch<PromptProvider>()
+                                              .filteredCategory,
+                                    )
                                     .toList(),
                             onPressed: (int index) {
+                              String filteredValue =
+                                  context
+                                      .read<PromptProvider>()
+                                      .filteredCategory;
                               String strToFilter = "";
                               if (PromptCategory.values[index].name ==
-                                  filteredCategory) {
+                                  filteredValue) {
                                 strToFilter = "";
                               } else {
                                 strToFilter = PromptCategory.values[index].name;
                               }
-                              setState(() {
-                                filteredCategory = strToFilter;
-                              });
-                              loadPromptList(true, searchPromptCtrlr.text);
+                              context
+                                  .read<PromptProvider>()
+                                  .setFilteredCategory(strToFilter);
                             },
                             borderRadius: BorderRadius.circular(30),
                             children:
@@ -183,7 +147,11 @@ class _PromptModalState extends State<PromptModal> {
                                     .map(
                                       (e) => CategoryBtn(
                                         title: e.name,
-                                        filtered: e.name == filteredCategory,
+                                        filtered:
+                                            e.name ==
+                                            context
+                                                .watch<PromptProvider>()
+                                                .filteredCategory,
                                       ),
                                     )
                                     .toList(),
@@ -197,16 +165,7 @@ class _PromptModalState extends State<PromptModal> {
                                 context
                                     .watch<PromptProvider>()
                                     .publicPrompts
-                                    .map(
-                                      (prompt) => PromptRect(
-                                        prompt: prompt,
-                                        onHeartTap: () async {
-                                          await toggleFavorite(prompt);
-                                          loadPromptList(true, "");
-                                        },
-                                        onReload: () {},
-                                      ),
-                                    )
+                                    .map((prompt) => PromptRect(prompt: prompt))
                                     .toList(),
                           ),
                         ),
@@ -220,13 +179,10 @@ class _PromptModalState extends State<PromptModal> {
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: TextButton(
                             onPressed: () async {
-                              final result = await showDialog(
+                              showDialog(
                                 context: context,
                                 builder: (context) => PromptCreationPopUp(),
                               );
-                              if (result == true) {
-                                loadPromptList(false, "");
-                              }
                             },
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -243,19 +199,10 @@ class _PromptModalState extends State<PromptModal> {
                         ),
                         Column(
                           children:
-                              privatePrompts
-                                  .map(
-                                    (prompt) => PromptRect(
-                                      prompt: prompt,
-                                      onHeartTap: () async {
-                                        await toggleFavorite(prompt);
-                                        loadPromptList(false, "");
-                                      },
-                                      onReload: () {
-                                        loadPromptList(false, "");
-                                      },
-                                    ),
-                                  )
+                              context
+                                  .watch<PromptProvider>()
+                                  .privatePrompts
+                                  .map((prompt) => PromptRect(prompt: prompt))
                                   .toList(),
                         ),
                       ],

@@ -11,6 +11,7 @@ Future<void> createPrompt({
   required String title,
   required String content,
   String description = "",
+  required VoidCallback onSuccess,
 }) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
@@ -42,6 +43,7 @@ Future<void> createPrompt({
                 GoRouter.of(rootNavigatorKey.currentContext!).pop(true),
               },
         );
+        onSuccess();
         break;
       default:
         QuickAlert.show(
