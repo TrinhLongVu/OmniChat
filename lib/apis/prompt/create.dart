@@ -30,8 +30,6 @@ Future<void> createPrompt({
       },
       options: Options(headers: headers),
     );
-    debugPrint(response.data.toString());
-    debugPrint(response.statusCode.toString());
     switch (response.statusCode) {
       case 201:
         QuickAlert.show(
@@ -41,7 +39,7 @@ Future<void> createPrompt({
           onConfirmBtnTap:
               () => {
                 GoRouter.of(rootNavigatorKey.currentContext!).pop(),
-                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
+                GoRouter.of(rootNavigatorKey.currentContext!).pop(true),
               },
         );
         break;

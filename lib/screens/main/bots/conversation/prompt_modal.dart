@@ -22,27 +22,35 @@ class PromptModal extends StatefulWidget {
 class _PromptModalState extends State<PromptModal> {
   final TextEditingController searchPromptCtrlr = TextEditingController();
 
-  List<Prompt> prompts = [];
+  List<Prompt> publicPrompts = [];
+  List<Prompt> privatePrompts = [];
   String filteredCategory = "";
   bool favFiltered = false;
 
   @override
   void initState() {
     super.initState();
-    loadPromptList("");
+    loadPromptList(true, "");
+    loadPromptList(false, "");
   }
 
-  Future<void> loadPromptList(String query) async {
+  Future<void> loadPromptList(bool isPublic, String query) async {
     PromptListResponse? promptListResponse = await getPromptList(
       isFavorite: favFiltered,
-      isPublic: true,
+      isPublic: isPublic,
       query: query,
       category: filteredCategory,
     );
     if (mounted && promptListResponse != null) {
-      setState(() {
-        prompts = promptListResponse.items;
-      });
+      if (isPublic) {
+        setState(() {
+          publicPrompts = promptListResponse.items;
+        });
+      } else {
+        setState(() {
+          privatePrompts = promptListResponse.items;
+        });
+      }
     }
   }
 
@@ -91,7 +99,8 @@ class _PromptModalState extends State<PromptModal> {
                     ctrlr: searchPromptCtrlr,
                     placeholder: "Search Prompts...",
                     onSearch: (value) {
-                      loadPromptList(value);
+                      loadPromptList(true, value);
+                      loadPromptList(false, value);
                     },
                   ),
                 ),
@@ -100,7 +109,7 @@ class _PromptModalState extends State<PromptModal> {
                     setState(() {
                       favFiltered = !favFiltered;
                     });
-                    loadPromptList("");
+                    loadPromptList(true, "");
                   },
                   icon: Icon(
                     favFiltered ? Icons.favorite : Icons.favorite_border,
@@ -151,7 +160,7 @@ class _PromptModalState extends State<PromptModal> {
                               setState(() {
                                 filteredCategory = strToFilter;
                               });
-                              loadPromptList(searchPromptCtrlr.text);
+                              loadPromptList(true, searchPromptCtrlr.text);
                             },
                             borderRadius: BorderRadius.circular(30),
                             children:
@@ -170,7 +179,7 @@ class _PromptModalState extends State<PromptModal> {
                         child: SingleChildScrollView(
                           child: Column(
                             children:
-                                prompts
+                                publicPrompts
                                     .map(
                                       (prompt) => PromptRect(
                                         title: prompt.title,
@@ -179,7 +188,7 @@ class _PromptModalState extends State<PromptModal> {
                                         isFav: prompt.isFavorite,
                                         onHeartTap: () async {
                                           await addToFavorite(id: prompt.id);
-                                          loadPromptList("");
+                                          loadPromptList(true, "");
                                         },
                                       ),
                                     )
@@ -195,11 +204,14 @@ class _PromptModalState extends State<PromptModal> {
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: TextButton(
-                            onPressed: () {
-                              showDialog(
+                            onPressed: () async {
+                              final result = await showDialog(
                                 context: context,
                                 builder: (context) => PromptCreationPopUp(),
                               );
+                              if (result == true) {
+                                loadPromptList(false, "");
+                              }
                             },
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -216,17 +228,20 @@ class _PromptModalState extends State<PromptModal> {
                         ),
                         Column(
                           children:
-                              List.generate(
-                                3,
-                                (index) => PromptRect(
-                                  title:
-                                      "Grammar Corrector for English language (English (United States))",
-                                  description:
-                                      "Improve your spelling and grammar by checking your text for errors.",
-                                  isFav: false,
-                                  onHeartTap: () {},
-                                ),
-                              ).toList(),
+                              privatePrompts
+                                  .map(
+                                    (prompt) => PromptRect(
+                                      title: prompt.title,
+                                      description:
+                                          prompt.description.toString(),
+                                      isFav: prompt.isFavorite,
+                                      onHeartTap: () async {
+                                        await addToFavorite(id: prompt.id);
+                                        loadPromptList(false, "");
+                                      },
+                                    ),
+                                  )
+                                  .toList(),
                         ),
                       ],
                     ),
