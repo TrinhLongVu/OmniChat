@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:omni_chat/apis/prompt/add_to_fav.dart';
 import 'package:omni_chat/apis/prompt/get_list.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/constants/prompt_category.dart';
@@ -169,6 +170,11 @@ class _PromptModalState extends State<PromptModal> {
                                         title: prompt.title,
                                         description:
                                             prompt.description.toString(),
+                                        isFav: prompt.isFavorite,
+                                        onHeartTap: () async {
+                                          await addToFavorite(id: prompt.id);
+                                          loadPromptList("");
+                                        },
                                       ),
                                     )
                                     .toList(),
@@ -203,15 +209,18 @@ class _PromptModalState extends State<PromptModal> {
                           ),
                         ),
                         Column(
-                          children: List.generate(
-                            3,
-                            (index) => PromptRect(
-                              title:
-                                  "Grammar Corrector for English language (English (United States))",
-                              description:
-                                  "Improve your spelling and grammar by checking your text for errors.",
-                            ),
-                          ),
+                          children:
+                              List.generate(
+                                3,
+                                (index) => PromptRect(
+                                  title:
+                                      "Grammar Corrector for English language (English (United States))",
+                                  description:
+                                      "Improve your spelling and grammar by checking your text for errors.",
+                                  isFav: false,
+                                  onHeartTap: () {},
+                                ),
+                              ).toList(),
                         ),
                       ],
                     ),

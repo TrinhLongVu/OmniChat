@@ -2,10 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:omni_chat/widgets/popup/prompt_info.dart';
 
 class PromptRect extends StatelessWidget {
-  const PromptRect({super.key, required this.title, required this.description});
+  const PromptRect({
+    super.key,
+    required this.title,
+    required this.description,
+    required this.isFav,
+    required this.onHeartTap,
+  });
 
   final String title;
   final String description;
+  final bool isFav;
+  final Function onHeartTap;
 
   @override
   Widget build(BuildContext context) {
@@ -47,8 +55,12 @@ class PromptRect extends StatelessWidget {
           Row(
             children: [
               IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.favorite, size: 18),
+                onPressed: () => onHeartTap(),
+                icon: Icon(
+                  Icons.favorite,
+                  size: 18,
+                  color: isFav ? Colors.red : Colors.grey,
+                ),
               ),
               IconButton(
                 onPressed: () {
