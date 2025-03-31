@@ -7,11 +7,13 @@ import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/constants/prompt_category.dart';
 import 'package:omni_chat/models/api/prompt/prompt_list_res.dart';
 import 'package:omni_chat/models/prompt.dart';
+import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/widgets/button/category_btn.dart';
 import 'package:omni_chat/widgets/popup/prompt_new.dart';
 import 'package:omni_chat/widgets/rectangle/prompt_rect.dart';
 import 'package:omni_chat/widgets/search_box.dart';
 import 'package:omni_chat/widgets/tab_item.dart';
+import 'package:provider/provider.dart';
 
 class PromptModal extends StatefulWidget {
   const PromptModal({super.key});
@@ -23,7 +25,6 @@ class PromptModal extends StatefulWidget {
 class _PromptModalState extends State<PromptModal> {
   final TextEditingController searchPromptCtrlr = TextEditingController();
 
-  List<Prompt> publicPrompts = [];
   List<Prompt> privatePrompts = [];
   String filteredCategory = "";
   bool favFiltered = false;
@@ -31,8 +32,18 @@ class _PromptModalState extends State<PromptModal> {
   @override
   void initState() {
     super.initState();
-    loadPromptList(true, "");
-    loadPromptList(false, "");
+    context.read<PromptProvider>().loadPromptList(
+      isPublic: true,
+      query: "",
+      filteredCategory: "",
+      favFiltered: false,
+    );
+    context.read<PromptProvider>().loadPromptList(
+      isPublic: false,
+      query: "",
+      filteredCategory: "",
+      favFiltered: false,
+    );
   }
 
   Future<void> loadPromptList(bool isPublic, String query) async {
@@ -43,15 +54,9 @@ class _PromptModalState extends State<PromptModal> {
       category: filteredCategory,
     );
     if (mounted && promptListResponse != null) {
-      if (isPublic) {
-        setState(() {
-          publicPrompts = promptListResponse.items;
-        });
-      } else {
-        setState(() {
-          privatePrompts = promptListResponse.items;
-        });
-      }
+      setState(() {
+        privatePrompts = promptListResponse.items;
+      });
     }
   }
 
@@ -189,7 +194,9 @@ class _PromptModalState extends State<PromptModal> {
                         child: SingleChildScrollView(
                           child: Column(
                             children:
-                                publicPrompts
+                                context
+                                    .watch<PromptProvider>()
+                                    .publicPrompts
                                     .map(
                                       (prompt) => PromptRect(
                                         prompt: prompt,

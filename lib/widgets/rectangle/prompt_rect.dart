@@ -50,6 +50,9 @@ class PromptRect extends StatelessWidget {
                 Text(
                   prompt.description.toString(),
                   style: TextStyle(fontSize: 13, color: Colors.black54),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
                 ),
               ],
             ),
