@@ -24,6 +24,7 @@ class _PromptModalState extends State<PromptModal> {
 
   List<Prompt> prompts = [];
   String filteredCategory = "";
+  bool favFiltered = false;
 
   @override
   void initState() {
@@ -33,7 +34,7 @@ class _PromptModalState extends State<PromptModal> {
 
   Future<void> loadPromptList(String query) async {
     PromptListResponse? promptListResponse = await getPromptList(
-      isFavorite: false,
+      isFavorite: favFiltered,
       isPublic: true,
       query: query,
       category: filteredCategory,
@@ -95,9 +96,14 @@ class _PromptModalState extends State<PromptModal> {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    setState(() {
+                      favFiltered = !favFiltered;
+                    });
+                    loadPromptList("");
+                  },
                   icon: Icon(
-                    Icons.favorite_border,
+                    favFiltered ? Icons.favorite : Icons.favorite_border,
                     size: 25,
                     color: Colors.red,
                   ),
