@@ -32,6 +32,14 @@ class PromptProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool isListEmpty({required bool isPublic}) {
+    if (isPublic) {
+      return publicPrompts.isEmpty;
+    } else {
+      return privatePrompts.isEmpty;
+    }
+  }
+
   void load2List() {
     loadList(isPublic: true);
     loadList(isPublic: false);

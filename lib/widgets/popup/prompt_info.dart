@@ -5,6 +5,7 @@ import 'package:omni_chat/apis/prompt/fav_remove.dart';
 import 'package:omni_chat/apis/prompt/update.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/prompt.dart';
+import 'package:omni_chat/providers/chat.dart';
 import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/widgets/button/ico_txt_btn.dart';
 import 'package:omni_chat/widgets/info_field.dart';
@@ -294,6 +295,8 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
                             );
                           }
                         } else {
+                          context.read<ChatProvider>().setPrompt(promptContent);
+                          context.pop();
                           context.pop();
                         }
                       },

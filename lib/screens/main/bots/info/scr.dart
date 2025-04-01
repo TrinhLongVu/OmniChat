@@ -67,7 +67,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
       setState(() {
         bot = botInfo;
         botNameInfoTxt = bot!.name;
-        botInstructionInfoTxt = bot!.instruction;
+        botInstructionInfoTxt = bot!.instruction ?? "";
         botDescriptionInfoTxt = bot!.description ?? "";
         isLoading = false;
       });

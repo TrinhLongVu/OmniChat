@@ -6,9 +6,11 @@ import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/api/chat/get_convo_history_res.dart';
 import 'package:omni_chat/models/api/chat/get_convos_res.dart';
 import 'package:omni_chat/models/convo_item.dart';
+import 'package:omni_chat/providers/chat.dart';
 import 'package:omni_chat/screens/main/bots/conversation/convo_box.dart';
 import 'package:omni_chat/screens/main/bots/conversation/prompt_modal.dart';
 import 'package:omni_chat/screens/main/bots/conversation/thread_drawer.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -220,6 +222,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
+                        onChanged:
+                            (value) => {
+                              context.read<ChatProvider>().message = value,
+                            },
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(10, 0, 10, 8),
@@ -260,7 +266,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                 ),
                                 IconButton(
                                   onPressed: () {
-                                    sendConvoMessage();
+                                    // sendConvoMessage();
+                                    // var promptToSend =
+                                    //     context.read<ChatProvider>().msgPrompt;
+                                    // var messageToSend =
+                                    //     context.read<ChatProvider>().message;
+                                    // debugPrint(promptToSend);
                                   },
                                   iconSize: 20,
                                   padding: EdgeInsets.all(5),

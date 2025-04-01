@@ -4,6 +4,7 @@ import 'package:omni_chat/apis/prompt/delete.dart';
 import 'package:omni_chat/apis/prompt/fav_add.dart';
 import 'package:omni_chat/apis/prompt/fav_remove.dart';
 import 'package:omni_chat/models/prompt.dart';
+import 'package:omni_chat/providers/chat.dart';
 import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/widgets/popup/prompt_info.dart';
 import 'package:provider/provider.dart';
@@ -33,7 +34,7 @@ class PromptRect extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: viewport.width * .7,
+            width: viewport.width * .6,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -47,7 +48,7 @@ class PromptRect extends StatelessWidget {
                 Text(
                   prompt.description.toString(),
                   style: TextStyle(fontSize: 13, color: Colors.black54),
-                  maxLines: 2,
+                  maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,
                 ),
@@ -55,6 +56,7 @@ class PromptRect extends StatelessWidget {
             ),
           ),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               IconButton(
                 onPressed: () async {
@@ -76,7 +78,7 @@ class PromptRect extends StatelessWidget {
                 },
                 icon: Icon(
                   Icons.favorite,
-                  size: 18,
+                  size: 15,
                   color: prompt.isFavorite ? Colors.red : Colors.grey,
                 ),
               ),
@@ -112,7 +114,14 @@ class PromptRect extends StatelessWidget {
                         ),
                   );
                 },
-                icon: Icon(Icons.info_outline_rounded, size: 18),
+                icon: Icon(Icons.info_outline_rounded, size: 15),
+              ),
+              IconButton(
+                onPressed: () {
+                  context.read<ChatProvider>().setPrompt(prompt.content);
+                  context.pop();
+                },
+                icon: Icon(Icons.arrow_circle_right_outlined, size: 15),
               ),
             ],
           ),

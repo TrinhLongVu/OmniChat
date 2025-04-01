@@ -3,7 +3,7 @@ class Bot {
     required this.id,
     required this.userId,
     required this.name,
-    required this.instruction,
+    this.instruction,
     this.description,
     required this.createdAt,
     required this.updatedAt,
@@ -17,7 +17,7 @@ class Bot {
   final String id;
   final String userId;
   final String name;
-  final String instruction;
+  final String? instruction;
   final String? description;
   final String createdAt;
   final String updatedAt;

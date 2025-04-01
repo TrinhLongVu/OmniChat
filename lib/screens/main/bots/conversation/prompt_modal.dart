@@ -39,7 +39,7 @@ class _PromptModalState extends State<PromptModal> {
           topRight: Radius.circular(20),
         ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 6),
       child: DefaultTabController(
         length: 2,
         child: Column(
@@ -175,6 +175,20 @@ class _PromptModalState extends State<PromptModal> {
                   SingleChildScrollView(
                     child: Column(
                       children: [
+                        if (context
+                            .watch<PromptProvider>()
+                            .privatePrompts
+                            .isEmpty) ...[
+                          SizedBox(height: viewport.height * 0.2),
+                          Center(
+                            child: Text(
+                              "You don't have any private prompts yet",
+                            ),
+                          ),
+                        ] else ...[
+                          SizedBox.shrink(),
+                        ],
+
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: TextButton(
@@ -197,6 +211,7 @@ class _PromptModalState extends State<PromptModal> {
                             ),
                           ),
                         ),
+
                         Column(
                           children:
                               context
