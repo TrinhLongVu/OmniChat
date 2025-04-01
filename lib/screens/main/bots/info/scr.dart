@@ -7,7 +7,7 @@ import 'package:omni_chat/apis/bot/update.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/bot_model.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
-import 'package:omni_chat/widgets/button/flex_common_btn.dart';
+import 'package:omni_chat/widgets/button/ico_txt_btn.dart';
 import 'package:omni_chat/widgets/info_field.dart';
 import 'package:omni_chat/widgets/input_field.dart';
 import 'package:omni_chat/widgets/input_header.dart';
@@ -183,7 +183,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                         ? Row(
                           spacing: 10,
                           children: [
-                            FlexCommonBtn(
+                            IcoTxtBtn(
                               title: "Edit",
                               onTap: () {
                                 setState(() {
@@ -191,7 +191,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                                 });
                               },
                             ),
-                            FlexCommonBtn(
+                            IcoTxtBtn(
                               title: "Delete",
                               bgColor: Colors.red,
                               onTap: () {
