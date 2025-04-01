@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/apis/prompt/fav_add.dart';
 import 'package:omni_chat/apis/prompt/fav_remove.dart';
+import 'package:omni_chat/apis/prompt/update.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/prompt.dart';
 import 'package:omni_chat/providers/prompt.dart';
@@ -10,6 +11,7 @@ import 'package:omni_chat/widgets/info_field.dart';
 import 'package:omni_chat/widgets/input_field.dart';
 import 'package:omni_chat/widgets/input_header.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:validatorless/validatorless.dart';
 
 final editPromptFormKey = GlobalKey<FormState>();
@@ -30,6 +32,9 @@ class PromptInfoPopUp extends StatefulWidget {
 
 class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
   bool editing = false;
+  String promptTitle = "";
+  String promptContent = "";
+  String promptDescription = "";
 
   late bool isFavorite;
   late TextEditingController nameCtrlr;
@@ -43,6 +48,9 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
     nameCtrlr = TextEditingController(text: widget.prompt.title);
     contentCtrlr = TextEditingController(text: widget.prompt.content);
     descriptionCtrlr = TextEditingController(text: widget.prompt.description);
+    promptTitle = widget.prompt.title;
+    promptContent = widget.prompt.content;
+    promptDescription = widget.prompt.description.toString();
   }
 
   void toggleFavorite() async {
@@ -133,7 +141,7 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
                             SizedBox(
                               width: 255,
                               child: Text(
-                                widget.prompt.title,
+                                promptTitle,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -155,9 +163,9 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
                         ),
                       ],
                     ),
-                widget.prompt.description != "" && !editing
+                promptDescription != "" && !editing
                     ? Text(
-                      widget.prompt.description.toString(),
+                      promptDescription,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -179,7 +187,7 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
                       maxLns: 5,
                       formKey: editPromptFormKey,
                     )
-                    : InfoField(infoText: widget.prompt.content, lineNum: 5),
+                    : InfoField(infoText: promptContent, lineNum: 5),
                 if (editing) ...[
                   InputHeader(
                     title: "Description",
@@ -253,7 +261,38 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
                       title: editing ? "Save" : "Use this prompt",
                       onTap: () {
                         if (editing) {
-                          if (editPromptFormKey.currentState!.validate()) {}
+                          if (editPromptFormKey.currentState!.validate()) {
+                            QuickAlert.show(
+                              context: context,
+                              type: QuickAlertType.confirm,
+                              title: "Save changes?",
+                              text:
+                                  "Are you sure you want to update this prompt?",
+                              confirmBtnText: "Yes",
+                              cancelBtnText: "No",
+                              onConfirmBtnTap: () async {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                context.pop();
+                                await updatePrompt(
+                                  id: widget.prompt.id,
+                                  title: nameCtrlr.text,
+                                  content: contentCtrlr.text,
+                                  description: descriptionCtrlr.text,
+                                  onSuccess: () {
+                                    setState(() {
+                                      promptTitle = nameCtrlr.text;
+                                      promptContent = contentCtrlr.text;
+                                      promptDescription = descriptionCtrlr.text;
+                                      editing = !editing;
+                                    });
+                                    context.read<PromptProvider>().loadList(
+                                      isPublic: false,
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          }
                         } else {
                           context.pop();
                         }

@@ -7,7 +7,8 @@ import 'package:omni_chat/services/dio_client.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> createPrompt({
+Future<void> updatePrompt({
+  required String id,
   required String title,
   required String content,
   String description = "",
@@ -25,8 +26,8 @@ Future<void> createPrompt({
   Dio dio = DioClient(baseUrl: BaseUrls.jarvis).dio;
 
   try {
-    Response response = await dio.post(
-      "/api/v1/prompts",
+    Response response = await dio.patch(
+      "/api/v1/prompts/$id",
       data: {
         "title": title,
         "content": content,
@@ -36,16 +37,13 @@ Future<void> createPrompt({
       options: Options(headers: headers),
     );
     switch (response.statusCode) {
-      case 201:
+      case 200:
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.success,
-          text: "Prompt created successfully!",
+          text: "Prompt updated successfully!",
           onConfirmBtnTap:
-              () => {
-                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
-                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
-              },
+              () => GoRouter.of(rootNavigatorKey.currentContext!).pop(),
         );
         onSuccess();
         break;
