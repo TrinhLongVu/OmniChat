@@ -17,7 +17,6 @@ class PromptRect extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Size viewport = MediaQuery.of(context).size;
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
@@ -33,8 +32,7 @@ class PromptRect extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: viewport.width * .6,
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

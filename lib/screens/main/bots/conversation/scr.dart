@@ -7,9 +7,11 @@ import 'package:omni_chat/models/api/chat/get_convo_history_res.dart';
 import 'package:omni_chat/models/api/chat/get_convos_res.dart';
 import 'package:omni_chat/models/convo_item.dart';
 import 'package:omni_chat/providers/chat.dart';
+import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/screens/main/bots/conversation/convo_box.dart';
 import 'package:omni_chat/screens/main/bots/conversation/prompt_modal.dart';
 import 'package:omni_chat/screens/main/bots/conversation/thread_drawer.dart';
+import 'package:omni_chat/widgets/prompt_slash.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -31,10 +33,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
   List<ConvoHistoryItem> convoHistoryList = [];
   String currentConvoId = "";
   int tokenNum = 50;
+  bool showPromptTooltip = false;
 
   @override
   void initState() {
     super.initState();
+    context.read<PromptProvider>().loadSlashList();
     loadConvoList();
     focusNod.addListener(scrollToBottom);
   }
@@ -215,7 +219,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: Colors.white,
-                          hintText: "Type your message...",
+                          hintText:
+                              "Ask me anthing or type '/' to use a prompt",
                           hintStyle: TextStyle(color: Colors.grey),
                           border: OutlineInputBorder(
                             borderSide: BorderSide.none,
@@ -225,6 +230,18 @@ class _ConversationScreenState extends State<ConversationScreen> {
                         onChanged:
                             (value) => {
                               context.read<ChatProvider>().message = value,
+                              if (msgCtrlr.text == "/")
+                                {
+                                  setState(() {
+                                    showPromptTooltip = true;
+                                  }),
+                                }
+                              else
+                                {
+                                  setState(() {
+                                    showPromptTooltip = false;
+                                  }),
+                                },
                             },
                       ),
                       Padding(
@@ -267,11 +284,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                 IconButton(
                                   onPressed: () {
                                     // sendConvoMessage();
-                                    // var promptToSend =
-                                    //     context.read<ChatProvider>().msgPrompt;
+                                    var promptToSend =
+                                        context.read<ChatProvider>().msgPrompt;
                                     // var messageToSend =
                                     //     context.read<ChatProvider>().message;
-                                    // debugPrint(promptToSend);
+                                    debugPrint(promptToSend);
                                   },
                                   iconSize: 20,
                                   padding: EdgeInsets.all(5),
@@ -294,6 +311,44 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   ),
                 ),
               ),
+              showPromptTooltip
+                  ? Positioned(
+                    left: 20,
+                    right: 20,
+                    bottom: 110,
+                    child: Container(
+                      height: viewport.height * 0.3,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(width: 0.5),
+                      ),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children:
+                              context
+                                  .watch<PromptProvider>()
+                                  .slashPrompts
+                                  .map(
+                                    (prompt) => PromptSlash(
+                                      title: prompt.title,
+                                      onUse: () {
+                                        context.read<ChatProvider>().setPrompt(
+                                          prompt.content,
+                                        );
+                                        msgCtrlr.clear();
+                                        setState(() {
+                                          showPromptTooltip = false;
+                                        });
+                                      },
+                                    ),
+                                  )
+                                  .toList(),
+                        ),
+                      ),
+                    ),
+                  )
+                  : SizedBox.shrink(),
             ],
           ),
         ),

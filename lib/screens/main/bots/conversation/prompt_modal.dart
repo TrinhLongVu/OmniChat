@@ -23,7 +23,7 @@ class _PromptModalState extends State<PromptModal> {
   @override
   void initState() {
     super.initState();
-    context.read<PromptProvider>().initPromptProvider();
+    context.read<PromptProvider>().initPromptLibrary();
   }
 
   @override
