@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/apis/auth/get_me.dart';
+import 'package:omni_chat/apis/auth/logout.dart';
 import 'package:omni_chat/models/api/auth/auth_entity.dart';
-import 'package:omni_chat/screens/main/profile/profile_btn.dart';
+import 'package:omni_chat/widgets/button/profile_btn.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -89,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   icon: Icons.logout_outlined,
                   title: "Logout",
                   onNavi: () async {
-                    context.goNamed("landing");
+                    await logout();
                   },
                 ),
               ],

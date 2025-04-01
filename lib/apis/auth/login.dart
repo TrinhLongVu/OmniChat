@@ -35,6 +35,7 @@ Future<void> login(String email, String password) async {
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.success,
           text: "Login successful!",
+          barrierDismissible: false,
           onConfirmBtnTap:
               () => {
                 GoRouter.of(
