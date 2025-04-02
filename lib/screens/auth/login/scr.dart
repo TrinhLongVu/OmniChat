@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/auth/login.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
@@ -13,8 +14,22 @@ final loginFormKey = GlobalKey<FormState>();
 class LoginScreen extends StatelessWidget {
   final TextEditingController emailCtrlr = TextEditingController();
   final TextEditingController passwordCtrlr = TextEditingController();
+  final ValueNotifier<bool> loading = ValueNotifier(false);
 
   LoginScreen({super.key});
+
+  Future<void> loginUser() async {
+    if (loginFormKey.currentState!.validate()) {
+      loading.value = true;
+      login(
+        email: emailCtrlr.text,
+        password: passwordCtrlr.text,
+        onError: () {
+          loading.value = false;
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,13 +109,20 @@ class LoginScreen extends StatelessWidget {
                             style: TextStyle(fontWeight: FontWeight.w500),
                           ),
                         ),
-                        const SizedBox(height: 5),
-                        CommonBtn(
-                          title: "Login",
-                          onTap: () {
-                            if (loginFormKey.currentState!.validate()) {
-                              login(emailCtrlr.text, passwordCtrlr.text);
-                            }
+
+                        ValueListenableBuilder<bool>(
+                          valueListenable: loading,
+                          builder: (context, loading, _) {
+                            return loading
+                                ? Lottie.asset(
+                                  "assets/anims/loading.json",
+                                  width: 150,
+                                  height: 100,
+                                )
+                                : CommonBtn(
+                                  title: "Login",
+                                  onTap: () => loginUser(),
+                                );
                           },
                         ),
                       ],

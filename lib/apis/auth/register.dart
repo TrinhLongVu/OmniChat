@@ -2,11 +2,17 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/constants/base_urls.dart';
+import 'package:omni_chat/models/api/auth/login_res.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:omni_chat/services/dio_client.dart';
 import 'package:quickalert/quickalert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> register(String email, String password) async {
+Future<void> register({
+  required String email,
+  required String password,
+  required VoidCallback onError,
+}) async {
   const headers = {
     'X-Stack-Access-Type': 'client',
     'X-Stack-Project-Id': 'a914f06b-5e46-4966-8693-80e4b9f4f409',
@@ -33,15 +39,20 @@ Future<void> register(String email, String password) async {
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.success,
+          barrierDismissible: false,
           text: "Registration successful!",
-          onConfirmBtnTap:
-              () => {
-                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
-                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
-              },
+          confirmBtnText: "Login now",
+          onConfirmBtnTap: () async {
+            LoginResponse registerData = LoginResponse.fromJson(response.data);
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            await prefs.setString('access_token', registerData.accessToken);
+            await prefs.setString('refresh_token', registerData.refreshToken);
+            GoRouter.of(rootNavigatorKey.currentContext!).goNamed("all-bots");
+          },
         );
         break;
       case 400:
+        onError();
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.error,
@@ -49,6 +60,7 @@ Future<void> register(String email, String password) async {
         );
         break;
       case 409:
+        onError();
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.error,
@@ -56,6 +68,7 @@ Future<void> register(String email, String password) async {
         );
         break;
       default:
+        onError();
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.error,

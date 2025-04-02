@@ -8,7 +8,11 @@ import 'package:omni_chat/services/dio_client.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> login(String email, String password) async {
+Future<void> login({
+  required String email,
+  required String password,
+  required VoidCallback onError,
+}) async {
   const headers = {
     'X-Stack-Access-Type': 'client',
     'X-Stack-Project-Id': 'a914f06b-5e46-4966-8693-80e4b9f4f409',
@@ -50,6 +54,7 @@ Future<void> login(String email, String password) async {
           type: QuickAlertType.error,
           text: "Invalid email or password!",
         );
+        onError();
         break;
       default:
         QuickAlert.show(
@@ -57,6 +62,7 @@ Future<void> login(String email, String password) async {
           type: QuickAlertType.error,
           text: "Something went wrong! Please try again later.",
         );
+        onError();
     }
   } catch (e) {
     debugPrint("Error: $e");

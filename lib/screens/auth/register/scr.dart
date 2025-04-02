@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/auth/register.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
@@ -13,8 +14,24 @@ class RegisterScreen extends StatelessWidget {
   final TextEditingController emailCtrlr = TextEditingController();
   final TextEditingController passwordCtrlr = TextEditingController();
   final TextEditingController confirmPwdCtrlr = TextEditingController();
+  final ValueNotifier<bool> loading = ValueNotifier(false);
 
   RegisterScreen({super.key});
+
+  Future<void> registerUser() async {
+    if (registerFormKey.currentState!.validate()) {
+      loading.value = true;
+      if (registerFormKey.currentState!.validate()) {
+        register(
+          email: emailCtrlr.text,
+          password: passwordCtrlr.text,
+          onError: () {
+            loading.value = false;
+          },
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +102,7 @@ class RegisterScreen extends StatelessWidget {
                             Validatorless.required("Password is required"),
                             Validatorless.min(
                               8,
-                              "Password must contain at least 6 characters long",
+                              "Password must contain at least 8 characters long",
                             ),
                           ]),
                           formKey: registerFormKey,
@@ -107,12 +124,19 @@ class RegisterScreen extends StatelessWidget {
                           formKey: registerFormKey,
                         ),
                         const SizedBox(height: 5),
-                        CommonBtn(
-                          title: "Register",
-                          onTap: () {
-                            if (registerFormKey.currentState!.validate()) {
-                              register(emailCtrlr.text, passwordCtrlr.text);
-                            }
+                        ValueListenableBuilder<bool>(
+                          valueListenable: loading,
+                          builder: (context, loading, _) {
+                            return loading
+                                ? Lottie.asset(
+                                  "assets/anims/loading.json",
+                                  width: 150,
+                                  height: 100,
+                                )
+                                : CommonBtn(
+                                  title: "Register",
+                                  onTap: () => registerUser(),
+                                );
                           },
                         ),
                       ],

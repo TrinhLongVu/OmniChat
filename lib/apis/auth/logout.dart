@@ -30,7 +30,6 @@ Future<void> logout() async {
       data: {},
       options: Options(headers: headers),
     );
-    debugPrint(response.data.toString());
     switch (response.statusCode) {
       case 200:
         prefs.remove("access_token");
