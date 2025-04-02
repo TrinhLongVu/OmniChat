@@ -21,6 +21,7 @@ class RegisterScreen extends StatelessWidget {
   Future<void> registerUser() async {
     if (registerFormKey.currentState!.validate()) {
       loading.value = true;
+      FocusManager.instance.primaryFocus?.unfocus();
       if (registerFormKey.currentState!.validate()) {
         register(
           email: emailCtrlr.text,

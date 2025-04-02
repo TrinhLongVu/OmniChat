@@ -86,77 +86,92 @@ class PromptRect extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              IconButton(
-                onPressed: () async {
-                  if (shimmerizing) return;
-                  if (prompt.isFavorite) {
-                    await removeFromFavorite(
-                      id: prompt.id,
-                      onSuccess: () {
-                        context.read<PromptProvider>().load2List();
-                      },
-                    );
-                  } else {
-                    await addToFavorite(
-                      id: prompt.id,
-                      onSuccess: () {
-                        context.read<PromptProvider>().load2List();
-                      },
-                    );
-                  }
-                },
-                icon: Icon(
-                  Icons.favorite,
-                  size: 15,
-                  color:
-                      prompt.isFavorite && !shimmerizing
-                          ? Colors.red
-                          : Colors.grey,
-                ),
-              ),
-              IconButton(
-                onPressed: () {
-                  if (shimmerizing) return;
-                  showDialog(
-                    context: context,
-                    builder:
-                        (context) => PromptInfoPopUp(
-                          prompt: prompt,
-                          onDelete: () {
-                            QuickAlert.show(
-                              context: context,
-                              type: QuickAlertType.confirm,
-                              text:
-                                  'Are you sure you want to delete this prompt?',
-                              onCancelBtnTap: () {
-                                context.pop();
-                              },
-                              onConfirmBtnTap: () async {
-                                context.pop();
-                                await deletePrompt(
-                                  id: prompt.id,
-                                  onSuccess: () {
-                                    context.read<PromptProvider>().loadList(
-                                      isPublic: false,
+              shimmerizing
+                  ? Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Icon(Icons.favorite, size: 15, color: Colors.grey),
+                  )
+                  : IconButton(
+                    onPressed: () async {
+                      if (shimmerizing) return;
+                      if (prompt.isFavorite) {
+                        await removeFromFavorite(
+                          id: prompt.id,
+                          onSuccess: () {
+                            context.read<PromptProvider>().load2List();
+                          },
+                        );
+                      } else {
+                        await addToFavorite(
+                          id: prompt.id,
+                          onSuccess: () {
+                            context.read<PromptProvider>().load2List();
+                          },
+                        );
+                      }
+                    },
+                    icon: Icon(
+                      Icons.favorite,
+                      size: 15,
+                      color:
+                          prompt.isFavorite && !shimmerizing
+                              ? Colors.red
+                              : Colors.grey,
+                    ),
+                  ),
+              shimmerizing
+                  ? Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Icon(Icons.info_outline_rounded, size: 15),
+                  )
+                  : IconButton(
+                    onPressed: () {
+                      if (shimmerizing) return;
+                      showDialog(
+                        context: context,
+                        builder:
+                            (context) => PromptInfoPopUp(
+                              prompt: prompt,
+                              onDelete: () {
+                                QuickAlert.show(
+                                  context: context,
+                                  type: QuickAlertType.confirm,
+                                  text:
+                                      'Are you sure you want to delete this prompt?',
+                                  onCancelBtnTap: () {
+                                    context.pop();
+                                  },
+                                  onConfirmBtnTap: () async {
+                                    context.pop();
+                                    await deletePrompt(
+                                      id: prompt.id,
+                                      onSuccess: () {
+                                        context.read<PromptProvider>().loadList(
+                                          isPublic: false,
+                                        );
+                                      },
                                     );
                                   },
                                 );
                               },
-                            );
-                          },
-                        ),
-                  );
-                },
-                icon: Icon(Icons.info_outline_rounded, size: 15),
-              ),
-              IconButton(
-                onPressed: () {
-                  if (shimmerizing) return;
-                  context.read<ChatProvider>().setPrompt(prompt.content);
-                  context.pop();
-                },
-                icon: Icon(Icons.arrow_circle_right_outlined, size: 15),
-              ),
+                            ),
+                      );
+                    },
+                    icon: Icon(Icons.info_outline_rounded, size: 15),
+                  ),
+              shimmerizing
+                  ? Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Icon(Icons.arrow_circle_right_outlined, size: 15),
+                  )
+                  : IconButton(
+                    onPressed: () {
+                      if (shimmerizing) return;
+                      context.read<ChatProvider>().setPrompt(prompt.content);
+                      context.pop();
+                    },
+                    icon: Icon(Icons.arrow_circle_right_outlined, size: 15),
+                  ),
             ],
           ),
         ],

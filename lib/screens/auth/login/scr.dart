@@ -21,6 +21,7 @@ class LoginScreen extends StatelessWidget {
   Future<void> loginUser() async {
     if (loginFormKey.currentState!.validate()) {
       loading.value = true;
+      FocusManager.instance.primaryFocus?.unfocus();
       login(
         email: emailCtrlr.text,
         password: passwordCtrlr.text,
