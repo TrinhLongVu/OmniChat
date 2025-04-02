@@ -43,4 +43,20 @@ class Prompt {
       isFavorite: json['isFavorite'],
     );
   }
+  factory Prompt.placeholder() {
+    return Prompt(
+      id: "",
+      userId: "",
+      userName: "",
+      title: "",
+      category: "",
+      content: "",
+      description: "",
+      language: "",
+      createdAt: "",
+      updatedAt: "",
+      isPublic: false,
+      isFavorite: false,
+    );
+  }
 }

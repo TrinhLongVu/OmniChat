@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/constants/prompt_category.dart';
+import 'package:omni_chat/models/prompt.dart';
 import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/widgets/button/category_btn.dart';
 import 'package:omni_chat/widgets/popup/prompt_new.dart';
@@ -160,13 +161,28 @@ class _PromptModalState extends State<PromptModal> {
                       ),
                       Expanded(
                         child: SingleChildScrollView(
-                          child: Column(
-                            children:
-                                context
-                                    .watch<PromptProvider>()
-                                    .publicPrompts
-                                    .map((prompt) => PromptRect(prompt: prompt))
-                                    .toList(),
+                          child: Consumer<PromptProvider>(
+                            builder: (context, provider, child) {
+                              return Column(
+                                children:
+                                    provider.publicPrompts.isEmpty
+                                        ? List.generate(
+                                          10,
+                                          (index) => PromptRect(
+                                            prompt: Prompt.placeholder(),
+                                            shimmerizing: true,
+                                          ),
+                                        ).toList()
+                                        : provider.publicPrompts
+                                            .map(
+                                              (prompt) => PromptRect(
+                                                prompt: prompt,
+                                                shimmerizing: false,
+                                              ),
+                                            )
+                                            .toList(),
+                              );
+                            },
                           ),
                         ),
                       ),
@@ -211,14 +227,26 @@ class _PromptModalState extends State<PromptModal> {
                             ),
                           ),
                         ),
-
-                        Column(
-                          children:
-                              context
-                                  .watch<PromptProvider>()
-                                  .privatePrompts
-                                  .map((prompt) => PromptRect(prompt: prompt))
-                                  .toList(),
+                        Consumer<PromptProvider>(
+                          builder: (context, provider, child) {
+                            return Column(
+                              children:
+                                  provider.privatePrompts.isEmpty
+                                      ? List.generate(
+                                        10,
+                                        (index) => PromptRect(
+                                          prompt: Prompt.placeholder(),
+                                          shimmerizing: true,
+                                        ),
+                                      ).toList()
+                                      : provider.privatePrompts
+                                          .map(
+                                            (prompt) =>
+                                                PromptRect(prompt: prompt),
+                                          )
+                                          .toList(),
+                            );
+                          },
                         ),
                       ],
                     ),
