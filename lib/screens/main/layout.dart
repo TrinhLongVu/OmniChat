@@ -18,7 +18,7 @@ class MainLayout extends StatelessWidget {
       body: SafeArea(child: navigationShell),
       bottomNavigationBar:
           isConversationScreen
-              ? null // Hide the bottom navigation bar
+              ? null
               : NavigationBar(
                 selectedIndex: navigationShell.currentIndex,
                 onDestinationSelected: navigationShell.goBranch,

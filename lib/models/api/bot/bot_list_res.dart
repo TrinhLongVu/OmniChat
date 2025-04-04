@@ -1,5 +1,5 @@
 import 'package:omni_chat/models/api/page_meta.dart';
-import 'package:omni_chat/models/bot_model.dart';
+import 'package:omni_chat/models/bot.dart';
 
 class BotListResponse {
   BotListResponse({required this.data, required this.meta});

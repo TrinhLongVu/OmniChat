@@ -5,7 +5,7 @@ import 'package:omni_chat/apis/bot/delete.dart';
 import 'package:omni_chat/apis/bot/get_info.dart';
 import 'package:omni_chat/apis/bot/update.dart';
 import 'package:omni_chat/constants/color.dart';
-import 'package:omni_chat/models/bot_model.dart';
+import 'package:omni_chat/models/bot.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
 import 'package:omni_chat/widgets/button/ico_txt_btn.dart';
 import 'package:omni_chat/widgets/info_field.dart';

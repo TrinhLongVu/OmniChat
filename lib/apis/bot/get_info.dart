@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:omni_chat/constants/base_urls.dart';
-import 'package:omni_chat/models/bot_model.dart';
+import 'package:omni_chat/models/bot.dart';
 import 'package:omni_chat/services/dio_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

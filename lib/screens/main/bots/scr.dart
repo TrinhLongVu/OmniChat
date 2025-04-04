@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:omni_chat/apis/bot/get_list.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/api/bot/bot_list_res.dart';
-import 'package:omni_chat/models/bot_model.dart';
+import 'package:omni_chat/models/bot.dart';
 import 'package:omni_chat/widgets/rectangle/bot_rect.dart';
 import 'package:omni_chat/widgets/search_box.dart';
 

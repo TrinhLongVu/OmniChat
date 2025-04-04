@@ -24,7 +24,6 @@ Future<PromptListResponse?> getPromptList({
     if (category != null && category.isNotEmpty) {
       url += "&category=$category";
     }
-
     Response response = await dio.get(url, options: Options(headers: headers));
     switch (response.statusCode) {
       case 200:
