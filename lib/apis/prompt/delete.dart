@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 Future<void> deletePrompt({
   required String id,
   required VoidCallback onSuccess,
+  required VoidCallback onError,
 }) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
@@ -25,19 +26,18 @@ Future<void> deletePrompt({
     );
     switch (response.statusCode) {
       case 200:
+        GoRouter.of(rootNavigatorKey.currentContext!).pop();
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.success,
           text: "Prompt deleted successfully!",
           onConfirmBtnTap:
-              () => {
-                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
-                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
-              },
+              () => GoRouter.of(rootNavigatorKey.currentContext!).pop(),
         );
         onSuccess();
         break;
       default:
+        onError();
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.error,

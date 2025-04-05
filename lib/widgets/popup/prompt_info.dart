@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
+import 'package:omni_chat/apis/prompt/delete.dart';
 import 'package:omni_chat/apis/prompt/fav_add.dart';
 import 'package:omni_chat/apis/prompt/fav_remove.dart';
 import 'package:omni_chat/apis/prompt/update.dart';
@@ -18,14 +20,9 @@ import 'package:validatorless/validatorless.dart';
 final editPromptFormKey = GlobalKey<FormState>();
 
 class PromptInfoPopUp extends StatefulWidget {
-  const PromptInfoPopUp({
-    super.key,
-    required this.prompt,
-    required this.onDelete,
-  });
+  const PromptInfoPopUp({super.key, required this.prompt});
 
   final Prompt prompt;
-  final Function onDelete;
 
   @override
   State<PromptInfoPopUp> createState() => _PromptInfoPopUpState();
@@ -41,6 +38,8 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
   late TextEditingController nameCtrlr;
   late TextEditingController contentCtrlr;
   late TextEditingController descriptionCtrlr;
+
+  final ValueNotifier<bool> loading = ValueNotifier(false);
 
   @override
   void initState() {
@@ -76,6 +75,67 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
         },
       );
     }
+  }
+
+  Future<void> updateThisPrompt() async {
+    if (editPromptFormKey.currentState!.validate()) {
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.confirm,
+        title: "Save changes?",
+        text: "Are you sure you want to update this prompt?",
+        confirmBtnText: "Yes",
+        cancelBtnText: "No",
+        onConfirmBtnTap: () async {
+          FocusManager.instance.primaryFocus?.unfocus();
+          loading.value = true;
+          context.pop();
+          await updatePrompt(
+            id: widget.prompt.id,
+            title: nameCtrlr.text,
+            content: contentCtrlr.text,
+            description: descriptionCtrlr.text,
+            onSuccess: () {
+              setState(() {
+                promptTitle = nameCtrlr.text;
+                promptContent = contentCtrlr.text;
+                promptDescription = descriptionCtrlr.text;
+                editing = !editing;
+              });
+              loading.value = false;
+              context.read<PromptProvider>().loadList(isPublic: false);
+            },
+            onError: () {
+              loading.value = false;
+            },
+          );
+        },
+      );
+    }
+  }
+
+  Future<void> deleteThisPrompt() async {
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.confirm,
+      text: 'Are you sure you want to delete this prompt?',
+      onCancelBtnTap: () {
+        context.pop();
+      },
+      onConfirmBtnTap: () async {
+        context.pop();
+        loading.value = true;
+        await deletePrompt(
+          id: widget.prompt.id,
+          onSuccess: () {
+            context.read<PromptProvider>().loadList(isPublic: false);
+          },
+          onError: () {
+            loading.value = false;
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -204,107 +264,98 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
                   ),
                 ] else
                   SizedBox.shrink(),
-                !widget.prompt.isPublic && !editing
-                    ? Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          IcoTxtBtn(
-                            icon: Icons.edit,
-                            title: "Edit",
-                            fontSz: 14,
-                            bgColor: Colors.green,
-                            onTap: () {
-                              setState(() {
-                                editing = !editing;
-                              });
-                            },
-                            borderRadius: 5,
-                            isExpanded: false,
-                          ),
-                          IcoTxtBtn(
-                            icon: Icons.delete,
-                            title: "Delete",
-                            fontSz: 14,
-                            bgColor: Colors.red,
-                            onTap: widget.onDelete,
-                            borderRadius: 5,
-                            isExpanded: false,
-                          ),
-                        ],
-                      ),
-                    )
-                    : SizedBox.shrink(),
-                Row(
-                  mainAxisAlignment:
-                      widget.prompt.isPublic
-                          ? MainAxisAlignment.end
-                          : MainAxisAlignment.center,
-                  spacing: 10,
-                  children: [
-                    widget.prompt.isPublic || editing
-                        ? TextButton(
-                          onPressed: () {
-                            if (editing) {
-                              setState(() {
-                                editing = !editing;
-                              });
-                            } else {
-                              context.pop();
-                            }
-                          },
-                          child: Text("Cancel"),
-                        )
-                        : SizedBox.shrink(),
-                    IcoTxtBtn(
-                      icon: editing ? Icons.save : null,
-                      title: editing ? "Save" : "Use this prompt",
-                      onTap: () {
-                        if (editing) {
-                          if (editPromptFormKey.currentState!.validate()) {
-                            QuickAlert.show(
-                              context: context,
-                              type: QuickAlertType.confirm,
-                              title: "Save changes?",
-                              text:
-                                  "Are you sure you want to update this prompt?",
-                              confirmBtnText: "Yes",
-                              cancelBtnText: "No",
-                              onConfirmBtnTap: () async {
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                context.pop();
-                                await updatePrompt(
-                                  id: widget.prompt.id,
-                                  title: nameCtrlr.text,
-                                  content: contentCtrlr.text,
-                                  description: descriptionCtrlr.text,
-                                  onSuccess: () {
-                                    setState(() {
-                                      promptTitle = nameCtrlr.text;
-                                      promptContent = contentCtrlr.text;
-                                      promptDescription = descriptionCtrlr.text;
-                                      editing = !editing;
-                                    });
-                                    context.read<PromptProvider>().loadList(
-                                      isPublic: false,
-                                    );
+                ValueListenableBuilder<bool>(
+                  valueListenable: loading,
+                  builder: (context, loading, _) {
+                    if (loading) {
+                      return Center(
+                        child: Lottie.asset(
+                          "assets/anims/loading.json",
+                          width: 120,
+                          height: 120,
+                        ),
+                      );
+                    }
+                    return Column(
+                      spacing: 8,
+                      children: [
+                        !widget.prompt.isPublic && !editing
+                            ? Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  IcoTxtBtn(
+                                    icon: Icons.edit,
+                                    title: "Edit",
+                                    fontSz: 14,
+                                    bgColor: Colors.green,
+                                    onTap: () {
+                                      setState(() {
+                                        editing = !editing;
+                                      });
+                                    },
+                                    borderRadius: 5,
+                                    isExpanded: false,
+                                  ),
+                                  IcoTxtBtn(
+                                    icon: Icons.delete,
+                                    title: "Delete",
+                                    fontSz: 14,
+                                    bgColor: Colors.red,
+                                    onTap: () => deleteThisPrompt(),
+                                    borderRadius: 5,
+                                    isExpanded: false,
+                                  ),
+                                ],
+                              ),
+                            )
+                            : SizedBox.shrink(),
+                        Row(
+                          mainAxisAlignment:
+                              widget.prompt.isPublic
+                                  ? MainAxisAlignment.end
+                                  : MainAxisAlignment.center,
+                          spacing: 10,
+                          children: [
+                            widget.prompt.isPublic || editing
+                                ? TextButton(
+                                  onPressed: () {
+                                    if (editing) {
+                                      setState(() {
+                                        editing = !editing;
+                                      });
+                                    } else {
+                                      context.pop();
+                                    }
                                   },
-                                );
+                                  child: Text("Cancel"),
+                                )
+                                : SizedBox.shrink(),
+                            IcoTxtBtn(
+                              icon: editing ? Icons.save : null,
+                              title: editing ? "Save" : "Use this prompt",
+                              onTap: () {
+                                if (editing) {
+                                  updateThisPrompt();
+                                } else {
+                                  context.read<ChatProvider>().setPrompt(
+                                    promptContent,
+                                  );
+                                  context.pop();
+                                  context.pop();
+                                }
                               },
-                            );
-                          }
-                        } else {
-                          context.read<ChatProvider>().setPrompt(promptContent);
-                          context.pop();
-                          context.pop();
-                        }
-                      },
-                      fontSz: 14,
-                      borderRadius: editing ? 5 : 30,
-                      isExpanded: false,
-                    ),
-                  ],
+                              fontSz: 14,
+                              borderRadius: editing ? 5 : 30,
+                              isExpanded: false,
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),

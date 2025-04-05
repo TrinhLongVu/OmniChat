@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/prompt/create.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/providers/prompt.dart';
+import 'package:omni_chat/router/index.dart';
+import 'package:omni_chat/widgets/button/ico_txt_btn.dart';
 import 'package:omni_chat/widgets/input_field.dart';
 import 'package:omni_chat/widgets/input_header.dart';
 import 'package:provider/provider.dart';
@@ -14,8 +17,26 @@ class PromptCreationPopUp extends StatelessWidget {
   final TextEditingController promptNameCtrlr = TextEditingController();
   final TextEditingController promptContentCtrlr = TextEditingController();
   final TextEditingController promptDescriptionCtrlr = TextEditingController();
+  final ValueNotifier<bool> loading = ValueNotifier(false);
 
   PromptCreationPopUp({super.key});
+
+  Future<void> createNewPrompt() async {
+    if (newPromptFormKey.currentState!.validate()) {
+      loading.value = true;
+      await createPrompt(
+        title: promptNameCtrlr.text,
+        content: promptContentCtrlr.text,
+        description: promptDescriptionCtrlr.text,
+        onSuccess: () {
+          rootNavigatorKey.currentContext!.read<PromptProvider>().loadList(
+            isPublic: false,
+          );
+        },
+      );
+      loading.value = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,44 +126,22 @@ class PromptCreationPopUp extends StatelessWidget {
                       },
                       child: Text("Cancel"),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        if (newPromptFormKey.currentState!.validate()) {
-                          createPrompt(
-                            title: promptNameCtrlr.text,
-                            content: promptContentCtrlr.text,
-                            description: promptDescriptionCtrlr.text,
-                            onSuccess: () {
-                              context.read<PromptProvider>().loadList(
-                                isPublic: false,
-                              );
-                            },
-                          );
-                        }
+                    ValueListenableBuilder<bool>(
+                      valueListenable: loading,
+                      builder: (context, loading, _) {
+                        return loading
+                            ? Lottie.asset(
+                              "assets/anims/loading.json",
+                              width: 100,
+                              height: 60,
+                            )
+                            : IcoTxtBtn(
+                              title: "Create",
+                              onTap: () => createNewPrompt(),
+                              fontSz: 14,
+                              isExpanded: false,
+                            );
                       },
-                      style: ButtonStyle(
-                        padding: WidgetStateProperty.all(
-                          const EdgeInsets.all(15),
-                        ),
-                        backgroundColor: const WidgetStatePropertyAll(
-                          omniDarkBlue,
-                        ),
-                        shape: WidgetStateProperty.all(
-                          const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(30),
-                            ), // Sharp corners
-                          ),
-                        ),
-                      ),
-                      child: Text(
-                        "Create",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
                     ),
                   ],
                 ),

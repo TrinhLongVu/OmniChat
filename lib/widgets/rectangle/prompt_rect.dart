@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:omni_chat/apis/prompt/delete.dart';
 import 'package:omni_chat/apis/prompt/fav_add.dart';
 import 'package:omni_chat/apis/prompt/fav_remove.dart';
 import 'package:omni_chat/models/prompt.dart';
@@ -9,7 +8,6 @@ import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/widgets/popup/prompt_info.dart';
 import 'package:omni_chat/widgets/rectangle/shimmer_ln.dart';
 import 'package:provider/provider.dart';
-import 'package:quickalert/quickalert.dart';
 
 class PromptRect extends StatelessWidget {
   final Prompt prompt;
@@ -129,32 +127,7 @@ class PromptRect extends StatelessWidget {
                       if (shimmerizing) return;
                       showDialog(
                         context: context,
-                        builder:
-                            (context) => PromptInfoPopUp(
-                              prompt: prompt,
-                              onDelete: () {
-                                QuickAlert.show(
-                                  context: context,
-                                  type: QuickAlertType.confirm,
-                                  text:
-                                      'Are you sure you want to delete this prompt?',
-                                  onCancelBtnTap: () {
-                                    context.pop();
-                                  },
-                                  onConfirmBtnTap: () async {
-                                    context.pop();
-                                    await deletePrompt(
-                                      id: prompt.id,
-                                      onSuccess: () {
-                                        context.read<PromptProvider>().loadList(
-                                          isPublic: false,
-                                        );
-                                      },
-                                    );
-                                  },
-                                );
-                              },
-                            ),
+                        builder: (context) => PromptInfoPopUp(prompt: prompt),
                       );
                     },
                     icon: Icon(Icons.info_outline_rounded, size: 15),

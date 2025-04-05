@@ -37,15 +37,14 @@ Future<void> createPrompt({
     );
     switch (response.statusCode) {
       case 201:
+        GoRouter.of(rootNavigatorKey.currentContext!).pop();
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
+          barrierDismissible: false,
           type: QuickAlertType.success,
           text: "Prompt created successfully!",
           onConfirmBtnTap:
-              () => {
-                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
-                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
-              },
+              () => GoRouter.of(rootNavigatorKey.currentContext!).pop(),
         );
         onSuccess();
         break;

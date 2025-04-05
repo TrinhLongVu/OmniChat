@@ -13,6 +13,7 @@ Future<void> updatePrompt({
   required String content,
   String description = "",
   required VoidCallback onSuccess,
+  required VoidCallback onError,
 }) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
@@ -48,6 +49,7 @@ Future<void> updatePrompt({
         onSuccess();
         break;
       default:
+        onError();
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.error,
