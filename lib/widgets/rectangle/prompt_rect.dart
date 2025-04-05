@@ -127,7 +127,9 @@ class PromptRect extends StatelessWidget {
                       if (shimmerizing) return;
                       showDialog(
                         context: context,
-                        builder: (context) => PromptInfoPopUp(prompt: prompt),
+                        builder:
+                            (context) =>
+                                PromptInfoPopUp(prompt: prompt, used: false),
                       );
                     },
                     icon: Icon(Icons.info_outline_rounded, size: 15),
@@ -140,7 +142,7 @@ class PromptRect extends StatelessWidget {
                   : IconButton(
                     onPressed: () {
                       if (shimmerizing) return;
-                      context.read<ChatProvider>().setPrompt(prompt.content);
+                      context.read<ChatProvider>().setPrompt(prompt);
                       context.pop();
                     },
                     icon: Icon(Icons.arrow_circle_right_outlined, size: 15),

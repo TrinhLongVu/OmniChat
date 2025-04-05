@@ -6,11 +6,14 @@ import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/api/chat/get_convo_history_res.dart';
 import 'package:omni_chat/models/api/chat/get_convos_res.dart';
 import 'package:omni_chat/models/convo_item.dart';
+import 'package:omni_chat/models/prompt.dart';
 import 'package:omni_chat/providers/chat.dart';
 import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/screens/main/bots/conversation/convo_box.dart';
 import 'package:omni_chat/screens/main/bots/conversation/prompt_modal.dart';
 import 'package:omni_chat/screens/main/bots/conversation/thread_drawer.dart';
+import 'package:omni_chat/widgets/info_field.dart';
+import 'package:omni_chat/widgets/popup/prompt_info.dart';
 import 'package:omni_chat/widgets/prompt_slash.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -190,6 +193,125 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   ),
                 ),
               ),
+              context.watch<ChatProvider>().msgPrompt.id != ""
+                  ? Positioned(
+                    left: 5,
+                    right: 5,
+                    bottom: 120,
+                    child: Container(
+                      padding: EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 15,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Row(
+                                  spacing: 10,
+                                  children: [
+                                    Icon(Icons.note),
+                                    Expanded(
+                                      child: Text(
+                                        context
+                                            .watch<ChatProvider>()
+                                            .msgPrompt
+                                            .title,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        softWrap: true,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Row(
+                                spacing: 10,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder:
+                                            (context) => PromptInfoPopUp(
+                                              used: true,
+                                              prompt:
+                                                  context
+                                                      .watch<ChatProvider>()
+                                                      .msgPrompt,
+                                            ),
+                                      );
+                                    },
+                                    iconSize: 20.0,
+                                    padding: EdgeInsets.all(5),
+                                    constraints: const BoxConstraints(),
+                                    style: const ButtonStyle(
+                                      tapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                    icon: Icon(Icons.info_outline),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      context.read<ChatProvider>().setPrompt(
+                                        Prompt.placeholder(),
+                                      );
+                                    },
+                                    iconSize: 20.0,
+                                    padding: EdgeInsets.all(5),
+                                    constraints: const BoxConstraints(),
+                                    style: const ButtonStyle(
+                                      tapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                    icon: const Icon(Icons.close),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          context.watch<ChatProvider>().msgPrompt.description !=
+                                  ""
+                              ? Text(
+                                context
+                                    .watch<ChatProvider>()
+                                    .msgPrompt
+                                    .description
+                                    .toString(),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                softWrap: true,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black45,
+                                ),
+                                textAlign: TextAlign.start,
+                              )
+                              : SizedBox.shrink(),
+                          InfoField(
+                            infoText:
+                                context
+                                    .watch<ChatProvider>()
+                                    .msgPrompt
+                                    .content
+                                    .toString(),
+                            lineNum: 3,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                  : SizedBox.shrink(),
               Positioned(
                 left: 15,
                 right: 15,
@@ -220,7 +342,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                           filled: true,
                           fillColor: Colors.white,
                           hintText:
-                              "Ask me anthing or type '/' to use a prompt",
+                              context.watch<ChatProvider>().msgPrompt.id != ""
+                                  ? "Asking with promt activated"
+                                  : "Ask me anthing or type '/' to use a prompt",
                           hintStyle: TextStyle(color: Colors.grey),
                           border: OutlineInputBorder(
                             borderSide: BorderSide.none,
@@ -284,11 +408,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                 IconButton(
                                   onPressed: () {
                                     // sendConvoMessage();
-                                    var promptToSend =
-                                        context.read<ChatProvider>().msgPrompt;
+                                    // var promptToSend =
+                                    //     context.read<ChatProvider>().msgPrompt;
                                     // var messageToSend =
                                     //     context.read<ChatProvider>().message;
-                                    debugPrint(promptToSend);
+                                    // debugPrint(promptToSend);
                                   },
                                   iconSize: 20,
                                   padding: EdgeInsets.all(5),
@@ -334,7 +458,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                       title: prompt.title,
                                       onUse: () {
                                         context.read<ChatProvider>().setPrompt(
-                                          prompt.content,
+                                          prompt,
                                         );
                                         msgCtrlr.clear();
                                         setState(() {

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:omni_chat/models/prompt.dart';
 
 class ChatProvider extends ChangeNotifier {
-  String msgPrompt = "";
+  Prompt msgPrompt = Prompt.placeholder();
   String message = "";
 
-  void setPrompt(String prompt) {
+  void setPrompt(Prompt prompt) {
     msgPrompt = prompt;
     notifyListeners();
   }

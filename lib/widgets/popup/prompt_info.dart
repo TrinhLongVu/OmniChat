@@ -20,9 +20,10 @@ import 'package:validatorless/validatorless.dart';
 final editPromptFormKey = GlobalKey<FormState>();
 
 class PromptInfoPopUp extends StatefulWidget {
-  const PromptInfoPopUp({super.key, required this.prompt});
+  const PromptInfoPopUp({super.key, required this.prompt, required this.used});
 
   final Prompt prompt;
+  final bool used;
 
   @override
   State<PromptInfoPopUp> createState() => _PromptInfoPopUpState();
@@ -330,27 +331,29 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
                                       context.pop();
                                     }
                                   },
-                                  child: Text("Cancel"),
+                                  child: Text(widget.used ? "Close" : "Cancel"),
                                 )
                                 : SizedBox.shrink(),
-                            IcoTxtBtn(
-                              icon: editing ? Icons.save : null,
-                              title: editing ? "Save" : "Use this prompt",
-                              onTap: () {
-                                if (editing) {
-                                  updateThisPrompt();
-                                } else {
-                                  context.read<ChatProvider>().setPrompt(
-                                    promptContent,
-                                  );
-                                  context.pop();
-                                  context.pop();
-                                }
-                              },
-                              fontSz: 14,
-                              borderRadius: editing ? 5 : 30,
-                              isExpanded: false,
-                            ),
+                            !widget.used
+                                ? IcoTxtBtn(
+                                  icon: editing ? Icons.save : null,
+                                  title: editing ? "Save" : "Use this prompt",
+                                  onTap: () {
+                                    if (editing) {
+                                      updateThisPrompt();
+                                    } else {
+                                      context.read<ChatProvider>().setPrompt(
+                                        widget.prompt,
+                                      );
+                                      context.pop();
+                                      context.pop();
+                                    }
+                                  },
+                                  fontSz: 14,
+                                  borderRadius: editing ? 5 : 30,
+                                  isExpanded: false,
+                                )
+                                : SizedBox.shrink(),
                           ],
                         ),
                       ],
