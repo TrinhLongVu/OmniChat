@@ -4,17 +4,20 @@ class SearchBox extends StatelessWidget {
   final TextEditingController ctrlr;
   final String placeholder;
   final Function onSearch;
+  final FocusNode? focusNod;
 
   const SearchBox({
     super.key,
     required this.ctrlr,
     required this.placeholder,
     required this.onSearch,
+    this.focusNod,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      focusNode: focusNod,
       controller: ctrlr,
       decoration: InputDecoration(
         filled: true,

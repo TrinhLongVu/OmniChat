@@ -20,7 +20,7 @@ Future<GetConvoHistoryResponse?> getConversationHistory({
       "/api/v1/ai-chat/conversations/$convoId/messages?assistantId=gpt-4o-mini&assistantModel=dify",
       options: Options(headers: headers),
     );
-    debugPrint(response.data.toString());
+    // debugPrint(response.data.toString());
     switch (response.statusCode) {
       case 200:
         GetConvoHistoryResponse meObj = GetConvoHistoryResponse.fromJson(

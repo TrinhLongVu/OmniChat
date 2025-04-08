@@ -97,7 +97,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
         currentConvoId = convosResponse.cursor;
         convoList = convosResponse.items;
       });
-      loadCurrentConvo();
+      // loadCurrentConvo();
     }
   }
 

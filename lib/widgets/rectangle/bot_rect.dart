@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:icons_plus/icons_plus.dart';
+import 'package:omni_chat/constants/color.dart';
 
 class BotRect extends StatelessWidget {
   const BotRect({
@@ -8,17 +10,19 @@ class BotRect extends StatelessWidget {
     required this.title,
     this.subtitle,
     required this.navigateToInfo,
+    this.isOfficial = false,
   });
 
   final String id;
   final String title;
   final String? subtitle;
   final Function navigateToInfo;
+  final bool isOfficial;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => {context.go("/bots/conversation")},
+      onTap: () => {if (isOfficial) context.go("/bots/conversation")},
       child: Container(
         padding: const EdgeInsets.only(right: 8),
         decoration: BoxDecoration(
@@ -34,7 +38,11 @@ class BotRect extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(10.0),
-              child: Icon(Icons.smart_toy, size: 60),
+              child: Icon(
+                isOfficial ? OctIcons.copilot : Icons.smart_toy,
+                size: 60,
+                color: isOfficial ? omniDarkCyan : Colors.black,
+              ),
             ),
             Expanded(
               child: Column(
