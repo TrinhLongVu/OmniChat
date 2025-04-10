@@ -18,7 +18,6 @@ Future<GetConvosResponse?> getConversations(String assistantId) async {
       "/api/v1/ai-chat/conversations?assistantId=$assistantId&assistantModel=dify",
       options: Options(headers: headers),
     );
-    debugPrint(response.data.toString());
     switch (response.statusCode) {
       case 200:
         GetConvosResponse res = GetConvosResponse.fromJson(response.data);

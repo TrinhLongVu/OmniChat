@@ -12,7 +12,6 @@ import 'package:omni_chat/widgets/info_field.dart';
 import 'package:omni_chat/widgets/popup/prompt_info.dart';
 import 'package:omni_chat/widgets/prompt_slash.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -61,10 +60,16 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 
   Future<void> sendConvoMessage() async {
+    var promptToSend = context.read<ChatProvider>().msgPrompt;
+    var msgContentToSend = msgCtrlr.text;
+    if (promptToSend.content.isNotEmpty) {
+      msgContentToSend = "${promptToSend.content}\n${msgCtrlr.text}";
+    }
     if (msgCtrlr.text.isNotEmpty && tokenNum > 0) {
-      var uuid = Uuid();
-      String newConvoId = uuid.v4();
-      await sendMessage(newConvoId, msgCtrlr.text);
+      await sendMessage(
+        context.read<ConvoProvider>().currentConvoId,
+        msgContentToSend,
+      );
       setState(() {
         tokenNum--;
         msgCtrlr.clear();
@@ -84,7 +89,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
             Padding(
               padding: const EdgeInsets.only(left: 8),
               child: Text(
-                "StarryAI Bot",
+                "Omni Chat Bot",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
             ),
@@ -359,7 +364,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                     Icons.token_rounded,
                                     color: omniDarkBlue,
                                   ),
-                                  Text("$tokenNum"),
+                                  Text(
+                                    "${context.watch<ConvoProvider>().currentToken}",
+                                  ),
                                 ],
                               ),
                             ),
@@ -383,11 +390,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                 IconButton(
                                   onPressed: () {
                                     sendConvoMessage();
-                                    // var promptToSend =
-                                    //     context.read<ChatProvider>().msgPrompt;
-                                    // var messageToSend =
-                                    //     context.read<ChatProvider>().message;
-                                    // debugPrint(promptToSend);
                                   },
                                   iconSize: 20,
                                   padding: EdgeInsets.all(5),

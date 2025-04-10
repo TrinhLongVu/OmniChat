@@ -40,7 +40,6 @@ dependencies:
   provider: ^6.1.4
   lottie: ^3.3.1
   shimmer: ^3.0.0
-  uuid: ^4.5.1
   validatorless: ^1.2.4
   shared_preferences: ^2.5.2
   dio: ^5.8.0+1
