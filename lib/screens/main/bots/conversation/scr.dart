@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:omni_chat/apis/chat/get_convo_history.dart';
-import 'package:omni_chat/apis/chat/get_convos.dart';
-import 'package:omni_chat/apis/chat/send_msg.dart';
+import 'package:omni_chat/apis/chat/controllers/send_msg.dart';
 import 'package:omni_chat/constants/color.dart';
-import 'package:omni_chat/models/api/chat/get_convo_history_res.dart';
-import 'package:omni_chat/models/api/chat/get_convos_res.dart';
-import 'package:omni_chat/models/convo_item.dart';
 import 'package:omni_chat/models/prompt.dart';
 import 'package:omni_chat/providers/chat.dart';
+import 'package:omni_chat/providers/convo.dart';
 import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/screens/main/bots/conversation/convo_box.dart';
 import 'package:omni_chat/screens/main/bots/conversation/prompt_modal.dart';
@@ -32,9 +28,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
   final FocusNode focusNod = FocusNode();
   final ScrollController scrollCtrlr = ScrollController();
 
-  List<ConvoItem> convoList = [];
-  List<ConvoHistoryItem> convoHistoryList = [];
-  String currentConvoId = "";
   int tokenNum = 50;
   bool showPromptTooltip = false;
 
@@ -42,7 +35,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   void initState() {
     super.initState();
     context.read<PromptProvider>().loadSlashList();
-    loadConvoList();
+    context.read<ConvoProvider>().initConvoList();
     focusNod.addListener(scrollToBottom);
   }
 
@@ -76,28 +69,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
         tokenNum--;
         msgCtrlr.clear();
       });
-    }
-  }
-
-  Future<void> loadCurrentConvo() async {
-    GetConvoHistoryResponse? convoHistoryResponse =
-        await getConversationHistory(convoId: currentConvoId);
-
-    if (mounted && convoHistoryResponse != null) {
-      setState(() {
-        convoHistoryList = convoHistoryResponse.items;
-      });
-    }
-  }
-
-  Future<void> loadConvoList() async {
-    GetConvosResponse? convosResponse = await getConversations("gpt-4o-mini");
-    if (mounted && convosResponse != null) {
-      setState(() {
-        // currentConvoId = convosResponse.cursor;
-        convoList = convosResponse.items;
-      });
-      // loadCurrentConvo();
     }
   }
 
@@ -135,6 +106,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
           ),
           IconButton(
             onPressed: () {
+              context.read<ConvoProvider>().loadConvoList();
               _scaffoldKey.currentState!.openEndDrawer();
             },
             icon: Icon(Icons.message),
@@ -142,8 +114,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
         ],
       ),
       endDrawer: ThreadDrawer(
-        conversations: convoList,
-        currentThread: currentConvoId,
+        conversations: context.watch<ConvoProvider>().convoList,
       ),
       body: Container(
         width: double.infinity,
@@ -165,28 +136,32 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   child: Column(
                     children: [
                       SizedBox(height: viewport.height * .03),
-                      convoList.isEmpty
+                      context.watch<ConvoProvider>().convoList.isEmpty
                           ? SizedBox()
                           : Column(
                             spacing: 10,
-                            children: List.generate(
-                              5,
-                              (index) => Column(
-                                spacing: 10,
-                                children: [
-                                  ConvoBox(
-                                    message:
-                                        "Hello, I'm your new friend, StarryAI Bot. How can I help you today?",
-                                    isBot: true,
-                                  ),
-                                  ConvoBox(
-                                    message:
-                                        "Can you help me write a blog post about my new book?",
-                                    isBot: false,
-                                  ),
-                                ],
-                              ),
-                            ),
+                            children:
+                                context
+                                    .watch<ConvoProvider>()
+                                    .currentConvoHistoryList
+                                    .map((convo) {
+                                      return Column(
+                                        spacing: 10,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ConvoBox(
+                                            message: convo.query,
+                                            isBot: false,
+                                          ),
+                                          ConvoBox(
+                                            message: convo.answer,
+                                            isBot: true,
+                                          ),
+                                        ],
+                                      );
+                                    })
+                                    .toList(),
                           ),
                       SizedBox(height: viewport.height * .25),
                     ],
@@ -407,7 +382,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                 ),
                                 IconButton(
                                   onPressed: () {
-                                    // sendConvoMessage();
+                                    sendConvoMessage();
                                     // var promptToSend =
                                     //     context.read<ChatProvider>().msgPrompt;
                                     // var messageToSend =

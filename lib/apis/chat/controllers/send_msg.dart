@@ -14,8 +14,6 @@ Future<void> sendMessage(String convoId, String msgContent) async {
     'Content-Type': 'application/json',
   };
 
-  debugPrint(accessToken);
-
   Dio dio = DioClient(baseUrl: BaseUrls.jarvis).dio;
 
   try {
@@ -25,26 +23,12 @@ Future<void> sendMessage(String convoId, String msgContent) async {
         "content": msgContent,
         "files": [],
         "metadata": {
-          "conversation": {
-            "id": convoId,
-            "messages": [
-              {
-                "role": "assistant",
-                "content": "Hi again! What's on your mind?",
-                "files": [],
-                "assistant": {
-                  "id": "gpt-4o-mini",
-                  "model": "dify",
-                  "name": "GPT-4o Mini",
-                },
-              },
-            ],
-          },
+          "conversation": {"messages": []},
         },
         "assistant": {
-          "id": "gpt-4o-mini",
+          "id": "gemini-1.5-flash-latest",
           "model": "dify",
-          "name": "GPT-4o Mini",
+          "name": "Gemini 1.5 Flash",
         },
       },
       options: Options(headers: headers),

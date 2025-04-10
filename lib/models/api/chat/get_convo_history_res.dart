@@ -1,21 +1,12 @@
 class GetConvoHistoryResponse {
-  GetConvoHistoryResponse({
-    required this.cursor,
-    required this.hasMore,
-    required this.limit,
-    required this.items,
-  });
+  GetConvoHistoryResponse({required this.hasMore, required this.items});
 
-  final String cursor;
   final bool hasMore;
-  final int limit;
   final List<ConvoHistoryItem> items;
 
   factory GetConvoHistoryResponse.fromJson(Map<String, dynamic> json) {
     return GetConvoHistoryResponse(
-      cursor: json['cursor'],
       hasMore: json['has_more'],
-      limit: json['limit'],
       items: List<ConvoHistoryItem>.from(
         json['items'].map((x) => ConvoHistoryItem.fromJson(x)),
       ),
@@ -28,7 +19,7 @@ class ConvoHistoryItem {
 
   final String answer;
   final String query;
-  final int? createdAt;
+  final String? createdAt;
 
   factory ConvoHistoryItem.fromJson(Map<String, dynamic> json) {
     return ConvoHistoryItem(

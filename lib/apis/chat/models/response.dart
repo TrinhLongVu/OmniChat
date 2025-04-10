@@ -4,13 +4,13 @@ class GetConvosResponse {
   GetConvosResponse({
     this.cursor,
     required this.hasMore,
-    required this.limit,
+    this.limit,
     required this.items,
   });
 
   final String? cursor;
   final bool hasMore;
-  final int limit;
+  final int? limit;
   final List<ConvoItem> items;
 
   factory GetConvosResponse.fromJson(Map<String, dynamic> json) {

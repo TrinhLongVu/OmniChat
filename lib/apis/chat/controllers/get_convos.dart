@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:omni_chat/apis/chat/models/response.dart';
 import 'package:omni_chat/constants/base_urls.dart';
-import 'package:omni_chat/models/api/chat/get_convos_res.dart';
 import 'package:omni_chat/services/dio_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,8 +21,8 @@ Future<GetConvosResponse?> getConversations(String assistantId) async {
     debugPrint(response.data.toString());
     switch (response.statusCode) {
       case 200:
-        GetConvosResponse meObj = GetConvosResponse.fromJson(response.data);
-        return meObj;
+        GetConvosResponse res = GetConvosResponse.fromJson(response.data);
+        return res;
       default:
         return null;
     }

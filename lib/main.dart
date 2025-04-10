@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:omni_chat/providers/chat.dart';
+import 'package:omni_chat/providers/convo.dart';
 import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +17,7 @@ class OmniChatApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => PromptProvider()),
         ChangeNotifierProvider(create: (context) => ChatProvider()),
+        ChangeNotifierProvider(create: (context) => ConvoProvider()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

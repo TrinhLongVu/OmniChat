@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/convo_item.dart';
+import 'package:omni_chat/providers/convo.dart';
 import 'package:omni_chat/widgets/rectangle/chat_thread_rect.dart';
+import 'package:provider/provider.dart';
 
 class ThreadDrawer extends StatelessWidget {
-  const ThreadDrawer({
-    super.key,
-    required this.conversations,
-    this.currentThread,
-  });
+  const ThreadDrawer({super.key, required this.conversations});
 
   final List<ConvoItem> conversations;
-  final String? currentThread;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +50,18 @@ class ThreadDrawer extends StatelessWidget {
                               conversations.map((convo) {
                                 return ChatThreadRect(
                                   title: convo.title,
-                                  isCurrent: convo.id == currentThread,
+                                  isCurrent:
+                                      convo.id ==
+                                      context
+                                          .watch<ConvoProvider>()
+                                          .currentConvoId,
+                                  onChangeThread:
+                                      () => {
+                                        context
+                                            .read<ConvoProvider>()
+                                            .setCurrentConvoId(convo.id),
+                                        Scaffold.of(context).closeEndDrawer(),
+                                      },
                                 );
                               }).toList(),
                         ),
