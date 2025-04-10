@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:omni_chat/apis/prompt/fav_add.dart';
-import 'package:omni_chat/apis/prompt/fav_remove.dart';
+import 'package:omni_chat/apis/prompt/controllers/fav_add.dart';
+import 'package:omni_chat/apis/prompt/controllers/fav_remove.dart';
 import 'package:omni_chat/models/prompt.dart';
 import 'package:omni_chat/providers/chat.dart';
 import 'package:omni_chat/providers/prompt.dart';
@@ -93,19 +93,19 @@ class PromptRect extends StatelessWidget {
                     onPressed: () async {
                       if (shimmerizing) return;
                       if (prompt.isFavorite) {
-                        await removeFromFavorite(
+                        await removeFromFavorite((
                           id: prompt.id,
                           onSuccess: () {
                             context.read<PromptProvider>().load2List();
                           },
-                        );
+                        ));
                       } else {
-                        await addToFavorite(
+                        await addToFavorite((
                           id: prompt.id,
                           onSuccess: () {
                             context.read<PromptProvider>().load2List();
                           },
-                        );
+                        ));
                       }
                     },
                     icon: Icon(

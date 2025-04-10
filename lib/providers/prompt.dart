@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:omni_chat/apis/prompt/get_list.dart';
-import 'package:omni_chat/models/api/prompt/prompt_list_res.dart';
+import 'package:omni_chat/apis/prompt/controllers/get_list.dart';
+import 'package:omni_chat/apis/prompt/models/response.dart';
 import 'package:omni_chat/models/prompt.dart';
 
 class PromptProvider extends ChangeNotifier {
@@ -18,12 +18,12 @@ class PromptProvider extends ChangeNotifier {
   });
 
   Future<void> loadList({required bool isPublic}) async {
-    PromptListResponse? promptListResponse = await getPromptList(
+    PromptListResponse? promptListResponse = await getPromptList((
       isFavorite: favFiltered,
       isPublic: isPublic,
       query: query,
       category: filteredCategory,
-    );
+    ));
     if (promptListResponse != null) {
       if (isPublic) {
         publicPrompts = promptListResponse.items;

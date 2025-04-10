@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
-import 'package:omni_chat/apis/prompt/delete.dart';
-import 'package:omni_chat/apis/prompt/fav_add.dart';
-import 'package:omni_chat/apis/prompt/fav_remove.dart';
-import 'package:omni_chat/apis/prompt/update.dart';
+import 'package:omni_chat/apis/prompt/controllers/delete.dart';
+import 'package:omni_chat/apis/prompt/controllers/fav_add.dart';
+import 'package:omni_chat/apis/prompt/controllers/fav_remove.dart';
+import 'package:omni_chat/apis/prompt/controllers/update.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/prompt.dart';
 import 'package:omni_chat/providers/chat.dart';
@@ -56,7 +56,7 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
 
   void toggleFavorite() async {
     if (isFavorite) {
-      await removeFromFavorite(
+      await removeFromFavorite((
         id: widget.prompt.id,
         onSuccess: () {
           context.read<PromptProvider>().load2List();
@@ -64,9 +64,9 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
             isFavorite = !isFavorite;
           });
         },
-      );
+      ));
     } else {
-      await addToFavorite(
+      await addToFavorite((
         id: widget.prompt.id,
         onSuccess: () {
           context.read<PromptProvider>().load2List();
@@ -74,7 +74,7 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
             isFavorite = !isFavorite;
           });
         },
-      );
+      ));
     }
   }
 
@@ -91,7 +91,7 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
           FocusManager.instance.primaryFocus?.unfocus();
           loading.value = true;
           context.pop();
-          await updatePrompt(
+          await updatePrompt((
             id: widget.prompt.id,
             title: nameCtrlr.text,
             content: contentCtrlr.text,
@@ -109,7 +109,7 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
             onError: () {
               loading.value = false;
             },
-          );
+          ));
         },
       );
     }
@@ -126,7 +126,7 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
       onConfirmBtnTap: () async {
         context.pop();
         loading.value = true;
-        await deletePrompt(
+        await deletePrompt((
           id: widget.prompt.id,
           onSuccess: () {
             context.read<PromptProvider>().loadList(isPublic: false);
@@ -134,7 +134,7 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
           onError: () {
             loading.value = false;
           },
-        );
+        ));
       },
     );
   }

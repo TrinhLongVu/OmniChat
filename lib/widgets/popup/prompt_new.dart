@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
-import 'package:omni_chat/apis/prompt/create.dart';
+import 'package:omni_chat/apis/prompt/controllers/create.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/router/index.dart';
@@ -24,7 +24,7 @@ class PromptCreationPopUp extends StatelessWidget {
   Future<void> createNewPrompt() async {
     if (newPromptFormKey.currentState!.validate()) {
       loading.value = true;
-      await createPrompt(
+      await createPrompt((
         title: promptNameCtrlr.text,
         content: promptContentCtrlr.text,
         description: promptDescriptionCtrlr.text,
@@ -33,7 +33,7 @@ class PromptCreationPopUp extends StatelessWidget {
             isPublic: false,
           );
         },
-      );
+      ));
       loading.value = false;
     }
   }

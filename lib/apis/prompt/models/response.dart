@@ -1,5 +1,6 @@
 import 'package:omni_chat/models/prompt.dart';
 
+// Get Prompt List
 class PromptListResponse {
   PromptListResponse({
     required this.items,
