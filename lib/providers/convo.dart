@@ -25,7 +25,6 @@ class ConvoProvider extends ChangeNotifier {
     GetConvosResponse? convosResponse = await getConversations("gpt-4o-mini");
     if (convosResponse != null) {
       convoList = convosResponse.items;
-      currentConvoId = convoList[0].id;
       loadCurrentConvo();
     }
     notifyListeners();
@@ -57,6 +56,14 @@ class ConvoProvider extends ChangeNotifier {
 
   void setCurrentToken(int token) {
     currentToken = token;
+    notifyListeners();
+  }
+
+  void exitConvo() {
+    currentToken = 0;
+    currentConvoId = "";
+    currentConvoHistoryList = [];
+    convoList = [];
     notifyListeners();
   }
 }

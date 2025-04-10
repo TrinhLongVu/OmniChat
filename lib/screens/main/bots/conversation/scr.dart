@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:omni_chat/apis/chat/controllers/send_msg.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/prompt.dart';
@@ -27,7 +29,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
   final FocusNode focusNod = FocusNode();
   final ScrollController scrollCtrlr = ScrollController();
 
-  int tokenNum = 50;
   bool showPromptTooltip = false;
 
   @override
@@ -65,15 +66,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
     if (promptToSend.content.isNotEmpty) {
       msgContentToSend = "${promptToSend.content}\n${msgCtrlr.text}";
     }
-    if (msgCtrlr.text.isNotEmpty && tokenNum > 0) {
+    if (msgCtrlr.text.isNotEmpty) {
       await sendMessage(
         context.read<ConvoProvider>().currentConvoId,
         msgContentToSend,
       );
-      setState(() {
-        tokenNum--;
-        msgCtrlr.clear();
-      });
     }
   }
 
@@ -125,7 +122,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [omniLightCyan, omniMilk],
+            colors: [omniDarkCyan, omniLightCyan],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -141,8 +138,70 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   child: Column(
                     children: [
                       SizedBox(height: viewport.height * .03),
-                      context.watch<ConvoProvider>().convoList.isEmpty
-                          ? SizedBox()
+                      context.watch<ConvoProvider>().currentConvoId == ""
+                          ? Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(15),
+                            decoration: BoxDecoration(),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              spacing: 15,
+                              children: [
+                                Icon(
+                                  OctIcons.copilot,
+                                  size: 150,
+                                  color: omniMilk,
+                                ),
+                                Text(
+                                  "Start a new conversation by typing your message below",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: omniMilk,
+                                  ),
+                                ),
+                                Text(
+                                  "Or",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: omniMilk,
+                                  ),
+                                ),
+                                RichText(
+                                  textAlign: TextAlign.center,
+                                  text: TextSpan(
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: omniMilk,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily:
+                                          GoogleFonts.poppins().fontFamily,
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text:
+                                            'Select a thread from the drawer  ',
+                                      ),
+                                      WidgetSpan(
+                                        alignment: PlaceholderAlignment.middle,
+                                        child: Icon(
+                                          Icons.message,
+                                          size: 25,
+                                          color: omniMilk,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: '  to continue your conversation',
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
                           : Column(
                             spacing: 10,
                             children:

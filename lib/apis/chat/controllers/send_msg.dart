@@ -47,6 +47,14 @@ Future<void> sendMessage(String convoId, String msgContent) async {
         rootNavigatorKey.currentContext!.read<ConvoProvider>().setCurrentToken(
           res.token,
         );
+        if (convoId.isEmpty) {
+          rootNavigatorKey.currentContext!
+              .read<ConvoProvider>()
+              .setCurrentConvoId(res.id);
+          rootNavigatorKey.currentContext!
+              .read<ConvoProvider>()
+              .loadConvoList();
+        }
         break;
       default:
         return;

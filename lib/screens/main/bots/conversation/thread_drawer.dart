@@ -28,6 +28,7 @@ class ThreadDrawer extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () {
+                    context.read<ConvoProvider>().setCurrentConvoId("");
                     Scaffold.of(context).closeEndDrawer();
                   },
                   icon: Icon(Icons.add_comment, color: omniDarkCyan, size: 25),
