@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:omni_chat/apis/auth/controllers/get_token.dart';
+import 'package:omni_chat/apis/auth/models/response.dart';
 import 'package:omni_chat/apis/chat/controllers/get_convo_history.dart';
 import 'package:omni_chat/apis/chat/controllers/get_convos.dart';
 import 'package:omni_chat/apis/chat/models/response.dart';
@@ -16,6 +18,10 @@ class ConvoProvider extends ChangeNotifier {
   });
 
   Future<void> initConvoList() async {
+    GetTokenResponse? tokenRes = await getToken();
+    if (tokenRes != null) {
+      currentToken = tokenRes.currentToken;
+    }
     GetConvosResponse? convosResponse = await getConversations("gpt-4o-mini");
     if (convosResponse != null) {
       convoList = convosResponse.items;

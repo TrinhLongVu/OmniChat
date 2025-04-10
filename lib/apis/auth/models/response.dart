@@ -45,4 +45,29 @@ class GetMeResponse {
     );
   }
 }
+
+// Get Current Token
+class GetTokenResponse {
+  GetTokenResponse({
+    required this.currentToken,
+    required this.totalToken,
+    required this.unlimited,
+    required this.date,
+  });
+
+  final int currentToken;
+  final int totalToken;
+  final bool unlimited;
+  final String? date;
+
+  factory GetTokenResponse.fromJson(Map<String, dynamic> json) {
+    return GetTokenResponse(
+      currentToken: json['availableTokens'],
+      totalToken: json['totalTokens'],
+      unlimited: json['unlimited'],
+      date: json['date'],
+    );
+  }
+}
+
 // Refresh
