@@ -7,10 +7,11 @@ class ConvoBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size viewport = MediaQuery.of(context).size;
     return Align(
       alignment: isBot ? Alignment.centerLeft : Alignment.centerRight,
       child: Container(
-        width: 280,
+        width: viewport.width * 0.75,
         margin: EdgeInsets.symmetric(horizontal: 10),
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(

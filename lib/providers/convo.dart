@@ -39,6 +39,8 @@ class ConvoProvider extends ChangeNotifier {
   }
 
   Future<void> loadCurrentConvo() async {
+    currentConvoHistoryList = [];
+    notifyListeners();
     GetConvoHistoryResponse? convoHistoryResponse =
         await getConversationHistory(convoId: currentConvoId);
 

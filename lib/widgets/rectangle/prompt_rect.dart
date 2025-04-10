@@ -6,7 +6,7 @@ import 'package:omni_chat/models/prompt.dart';
 import 'package:omni_chat/providers/chat.dart';
 import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/widgets/popup/prompt_info.dart';
-import 'package:omni_chat/widgets/rectangle/shimmer_ln.dart';
+import 'package:omni_chat/widgets/shimmer/shimmer_ln.dart';
 import 'package:provider/provider.dart';
 
 class PromptRect extends StatelessWidget {

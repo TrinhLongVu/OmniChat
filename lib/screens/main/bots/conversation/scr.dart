@@ -13,6 +13,7 @@ import 'package:omni_chat/screens/main/bots/conversation/thread_drawer.dart';
 import 'package:omni_chat/widgets/info_field.dart';
 import 'package:omni_chat/widgets/popup/prompt_info.dart';
 import 'package:omni_chat/widgets/prompt_slash.dart';
+import 'package:omni_chat/widgets/shimmer/shimmer_convo_box.dart';
 import 'package:provider/provider.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -200,6 +201,19 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                   ),
                                 ),
                               ],
+                            ),
+                          )
+                          : context
+                              .watch<ConvoProvider>()
+                              .currentConvoHistoryList
+                              .isEmpty
+                          ? Column(
+                            spacing: 10,
+                            children: List.generate(
+                              4,
+                              (index) => ShimmerConvoBox(
+                                isBot: index % 2 == 0 ? false : true,
+                              ),
                             ),
                           )
                           : Column(
