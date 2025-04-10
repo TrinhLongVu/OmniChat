@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:lottie/lottie.dart';
-import 'package:omni_chat/apis/auth/login.dart';
+import 'package:omni_chat/apis/auth/controllers/login.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
 import 'package:omni_chat/widgets/input_field.dart';
@@ -22,13 +22,13 @@ class LoginScreen extends StatelessWidget {
     if (loginFormKey.currentState!.validate()) {
       loading.value = true;
       FocusManager.instance.primaryFocus?.unfocus();
-      login(
+      login((
         email: emailCtrlr.text,
         password: passwordCtrlr.text,
         onError: () {
           loading.value = false;
         },
-      );
+      ));
     }
   }
 

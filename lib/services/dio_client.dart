@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
-import 'package:omni_chat/apis/auth/refresh.dart';
+import 'package:omni_chat/apis/auth/controllers/refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DioClient {

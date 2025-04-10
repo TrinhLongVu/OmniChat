@@ -94,7 +94,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
     GetConvosResponse? convosResponse = await getConversations("gpt-4o-mini");
     if (mounted && convosResponse != null) {
       setState(() {
-        currentConvoId = convosResponse.cursor;
+        // currentConvoId = convosResponse.cursor;
         convoList = convosResponse.items;
       });
       // loadCurrentConvo();

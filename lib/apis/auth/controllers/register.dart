@@ -1,18 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:omni_chat/apis/auth/models/request.dart';
+import 'package:omni_chat/apis/auth/models/response.dart';
 import 'package:omni_chat/constants/base_urls.dart';
-import 'package:omni_chat/models/api/auth/login_res.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:omni_chat/services/dio_client.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> register({
-  required String email,
-  required String password,
-  required VoidCallback onError,
-}) async {
+Future<void> register(AuthRequest req) async {
   const headers = {
     'X-Stack-Access-Type': 'client',
     'X-Stack-Project-Id': 'a914f06b-5e46-4966-8693-80e4b9f4f409',
@@ -27,8 +24,8 @@ Future<void> register({
     Response response = await dio.post(
       "/api/v1/auth/password/sign-up",
       data: {
-        "email": email,
-        "password": password,
+        "email": req.email,
+        "password": req.password,
         "verification_callback_url":
             "https://auth.dev.jarvis.cx/handler/email-verification?after_auth_return_to=%2Fauth%2Fsignin%3Fclient_id%3Djarvis_chat%26redirect%3Dhttps%253A%252F%252Fchat.dev.jarvis.cx%252Fauth%252Foauth%252Fsuccess",
       },
@@ -43,7 +40,8 @@ Future<void> register({
           text: "Registration successful!",
           confirmBtnText: "Login now",
           onConfirmBtnTap: () async {
-            LoginResponse registerData = LoginResponse.fromJson(response.data);
+            AuthenticationResponse registerData =
+                AuthenticationResponse.fromJson(response.data);
             SharedPreferences prefs = await SharedPreferences.getInstance();
             await prefs.setString('access_token', registerData.accessToken);
             await prefs.setString('refresh_token', registerData.refreshToken);
@@ -52,7 +50,7 @@ Future<void> register({
         );
         break;
       case 400:
-        onError();
+        req.onError();
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.error,
@@ -60,7 +58,7 @@ Future<void> register({
         );
         break;
       case 409:
-        onError();
+        req.onError();
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.error,
@@ -68,7 +66,7 @@ Future<void> register({
         );
         break;
       default:
-        onError();
+        req.onError();
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.error,

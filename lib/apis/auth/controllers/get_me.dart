@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:omni_chat/apis/auth/models/response.dart';
 import 'package:omni_chat/constants/base_urls.dart';
-import 'package:omni_chat/models/api/auth/auth_entity.dart';
 import 'package:omni_chat/services/dio_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<AuthEntity?> getMe() async {
+Future<GetMeResponse?> getMe() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
 
@@ -21,7 +21,7 @@ Future<AuthEntity?> getMe() async {
     switch (response.statusCode) {
       case 200:
         final data = response.data as Map<String, dynamic>;
-        AuthEntity meObj = AuthEntity.fromJson(data);
+        GetMeResponse meObj = GetMeResponse.fromJson(data);
         return meObj;
       default:
         return null;

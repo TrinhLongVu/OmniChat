@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
-import 'package:omni_chat/apis/auth/get_me.dart';
-import 'package:omni_chat/apis/auth/logout.dart';
-import 'package:omni_chat/models/api/auth/auth_entity.dart';
+import 'package:omni_chat/apis/auth/controllers/get_me.dart';
+import 'package:omni_chat/apis/auth/controllers/logout.dart';
+import 'package:omni_chat/apis/auth/models/response.dart';
 import 'package:omni_chat/widgets/button/profile_btn.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -25,7 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> loadUserData() async {
-    AuthEntity? fetchedUser = await getMe();
+    GetMeResponse? fetchedUser = await getMe();
     if (mounted && fetchedUser != null) {
       setState(() {
         username = fetchedUser.username;

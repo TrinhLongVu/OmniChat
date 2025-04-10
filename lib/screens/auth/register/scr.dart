@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
-import 'package:omni_chat/apis/auth/register.dart';
+import 'package:omni_chat/apis/auth/controllers/register.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
 import 'package:omni_chat/widgets/input_field.dart';
@@ -23,13 +23,13 @@ class RegisterScreen extends StatelessWidget {
       loading.value = true;
       FocusManager.instance.primaryFocus?.unfocus();
       if (registerFormKey.currentState!.validate()) {
-        register(
+        register((
           email: emailCtrlr.text,
           password: passwordCtrlr.text,
           onError: () {
             loading.value = false;
           },
-        );
+        ));
       }
     }
   }
