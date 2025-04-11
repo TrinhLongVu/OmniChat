@@ -6,7 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/auth/controllers/login.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
-import 'package:omni_chat/widgets/input_field.dart';
+import 'package:omni_chat/widgets/text/input_field.dart';
 import 'package:validatorless/validatorless.dart';
 
 final loginFormKey = GlobalKey<FormState>();

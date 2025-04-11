@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
-import 'package:omni_chat/widgets/input_field.dart';
+import 'package:omni_chat/widgets/text/input_field.dart';
 
 class ResetPasswordScreen extends StatelessWidget {
   final TextEditingController oldPwCtrlr = TextEditingController();

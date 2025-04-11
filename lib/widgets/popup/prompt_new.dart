@@ -6,8 +6,8 @@ import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:omni_chat/widgets/button/ico_txt_btn.dart';
-import 'package:omni_chat/widgets/input_field.dart';
-import 'package:omni_chat/widgets/input_header.dart';
+import 'package:omni_chat/widgets/text/input_field.dart';
+import 'package:omni_chat/widgets/text/input_header.dart';
 import 'package:provider/provider.dart';
 import 'package:validatorless/validatorless.dart';
 
