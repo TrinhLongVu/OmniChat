@@ -1,5 +1,7 @@
-import 'package:omni_chat/models/convo_item.dart';
+import 'package:omni_chat/models/conversation/convo_history_item.dart';
+import 'package:omni_chat/models/conversation/convo_item.dart';
 
+// Get Chat Threads
 class GetConvosResponse {
   GetConvosResponse({
     this.cursor,
@@ -25,6 +27,7 @@ class GetConvosResponse {
   }
 }
 
+// Send Message
 class SendMessageResponse {
   SendMessageResponse({
     required this.id,
@@ -45,6 +48,7 @@ class SendMessageResponse {
   }
 }
 
+// Get Conversation History
 class GetConvoHistoryResponse {
   GetConvoHistoryResponse({required this.hasMore, required this.items});
 
@@ -57,22 +61,6 @@ class GetConvoHistoryResponse {
       items: List<ConvoHistoryItem>.from(
         json['items'].map((x) => ConvoHistoryItem.fromJson(x)),
       ),
-    );
-  }
-}
-
-class ConvoHistoryItem {
-  ConvoHistoryItem({required this.answer, required this.query, this.createdAt});
-
-  final String answer;
-  final String query;
-  final String? createdAt;
-
-  factory ConvoHistoryItem.fromJson(Map<String, dynamic> json) {
-    return ConvoHistoryItem(
-      answer: json['answer'],
-      query: json['query'],
-      createdAt: json['created_at'],
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:icons_plus/icons_plus.dart';
+import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
 
 class LandingScreen extends StatelessWidget {
@@ -22,7 +24,7 @@ class LandingScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.smart_toy_outlined, size: 180),
+                Icon(OctIcons.copilot, color: omniDarkBlue, size: 180),
                 Text(
                   "Hello\nIt's Omni Bot Here\nYour Own Chat Assistant",
                   style: TextStyle(

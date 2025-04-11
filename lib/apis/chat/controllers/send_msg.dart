@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:omni_chat/apis/chat/models/request.dart';
 import 'package:omni_chat/apis/chat/models/response.dart';
 import 'package:omni_chat/constants/base_urls.dart';
 import 'package:omni_chat/providers/convo.dart';
@@ -8,7 +9,7 @@ import 'package:omni_chat/services/dio_client.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> sendMessage(String convoId, String msgContent) async {
+Future<void> sendMessage(SendMessageRequest req) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
 
@@ -22,15 +23,15 @@ Future<void> sendMessage(String convoId, String msgContent) async {
 
   Map<String, Object> chatConvo = {"messages": []};
 
-  if (convoId.isNotEmpty) {
-    chatConvo = {'id': convoId, 'messages': []};
+  if (req.convoId.isNotEmpty) {
+    chatConvo = {'id': req.convoId, 'messages': []};
   }
 
   try {
     Response response = await dio.post(
       "/api/v1/ai-chat/messages",
       data: {
-        "content": msgContent,
+        "content": req.msgContent,
         "files": [],
         "metadata": {"conversation": chatConvo},
         "assistant": {
@@ -47,7 +48,7 @@ Future<void> sendMessage(String convoId, String msgContent) async {
         rootNavigatorKey.currentContext!.read<ConvoProvider>().setCurrentToken(
           res.token,
         );
-        if (convoId.isEmpty) {
+        if (req.convoId.isEmpty) {
           rootNavigatorKey.currentContext!
               .read<ConvoProvider>()
               .setCurrentConvoId(res.id);
@@ -55,11 +56,16 @@ Future<void> sendMessage(String convoId, String msgContent) async {
               .read<ConvoProvider>()
               .loadConvoList();
         }
+        rootNavigatorKey.currentContext!
+            .read<ConvoProvider>()
+            .loadCurrentConvo();
         break;
       default:
+        req.onError();
         return;
     }
   } catch (e) {
+    req.onError();
     debugPrint("Error: $e");
   }
 }

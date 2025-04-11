@@ -4,7 +4,8 @@ import 'package:omni_chat/apis/auth/models/response.dart';
 import 'package:omni_chat/apis/chat/controllers/get_convo_history.dart';
 import 'package:omni_chat/apis/chat/controllers/get_convos.dart';
 import 'package:omni_chat/apis/chat/models/response.dart';
-import 'package:omni_chat/models/convo_item.dart';
+import 'package:omni_chat/models/conversation/convo_history_item.dart';
+import 'package:omni_chat/models/conversation/convo_item.dart';
 import 'package:omni_chat/models/prompt.dart';
 
 class ConvoProvider extends ChangeNotifier {
@@ -24,7 +25,9 @@ class ConvoProvider extends ChangeNotifier {
     if (tokenRes != null) {
       currentToken = tokenRes.currentToken;
     }
-    GetConvosResponse? convosResponse = await getConversations("gpt-4o-mini");
+    GetConvosResponse? convosResponse = await getConversations((
+      assistantId: "gpt-4o-mini",
+    ));
     if (convosResponse != null) {
       convoList = convosResponse.items;
     }
@@ -32,18 +35,23 @@ class ConvoProvider extends ChangeNotifier {
   }
 
   Future<void> loadConvoList() async {
-    GetConvosResponse? convosResponse = await getConversations("gpt-4o-mini");
+    GetConvosResponse? convosResponse = await getConversations((
+      assistantId: "gpt-4o-mini",
+    ));
     if (convosResponse != null) {
       convoList = convosResponse.items;
     }
     notifyListeners();
   }
 
+  Future<void> reloadConvo() async {
+    clearCurrentConvo();
+    loadCurrentConvo();
+  }
+
   Future<void> loadCurrentConvo() async {
-    currentConvoHistoryList = [];
-    notifyListeners();
     GetConvoHistoryResponse? convoHistoryResponse =
-        await getConversationHistory(convoId: currentConvoId);
+        await getConversationHistory((convoId: currentConvoId));
 
     if (convoHistoryResponse != null) {
       currentConvoHistoryList = convoHistoryResponse.items;
@@ -51,9 +59,19 @@ class ConvoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clearCurrentConvo() {
+    currentConvoHistoryList = [];
+    notifyListeners();
+  }
+
   void setCurrentConvoId(String id) {
     currentConvoId = id;
-    loadCurrentConvo();
+    notifyListeners();
+  }
+
+  void changeCurrentConvo(String id) {
+    setCurrentConvoId(id);
+    reloadConvo();
     notifyListeners();
   }
 
@@ -64,6 +82,19 @@ class ConvoProvider extends ChangeNotifier {
 
   void setPrompt(Prompt prompt) {
     currentPrompt = prompt;
+    notifyListeners();
+  }
+
+  void clearPrompt() {
+    currentPrompt = Prompt.placeholder();
+    notifyListeners();
+  }
+
+  void askChat(String message) {
+    if (currentConvoId.isEmpty) {
+      currentConvoHistoryList = [];
+    }
+    currentConvoHistoryList.add(ConvoHistoryItem(query: message));
     notifyListeners();
   }
 

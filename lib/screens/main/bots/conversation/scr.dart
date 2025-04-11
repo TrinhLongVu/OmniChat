@@ -14,6 +14,7 @@ import 'package:omni_chat/widgets/popup/prompt_info.dart';
 import 'package:omni_chat/widgets/prompt_slash.dart';
 import 'package:omni_chat/widgets/shimmer/shimmer_convo_box.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -61,17 +62,40 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 
   Future<void> sendConvoMessage() async {
+    if (context.read<ConvoProvider>().currentToken <= 0) return;
+    bool newThread = false;
     var promptToSend = context.read<ConvoProvider>().currentPrompt;
     var msgContentToSend = msgCtrlr.text;
     if (promptToSend.content.isNotEmpty) {
       msgContentToSend = "${promptToSend.content}\n${msgCtrlr.text}";
     }
-    if (msgCtrlr.text.isNotEmpty) {
-      await sendMessage(
-        context.read<ConvoProvider>().currentConvoId,
-        msgContentToSend,
+    if (context.read<ConvoProvider>().currentConvoId.isEmpty) {
+      newThread = true;
+      context.read<ConvoProvider>().setCurrentConvoId(
+        "${DateTime.now().millisecondsSinceEpoch}",
       );
     }
+    msgCtrlr.clear();
+    FocusManager.instance.primaryFocus?.unfocus();
+    context.read<ConvoProvider>().askChat(msgContentToSend);
+    context.read<ConvoProvider>().clearPrompt();
+    await sendMessage((
+      convoId: context.read<ConvoProvider>().currentConvoId,
+      msgContent: msgContentToSend,
+      onError: () {
+        if (newThread) {
+          context.read<ConvoProvider>().setCurrentConvoId("");
+          context.read<ConvoProvider>().clearCurrentConvo();
+        } else {
+          context.read<ConvoProvider>().currentConvoHistoryList.removeLast();
+        }
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.error,
+          text: "Failed to send message! Please try again later.",
+        );
+      },
+    ));
   }
 
   @override
@@ -464,7 +488,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                 ),
                                 IconButton(
                                   onPressed: () {
-                                    sendConvoMessage();
+                                    if (msgCtrlr.text.isNotEmpty) {
+                                      sendConvoMessage();
+                                    }
                                   },
                                   iconSize: 20,
                                   padding: EdgeInsets.all(5),
@@ -473,9 +499,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                     tapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap,
                                   ),
-                                  icon: const Icon(
+                                  icon: Icon(
                                     Icons.send_rounded,
-                                    color: omniDarkBlue,
+                                    color:
+                                        msgCtrlr.text.isEmpty
+                                            ? Colors.grey
+                                            : omniDarkBlue,
                                   ),
                                 ),
                               ],
