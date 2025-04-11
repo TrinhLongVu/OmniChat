@@ -91,9 +91,6 @@ class ConvoProvider extends ChangeNotifier {
   }
 
   void askChat(String message) {
-    if (currentConvoId.isEmpty) {
-      currentConvoHistoryList = [];
-    }
     currentConvoHistoryList.add(ConvoHistoryItem(query: message));
     notifyListeners();
   }

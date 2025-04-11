@@ -49,6 +49,23 @@ class _ConversationScreenState extends State<ConversationScreen> {
     super.dispose();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final convoList = context.watch<ConvoProvider>().currentConvoHistoryList;
+    if (convoList.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (scrollCtrlr.hasClients) {
+          scrollCtrlr.animateTo(
+            scrollCtrlr.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 1000),
+            curve: Curves.easeIn,
+          );
+        }
+      });
+    }
+  }
+
   void scrollToBottom() {
     if (focusNod.hasFocus) {
       Future.delayed(Duration(milliseconds: 300), () {
@@ -74,13 +91,14 @@ class _ConversationScreenState extends State<ConversationScreen> {
       context.read<ConvoProvider>().setCurrentConvoId(
         "${DateTime.now().millisecondsSinceEpoch}",
       );
+      context.read<ConvoProvider>().clearCurrentConvo();
     }
     msgCtrlr.clear();
     FocusManager.instance.primaryFocus?.unfocus();
     context.read<ConvoProvider>().askChat(msgContentToSend);
     context.read<ConvoProvider>().clearPrompt();
     await sendMessage((
-      convoId: context.read<ConvoProvider>().currentConvoId,
+      convoId: newThread ? "" : context.read<ConvoProvider>().currentConvoId,
       msgContent: msgContentToSend,
       onError: () {
         if (newThread) {
