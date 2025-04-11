@@ -5,10 +5,12 @@ import 'package:omni_chat/apis/chat/controllers/get_convo_history.dart';
 import 'package:omni_chat/apis/chat/controllers/get_convos.dart';
 import 'package:omni_chat/apis/chat/models/response.dart';
 import 'package:omni_chat/models/convo_item.dart';
+import 'package:omni_chat/models/prompt.dart';
 
 class ConvoProvider extends ChangeNotifier {
   String currentConvoId = "";
   int currentToken = 0;
+  Prompt currentPrompt = Prompt.placeholder();
   List<ConvoHistoryItem> currentConvoHistoryList;
   List<ConvoItem> convoList;
 
@@ -25,7 +27,6 @@ class ConvoProvider extends ChangeNotifier {
     GetConvosResponse? convosResponse = await getConversations("gpt-4o-mini");
     if (convosResponse != null) {
       convoList = convosResponse.items;
-      loadCurrentConvo();
     }
     notifyListeners();
   }
@@ -61,10 +62,16 @@ class ConvoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setPrompt(Prompt prompt) {
+    currentPrompt = prompt;
+    notifyListeners();
+  }
+
   void exitConvo() {
     currentToken = 0;
     currentConvoId = "";
     currentConvoHistoryList = [];
+    currentPrompt = Prompt.placeholder();
     convoList = [];
     notifyListeners();
   }

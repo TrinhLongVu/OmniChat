@@ -6,7 +6,7 @@ import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/api/bot/bot_list_res.dart';
 import 'package:omni_chat/models/bot.dart';
 import 'package:omni_chat/widgets/rectangle/bot_rect.dart';
-import 'package:omni_chat/widgets/search_box.dart';
+import 'package:omni_chat/widgets/rectangle/search_box.dart';
 import 'package:shimmer/shimmer.dart';
 
 class BotListScreen extends StatefulWidget {

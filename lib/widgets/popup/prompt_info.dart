@@ -7,7 +7,7 @@ import 'package:omni_chat/apis/prompt/controllers/fav_remove.dart';
 import 'package:omni_chat/apis/prompt/controllers/update.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/prompt.dart';
-import 'package:omni_chat/providers/chat.dart';
+import 'package:omni_chat/providers/convo.dart';
 import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/widgets/button/ico_txt_btn.dart';
 import 'package:omni_chat/widgets/info_field.dart';
@@ -342,7 +342,7 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
                                     if (editing) {
                                       updateThisPrompt();
                                     } else {
-                                      context.read<ChatProvider>().setPrompt(
+                                      context.read<ConvoProvider>().setPrompt(
                                         widget.prompt,
                                       );
                                       context.pop();

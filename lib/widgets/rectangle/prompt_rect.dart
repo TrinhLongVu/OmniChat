@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:omni_chat/apis/prompt/controllers/fav_add.dart';
 import 'package:omni_chat/apis/prompt/controllers/fav_remove.dart';
 import 'package:omni_chat/models/prompt.dart';
-import 'package:omni_chat/providers/chat.dart';
+import 'package:omni_chat/providers/convo.dart';
 import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/widgets/popup/prompt_info.dart';
 import 'package:omni_chat/widgets/shimmer/shimmer_ln.dart';
@@ -142,7 +142,7 @@ class PromptRect extends StatelessWidget {
                   : IconButton(
                     onPressed: () {
                       if (shimmerizing) return;
-                      context.read<ChatProvider>().setPrompt(prompt);
+                      context.read<ConvoProvider>().setPrompt(prompt);
                       context.pop();
                     },
                     icon: Icon(Icons.arrow_circle_right_outlined, size: 15),

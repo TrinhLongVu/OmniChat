@@ -4,10 +4,9 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:omni_chat/apis/chat/controllers/send_msg.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/prompt.dart';
-import 'package:omni_chat/providers/chat.dart';
 import 'package:omni_chat/providers/convo.dart';
 import 'package:omni_chat/providers/prompt.dart';
-import 'package:omni_chat/screens/main/bots/conversation/convo_box.dart';
+import 'package:omni_chat/widgets/rectangle/convo_box.dart';
 import 'package:omni_chat/screens/main/bots/conversation/prompt_modal.dart';
 import 'package:omni_chat/screens/main/bots/conversation/thread_drawer.dart';
 import 'package:omni_chat/widgets/info_field.dart';
@@ -62,7 +61,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 
   Future<void> sendConvoMessage() async {
-    var promptToSend = context.read<ChatProvider>().msgPrompt;
+    var promptToSend = context.read<ConvoProvider>().currentPrompt;
     var msgContentToSend = msgCtrlr.text;
     if (promptToSend.content.isNotEmpty) {
       msgContentToSend = "${promptToSend.content}\n${msgCtrlr.text}";
@@ -246,7 +245,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   ),
                 ),
               ),
-              context.watch<ChatProvider>().msgPrompt.id != ""
+              context.watch<ConvoProvider>().currentPrompt.id != ""
                   ? Positioned(
                     left: 5,
                     right: 5,
@@ -272,8 +271,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                     Expanded(
                                       child: Text(
                                         context
-                                            .watch<ChatProvider>()
-                                            .msgPrompt
+                                            .watch<ConvoProvider>()
+                                            .currentPrompt
                                             .title,
                                         style: TextStyle(
                                           fontSize: 16,
@@ -299,8 +298,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                               used: true,
                                               prompt:
                                                   context
-                                                      .watch<ChatProvider>()
-                                                      .msgPrompt,
+                                                      .watch<ConvoProvider>()
+                                                      .currentPrompt,
                                             ),
                                       );
                                     },
@@ -315,7 +314,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                   ),
                                   IconButton(
                                     onPressed: () {
-                                      context.read<ChatProvider>().setPrompt(
+                                      context.read<ConvoProvider>().setPrompt(
                                         Prompt.placeholder(),
                                       );
                                     },
@@ -332,12 +331,15 @@ class _ConversationScreenState extends State<ConversationScreen> {
                               ),
                             ],
                           ),
-                          context.watch<ChatProvider>().msgPrompt.description !=
+                          context
+                                      .watch<ConvoProvider>()
+                                      .currentPrompt
+                                      .description !=
                                   ""
                               ? Text(
                                 context
-                                    .watch<ChatProvider>()
-                                    .msgPrompt
+                                    .watch<ConvoProvider>()
+                                    .currentPrompt
                                     .description
                                     .toString(),
                                 maxLines: 2,
@@ -354,8 +356,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
                           InfoField(
                             infoText:
                                 context
-                                    .watch<ChatProvider>()
-                                    .msgPrompt
+                                    .watch<ConvoProvider>()
+                                    .currentPrompt
                                     .content
                                     .toString(),
                             lineNum: 3,
@@ -395,7 +397,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
                           filled: true,
                           fillColor: Colors.white,
                           hintText:
-                              context.watch<ChatProvider>().msgPrompt.id != ""
+                              context.watch<ConvoProvider>().currentPrompt.id !=
+                                      ""
                                   ? "Asking with promt activated"
                                   : "Ask me anthing or type '/' to use a prompt",
                           hintStyle: TextStyle(color: Colors.grey),
@@ -406,7 +409,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
                         ),
                         onChanged:
                             (value) => {
-                              context.read<ChatProvider>().message = value,
                               if (msgCtrlr.text == "/")
                                 {
                                   setState(() {
@@ -507,7 +509,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                     (prompt) => PromptSlash(
                                       title: prompt.title,
                                       onUse: () {
-                                        context.read<ChatProvider>().setPrompt(
+                                        context.read<ConvoProvider>().setPrompt(
                                           prompt,
                                         );
                                         msgCtrlr.clear();
