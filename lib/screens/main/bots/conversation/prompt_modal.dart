@@ -24,7 +24,9 @@ class _PromptModalState extends State<PromptModal> {
   @override
   void initState() {
     super.initState();
-    context.read<PromptProvider>().initPromptLibrary();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<PromptProvider>().initPromptLibrary();
+    });
   }
 
   @override
@@ -165,7 +167,7 @@ class _PromptModalState extends State<PromptModal> {
                             builder: (context, provider, child) {
                               return Column(
                                 children:
-                                    provider.publicPrompts.isEmpty
+                                    provider.publicLoading
                                         ? List.generate(
                                           10,
                                           (index) => PromptRect(
@@ -231,7 +233,7 @@ class _PromptModalState extends State<PromptModal> {
                           builder: (context, provider, child) {
                             return Column(
                               children:
-                                  provider.privatePrompts.isEmpty
+                                  provider.privateLoading
                                       ? List.generate(
                                         10,
                                         (index) => PromptRect(
@@ -241,8 +243,10 @@ class _PromptModalState extends State<PromptModal> {
                                       ).toList()
                                       : provider.privatePrompts
                                           .map(
-                                            (prompt) =>
-                                                PromptRect(prompt: prompt),
+                                            (prompt) => PromptRect(
+                                              prompt: prompt,
+                                              shimmerizing: false,
+                                            ),
                                           )
                                           .toList(),
                             );

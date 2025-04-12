@@ -37,8 +37,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<PromptProvider>().loadSlashList();
-    context.read<ConvoProvider>().initConvoList();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<PromptProvider>().loadSlashList();
+      context.read<ConvoProvider>().initConvoList();
+    });
     focusNod.addListener(scrollToBottom);
   }
 

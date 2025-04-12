@@ -10,6 +10,8 @@ class PromptProvider extends ChangeNotifier {
   String query = "";
   String filteredCategory = "";
   bool favFiltered = false;
+  bool publicLoading = false;
+  bool privateLoading = false;
 
   PromptProvider({
     this.publicPrompts = const [],
@@ -18,6 +20,12 @@ class PromptProvider extends ChangeNotifier {
   });
 
   Future<void> loadList({required bool isPublic}) async {
+    if (isPublic) {
+      publicLoading = true;
+    } else {
+      privateLoading = true;
+    }
+    notifyListeners();
     PromptListResponse? promptListResponse = await getPromptList((
       isFavorite: favFiltered,
       isPublic: isPublic,
@@ -27,8 +35,10 @@ class PromptProvider extends ChangeNotifier {
     if (promptListResponse != null) {
       if (isPublic) {
         publicPrompts = promptListResponse.items;
+        publicLoading = false;
       } else {
         privatePrompts = promptListResponse.items;
+        privateLoading = false;
       }
     }
     notifyListeners();
