@@ -6,6 +6,10 @@ OmniChat AI is a multi-AI chat platform that allows users to interact with multi
 
 [Widget Tree Link](https://app.diagrams.net/#G1TnZxgtoSMKTJS3sofco8_FRvoOKmEnUC#%7B%22pageId%22%3A%22C5RBs43oDa-KdzZeNtuy%22%7D)
 
+## Demos
+
+[Demo Milestone 2](https://youtu.be/RTsYZB3JYII)
+
 ## Features
 
 - **Multi-AI Conversations:** Engage with multiple AI models in a single chat.
