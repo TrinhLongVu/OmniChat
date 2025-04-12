@@ -4,7 +4,6 @@ import 'package:omni_chat/apis/prompt/controllers/fav_add.dart';
 import 'package:omni_chat/apis/prompt/controllers/fav_remove.dart';
 import 'package:omni_chat/models/prompt.dart';
 import 'package:omni_chat/providers/convo.dart';
-import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/widgets/popup/prompt_info.dart';
 import 'package:omni_chat/widgets/shimmer/shimmer_ln.dart';
 import 'package:provider/provider.dart';
@@ -95,17 +94,10 @@ class PromptRect extends StatelessWidget {
                       if (prompt.isFavorite) {
                         await removeFromFavorite((
                           id: prompt.id,
-                          onSuccess: () {
-                            context.read<PromptProvider>().load2List();
-                          },
+                          onSuccess: () {},
                         ));
                       } else {
-                        await addToFavorite((
-                          id: prompt.id,
-                          onSuccess: () {
-                            context.read<PromptProvider>().load2List();
-                          },
-                        ));
+                        await addToFavorite((id: prompt.id, onSuccess: () {}));
                       }
                     },
                     icon: Icon(

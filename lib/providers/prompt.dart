@@ -44,6 +44,23 @@ class PromptProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> reloadList({required bool isPublic}) async {
+    PromptListResponse? promptListResponse = await getPromptList((
+      isFavorite: favFiltered,
+      isPublic: isPublic,
+      query: query,
+      category: filteredCategory,
+    ));
+    if (promptListResponse != null) {
+      if (isPublic) {
+        publicPrompts = promptListResponse.items;
+      } else {
+        privatePrompts = promptListResponse.items;
+      }
+    }
+    notifyListeners();
+  }
+
   bool isListEmpty({required bool isPublic}) {
     if (isPublic) {
       return publicPrompts.isEmpty;
@@ -57,9 +74,14 @@ class PromptProvider extends ChangeNotifier {
     loadList(isPublic: false);
   }
 
+  void reload2List() {
+    reloadList(isPublic: true);
+    reloadList(isPublic: false);
+  }
+
   void toggleFavoriteFilter() {
     favFiltered = !favFiltered;
-    load2List();
+    reload2List();
   }
 
   void setFilteredCategory(String category) {

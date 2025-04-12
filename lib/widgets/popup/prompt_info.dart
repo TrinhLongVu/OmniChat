@@ -59,7 +59,6 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
       await removeFromFavorite((
         id: widget.prompt.id,
         onSuccess: () {
-          context.read<PromptProvider>().load2List();
           setState(() {
             isFavorite = !isFavorite;
           });
@@ -69,7 +68,6 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
       await addToFavorite((
         id: widget.prompt.id,
         onSuccess: () {
-          context.read<PromptProvider>().load2List();
           setState(() {
             isFavorite = !isFavorite;
           });
@@ -104,7 +102,7 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
                 editing = !editing;
               });
               loading.value = false;
-              context.read<PromptProvider>().loadList(isPublic: false);
+              context.read<PromptProvider>().reloadList(isPublic: false);
             },
             onError: () {
               loading.value = false;
@@ -129,7 +127,7 @@ class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
         await deletePrompt((
           id: widget.prompt.id,
           onSuccess: () {
-            context.read<PromptProvider>().loadList(isPublic: false);
+            context.read<PromptProvider>().reloadList(isPublic: false);
           },
           onError: () {
             loading.value = false;

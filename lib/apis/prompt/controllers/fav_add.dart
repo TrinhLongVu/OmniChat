@@ -2,8 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:omni_chat/apis/prompt/models/request.dart';
 import 'package:omni_chat/constants/base_urls.dart';
+import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:omni_chat/services/dio_client.dart';
+import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,6 +24,7 @@ Future<void> addToFavorite(ToggleFavoriteRequest req) async {
     );
     switch (response.statusCode) {
       case 201:
+        rootNavigatorKey.currentContext!.read<PromptProvider>().reload2List();
         req.onSuccess();
         break;
       default:
