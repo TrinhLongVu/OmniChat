@@ -4,6 +4,8 @@ import 'package:omni_chat/apis/auth/models/response.dart';
 import 'package:omni_chat/apis/chat/controllers/get_convo_history.dart';
 import 'package:omni_chat/apis/chat/controllers/get_convos.dart';
 import 'package:omni_chat/apis/chat/models/response.dart';
+import 'package:omni_chat/constants/assistant.dart';
+import 'package:omni_chat/models/assistant.dart';
 import 'package:omni_chat/models/conversation/convo_history_item.dart';
 import 'package:omni_chat/models/conversation/convo_item.dart';
 import 'package:omni_chat/models/prompt.dart';
@@ -14,6 +16,7 @@ class ConvoProvider extends ChangeNotifier {
   Prompt currentPrompt = Prompt.placeholder();
   List<ConvoHistoryItem> currentConvoHistoryList;
   List<ConvoItem> convoList;
+  AssistantDto currentAssistant = Assistant.geminiFlash.toDto();
 
   ConvoProvider({
     this.currentConvoHistoryList = const [],
@@ -92,6 +95,11 @@ class ConvoProvider extends ChangeNotifier {
 
   void askChat(String message) {
     currentConvoHistoryList.add(ConvoHistoryItem(query: message));
+    notifyListeners();
+  }
+
+  void changeAssistant(AssistantDto assistant) {
+    currentAssistant = assistant;
     notifyListeners();
   }
 

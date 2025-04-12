@@ -6,6 +6,8 @@ import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/prompt.dart';
 import 'package:omni_chat/providers/convo.dart';
 import 'package:omni_chat/providers/prompt.dart';
+import 'package:omni_chat/widgets/button/fit_ico_btn.dart';
+import 'package:omni_chat/widgets/popup/agent_change.dart';
 import 'package:omni_chat/widgets/rectangle/convo_box.dart';
 import 'package:omni_chat/screens/main/bots/conversation/prompt_modal.dart';
 import 'package:omni_chat/screens/main/bots/conversation/thread_drawer.dart';
@@ -138,22 +140,19 @@ class _ConversationScreenState extends State<ConversationScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              showModalBottomSheet(
+              showDialog(
                 context: context,
-                isScrollControlled: true,
-                builder: (context) {
-                  return PromptModal();
-                },
+                builder: (context) => AgentChangePopUp(),
               );
             },
-            icon: Icon(Icons.note),
+            icon: Icon(Icons.smart_toy, color: omniDarkBlue),
           ),
           IconButton(
             onPressed: () {
               context.read<ConvoProvider>().loadConvoList();
               _scaffoldKey.currentState!.openEndDrawer();
             },
-            icon: Icon(Icons.message),
+            icon: Icon(BoxIcons.bxs_message_alt_detail, color: omniDarkBlue),
           ),
         ],
       ),
@@ -229,10 +228,16 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                       ),
                                       WidgetSpan(
                                         alignment: PlaceholderAlignment.middle,
-                                        child: Icon(
-                                          Icons.message,
-                                          size: 25,
-                                          color: omniMilk,
+                                        child: FitIconBtn(
+                                          onTap: () {
+                                            context
+                                                .read<ConvoProvider>()
+                                                .loadConvoList();
+                                            _scaffoldKey.currentState!
+                                                .openEndDrawer();
+                                          },
+                                          icon: BoxIcons.bxs_message_alt_detail,
+                                          iconColor: omniMilk,
                                         ),
                                       ),
                                       TextSpan(
@@ -309,7 +314,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                 child: Row(
                                   spacing: 10,
                                   children: [
-                                    Icon(Icons.note),
+                                    Icon(FontAwesome.note_sticky_solid),
                                     Expanded(
                                       child: Text(
                                         context
@@ -331,8 +336,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
                               Row(
                                 spacing: 10,
                                 children: [
-                                  IconButton(
-                                    onPressed: () {
+                                  FitIconBtn(
+                                    onTap: () {
                                       showDialog(
                                         context: context,
                                         builder:
@@ -345,29 +350,15 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                             ),
                                       );
                                     },
-                                    iconSize: 20.0,
-                                    padding: EdgeInsets.all(5),
-                                    constraints: const BoxConstraints(),
-                                    style: const ButtonStyle(
-                                      tapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                    ),
-                                    icon: Icon(Icons.info_outline),
+                                    icon: Icons.info_outline,
                                   ),
-                                  IconButton(
-                                    onPressed: () {
+                                  FitIconBtn(
+                                    onTap: () {
                                       context.read<ConvoProvider>().setPrompt(
                                         Prompt.placeholder(),
                                       );
                                     },
-                                    iconSize: 20.0,
-                                    padding: EdgeInsets.all(5),
-                                    constraints: const BoxConstraints(),
-                                    style: const ButtonStyle(
-                                      tapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                    ),
-                                    icon: const Icon(Icons.close),
+                                    icon: Icons.close,
                                   ),
                                 ],
                               ),
@@ -475,14 +466,31 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Row(
-                                spacing: 4,
+                                spacing: 10,
                                 children: [
-                                  Icon(
-                                    Icons.token_rounded,
-                                    color: omniDarkBlue,
+                                  Row(
+                                    spacing: 4,
+                                    children: [
+                                      Icon(
+                                        Icons.token_rounded,
+                                        color: omniDarkBlue,
+                                      ),
+                                      Text(
+                                        "${context.watch<ConvoProvider>().currentToken}",
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    "${context.watch<ConvoProvider>().currentToken}",
+                                  FitIconBtn(
+                                    icon: FontAwesome.envelope_open_text_solid,
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        builder: (context) {
+                                          return PromptModal();
+                                        },
+                                      );
+                                    },
                                   ),
                                 ],
                               ),
@@ -490,40 +498,18 @@ class _ConversationScreenState extends State<ConversationScreen> {
                             Row(
                               spacing: 10,
                               children: [
-                                IconButton(
-                                  onPressed: () {},
-                                  iconSize: 20,
-                                  padding: EdgeInsets.all(5),
-                                  constraints: const BoxConstraints(),
-                                  style: const ButtonStyle(
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                  ),
-                                  icon: const Icon(
-                                    Icons.photo,
-                                    color: omniDarkBlue,
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
+                                FitIconBtn(onTap: () {}, icon: Icons.photo),
+                                FitIconBtn(
+                                  icon: Icons.send,
+                                  iconColor:
+                                      msgCtrlr.text.isEmpty
+                                          ? Colors.grey
+                                          : omniDarkBlue,
+                                  onTap: () {
                                     if (msgCtrlr.text.isNotEmpty) {
                                       sendConvoMessage();
                                     }
                                   },
-                                  iconSize: 20,
-                                  padding: EdgeInsets.all(5),
-                                  constraints: const BoxConstraints(),
-                                  style: const ButtonStyle(
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                  ),
-                                  icon: Icon(
-                                    Icons.send_rounded,
-                                    color:
-                                        msgCtrlr.text.isEmpty
-                                            ? Colors.grey
-                                            : omniDarkBlue,
-                                  ),
                                 ),
                               ],
                             ),
