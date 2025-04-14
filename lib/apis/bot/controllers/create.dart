@@ -47,6 +47,7 @@ Future<void> createBot(CreateBotRequest req) async {
         );
         break;
       default:
+        req.onError();
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.error,

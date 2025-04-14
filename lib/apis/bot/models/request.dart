@@ -1,10 +1,17 @@
+import 'dart:ui';
+
 // Create Bot
 typedef CreateBotRequest =
-    ({String name, String instruction, String description});
+    ({
+      String name,
+      String instruction,
+      String description,
+      VoidCallback onError,
+    });
 // Get Bot Info
 typedef GetBotInfoRequest = ({String id});
 // Update Bot
 typedef UpdateBotRequest =
     ({String id, String name, String instruction, String description});
 // Delete Bot
-typedef DeleteBotRequest = ({String id});
+typedef DeleteBotRequest = ({String id, VoidCallback onError});

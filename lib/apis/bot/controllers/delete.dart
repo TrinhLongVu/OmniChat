@@ -41,6 +41,7 @@ Future<void> deleteBot(DeleteBotRequest req) async {
         );
         break;
       default:
+        req.onError();
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.error,

@@ -21,7 +21,7 @@ class BotRect extends StatelessWidget {
   Widget build(BuildContext context) {
     final Size viewport = MediaQuery.of(context).size;
     return GestureDetector(
-      onTap: () => {},
+      onTap: () => {if (shimmerizing) {}},
       child: Container(
         padding: const EdgeInsets.only(right: 8),
         decoration: BoxDecoration(
@@ -84,11 +84,14 @@ class BotRect extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: IconButton(
-                onPressed: () => navigateToInfo(),
-                icon: Icon(Icons.more_vert, size: 20),
-              ),
+              padding: EdgeInsets.all(shimmerizing ? 20 : 10),
+              child:
+                  shimmerizing
+                      ? Icon(Icons.more_vert, size: 20)
+                      : IconButton(
+                        onPressed: () => navigateToInfo(),
+                        icon: Icon(Icons.more_vert, size: 20),
+                      ),
             ),
           ],
         ),

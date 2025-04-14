@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/bot/controllers/create.dart';
 import 'package:omni_chat/apis/bot/controllers/delete.dart';
 import 'package:omni_chat/apis/bot/controllers/get_info.dart';
@@ -37,6 +38,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
   String botNameInfoTxt = "";
   String botInstructionInfoTxt = "";
   String botDescriptionInfoTxt = "";
+  final ValueNotifier<bool> loading = ValueNotifier(false);
 
   @override
   void initState() {
@@ -79,6 +81,28 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
         text: bot?.description ?? "",
       );
     }
+  }
+
+  Future<void> onCreateBot() async {
+    loading.value = true;
+    await createBot((
+      name: nameController.text,
+      instruction: instructionController.text,
+      description: descriptionController.text,
+      onError: () {
+        loading.value = false;
+      },
+    ));
+  }
+
+  Future<void> onDeleteBot() async {
+    loading.value = true;
+    await deleteBot((
+      id: widget.id!,
+      onError: () {
+        loading.value = false;
+      },
+    ));
   }
 
   @override
@@ -178,8 +202,16 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                 right: 20,
                 left: 20,
                 bottom: 20,
-                child:
-                    (screenState == "info")
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: loading,
+                  builder: (context, loading, _) {
+                    return loading
+                        ? Lottie.asset(
+                          "assets/anims/loading.json",
+                          width: 120,
+                          height: 80,
+                        )
+                        : (screenState == "info")
                         ? Row(
                           spacing: 10,
                           children: [
@@ -203,7 +235,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                                   onCancelBtnTap: () => context.pop(),
                                   onConfirmBtnTap: () {
                                     context.pop();
-                                    deleteBot((id: widget.id!));
+                                    onDeleteBot();
                                   },
                                 );
                               },
@@ -215,11 +247,8 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                           onTap: () {
                             if (screenState == "create") {
                               if (editBotFormKey.currentState!.validate()) {
-                                createBot((
-                                  name: nameController.text,
-                                  instruction: instructionController.text,
-                                  description: descriptionController.text,
-                                ));
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                onCreateBot();
                               }
                             } else if (screenState == "edit") {
                               if (editBotFormKey.currentState!.validate()) {
@@ -247,7 +276,9 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                               }
                             }
                           },
-                        ),
+                        );
+                  },
+                ),
               ),
             ],
           ),

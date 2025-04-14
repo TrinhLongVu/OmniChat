@@ -151,9 +151,7 @@ class _BotListScreenState extends State<BotListScreen> {
           ),
         ),
         SliverFillRemaining(
-          hasScrollBody:
-              context.watch<BotProvider>().loadingList ||
-              context.watch<BotProvider>().botList.isNotEmpty,
+          hasScrollBody: context.watch<BotProvider>().botList.isNotEmpty,
           child:
               context.watch<BotProvider>().loadingList
                   ? ListView.builder(
