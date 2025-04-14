@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:omni_chat/apis/bot/controllers/get_list.dart';
-import 'package:omni_chat/apis/bot/models/response.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/bot.dart';
+import 'package:omni_chat/providers/bot.dart';
+import 'package:omni_chat/widgets/button/fit_ico_btn.dart';
 import 'package:omni_chat/widgets/rectangle/bot_rect.dart';
 import 'package:omni_chat/widgets/rectangle/search_box.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class BotListScreen extends StatefulWidget {
@@ -29,7 +31,7 @@ class _BotListScreenState extends State<BotListScreen> {
   @override
   void initState() {
     super.initState();
-    loadBotList();
+    context.read<BotProvider>().loadBotList();
 
     searchFocusNode.addListener(() {
       if (searchFocusNode.hasFocus) {
@@ -46,15 +48,6 @@ class _BotListScreenState extends State<BotListScreen> {
         });
       }
     });
-  }
-
-  Future<void> loadBotList() async {
-    GetBotListResponse? botListRes = await getBotList();
-    if (mounted && botListRes != null) {
-      setState(() {
-        botList = botListRes.data;
-      });
-    }
   }
 
   void scrollToSearchBar() {
@@ -146,11 +139,8 @@ class _BotListScreenState extends State<BotListScreen> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () async {
-                      final result = await context.push("/bots/new");
-                      if (result == true) {
-                        loadBotList();
-                      }
+                    onPressed: () {
+                      context.push("/bots/new");
                     },
                     icon: Icon(
                       Icons.add_circle_outline,
@@ -163,28 +153,70 @@ class _BotListScreenState extends State<BotListScreen> {
             ),
           ),
         ),
-
-        /// Bot List
         SliverFillRemaining(
-          hasScrollBody: true,
-          child: ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: botList.length,
-            itemBuilder: (context, index) {
-              final bot = botList[index];
-              return BotRect(
-                title: bot.name,
-                subtitle: bot.description,
-                id: bot.id,
-                navigateToInfo: () async {
-                  final result = await context.push("/bots/${bot.id}");
-                  if (result == null) {
-                    loadBotList();
-                  }
-                },
-              );
-            },
-          ),
+          hasScrollBody: context.watch<BotProvider>().botList.isNotEmpty,
+          child:
+              context.watch<BotProvider>().botList.isEmpty
+                  ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "You don't have any bot yet",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: GoogleFonts.poppins().fontFamily,
+                            ),
+                            children: [
+                              TextSpan(text: 'Create one of your own  '),
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.middle,
+                                child: FitIconBtn(
+                                  onTap: () {
+                                    context.push("/bots/new");
+                                  },
+                                  icon: Icons.add_circle_outline,
+                                  iconColor: omniDarkBlue,
+                                  iconSize: 30,
+                                ),
+                              ),
+                              TextSpan(text: '  now'),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                  : ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: context.watch<BotProvider>().botList.length,
+                    itemBuilder: (context, index) {
+                      if (context.watch<BotProvider>().botList.isEmpty) {
+                        return SizedBox.shrink();
+                      }
+                      final bot = context.watch<BotProvider>().botList[index];
+                      return BotRect(
+                        title: bot.name,
+                        subtitle: bot.description,
+                        id: bot.id,
+                        navigateToInfo: () {
+                          context.push("/bots/${bot.id}");
+                        },
+                      );
+                    },
+                  ),
         ),
       ],
     );
