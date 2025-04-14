@@ -1,48 +1,39 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:omni_chat/apis/bot/models/request.dart';
 import 'package:omni_chat/constants/base_urls.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:omni_chat/services/dio_client.dart';
-import 'package:quickalert/quickalert.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> createBot({
-  required String name,
-  required String instruction,
-  required String description,
-}) async {
+Future<void> deleteBot(DeleteBotRequest req) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
 
-  var headers = {
-    'x-jarvis-guid': '',
-    'Authorization': 'Bearer $accessToken',
-    'Content-Type': 'application/json',
-  };
+  var headers = {'x-jarvis-guid': '', 'Authorization': 'Bearer $accessToken'};
 
   Dio dio = DioClient(baseUrl: BaseUrls.knowledge).dio;
 
   try {
-    Response response = await dio.post(
-      "/kb-core/v1/ai-assistant",
-      data: {
-        "assistantName": name,
-        "instructions": instruction,
-        "description": description,
-      },
+    Response response = await dio.delete(
+      "/kb-core/v1/ai-assistant/${req.id}",
       options: Options(headers: headers),
     );
     switch (response.statusCode) {
-      case 201:
+      case 200:
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.success,
-          text: "Bot created successfully!",
+          text: "Bot deleted successfully!",
           onConfirmBtnTap:
               () => {
                 GoRouter.of(rootNavigatorKey.currentContext!).pop(),
-                GoRouter.of(rootNavigatorKey.currentContext!).pop(true),
+                GoRouter.of(
+                  rootNavigatorKey.currentContext!,
+                ).goNamed("all-bots"),
               },
         );
         break;

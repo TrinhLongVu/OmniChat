@@ -175,6 +175,18 @@ class _PromptModalState extends State<PromptModal> {
                                             shimmerizing: true,
                                           ),
                                         ).toList()
+                                        : provider.publicPrompts.isEmpty
+                                        ? [
+                                          SizedBox(
+                                            height: viewport.height * 0.2,
+                                          ),
+                                          Center(
+                                            child: Text(
+                                              "No public prompts meet the criteria you specified",
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ]
                                         : provider.publicPrompts
                                             .map(
                                               (prompt) => PromptRect(

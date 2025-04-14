@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:omni_chat/apis/bot/models/request.dart';
 import 'package:omni_chat/constants/base_urls.dart';
 import 'package:omni_chat/models/bot.dart';
 import 'package:omni_chat/services/dio_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<Bot?> getBotInfo({required String id}) async {
+Future<Bot?> getBotInfo(GetBotInfoRequest req) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
 
@@ -15,13 +16,13 @@ Future<Bot?> getBotInfo({required String id}) async {
 
   try {
     Response response = await dio.get(
-      "/kb-core/v1/ai-assistant/$id",
+      "/kb-core/v1/ai-assistant/${req.id}",
       options: Options(headers: headers),
     );
     switch (response.statusCode) {
       case 200:
-        Bot botListRes = Bot.fromJson(response.data);
-        return botListRes;
+        Bot res = Bot.fromJson(response.data);
+        return res;
       default:
         return null;
     }

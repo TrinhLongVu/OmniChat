@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:omni_chat/apis/bot/get_list.dart';
+import 'package:omni_chat/apis/bot/controllers/get_list.dart';
+import 'package:omni_chat/apis/bot/models/response.dart';
 import 'package:omni_chat/constants/color.dart';
-import 'package:omni_chat/models/api/bot/bot_list_res.dart';
 import 'package:omni_chat/models/bot.dart';
 import 'package:omni_chat/widgets/rectangle/bot_rect.dart';
 import 'package:omni_chat/widgets/rectangle/search_box.dart';
@@ -49,7 +49,7 @@ class _BotListScreenState extends State<BotListScreen> {
   }
 
   Future<void> loadBotList() async {
-    BotListResponse? botListRes = await getBotList();
+    GetBotListResponse? botListRes = await getBotList();
     if (mounted && botListRes != null) {
       setState(() {
         botList = botListRes.data;

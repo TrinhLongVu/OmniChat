@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:omni_chat/apis/bot/create.dart';
-import 'package:omni_chat/apis/bot/delete.dart';
-import 'package:omni_chat/apis/bot/get_info.dart';
-import 'package:omni_chat/apis/bot/update.dart';
+import 'package:omni_chat/apis/bot/controllers/create.dart';
+import 'package:omni_chat/apis/bot/controllers/delete.dart';
+import 'package:omni_chat/apis/bot/controllers/get_info.dart';
+import 'package:omni_chat/apis/bot/controllers/update.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/bot.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
@@ -62,7 +62,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
   }
 
   Future<void> loadBotInfo() async {
-    Bot? botInfo = await getBotInfo(id: widget.id!);
+    Bot? botInfo = await getBotInfo((id: widget.id!));
     if (mounted && botInfo != null) {
       setState(() {
         bot = botInfo;
@@ -203,7 +203,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                                   onCancelBtnTap: () => context.pop(),
                                   onConfirmBtnTap: () {
                                     context.pop();
-                                    deleteBot(id: widget.id!);
+                                    deleteBot((id: widget.id!));
                                   },
                                 );
                               },
@@ -215,11 +215,11 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                           onTap: () {
                             if (screenState == "create") {
                               if (editBotFormKey.currentState!.validate()) {
-                                createBot(
+                                createBot((
                                   name: nameController.text,
                                   instruction: instructionController.text,
                                   description: descriptionController.text,
-                                );
+                                ));
                               }
                             } else if (screenState == "edit") {
                               if (editBotFormKey.currentState!.validate()) {
@@ -233,12 +233,12 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                                     FocusManager.instance.primaryFocus
                                         ?.unfocus();
                                     context.pop();
-                                    bool updateResult = await updateBot(
+                                    bool updateResult = await updateBot((
                                       id: widget.id!,
                                       name: nameController.text,
                                       instruction: instructionController.text,
                                       description: descriptionController.text,
-                                    );
+                                    ));
                                     if (updateResult) {
                                       isLoading = true;
                                       loadBotInfo();

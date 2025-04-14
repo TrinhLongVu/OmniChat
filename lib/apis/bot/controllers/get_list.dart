@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:omni_chat/apis/bot/models/response.dart';
 import 'package:omni_chat/constants/base_urls.dart';
-import 'package:omni_chat/models/api/bot/bot_list_res.dart';
 import 'package:omni_chat/services/dio_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<BotListResponse?> getBotList() async {
+Future<GetBotListResponse?> getBotList() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
 
@@ -20,8 +20,8 @@ Future<BotListResponse?> getBotList() async {
     );
     switch (response.statusCode) {
       case 200:
-        BotListResponse botListRes = BotListResponse.fromJson(response.data);
-        return botListRes;
+        GetBotListResponse res = GetBotListResponse.fromJson(response.data);
+        return res;
       default:
         return null;
     }

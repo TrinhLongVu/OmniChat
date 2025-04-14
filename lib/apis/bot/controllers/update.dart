@@ -1,24 +1,33 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:omni_chat/apis/bot/models/request.dart';
 import 'package:omni_chat/constants/base_urls.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:omni_chat/services/dio_client.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> deleteBot({required String id}) async {
+Future<bool> updateBot(UpdateBotRequest req) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
 
-  var headers = {'x-jarvis-guid': '', 'Authorization': 'Bearer $accessToken'};
+  var headers = {
+    'x-jarvis-guid': '',
+    'Authorization': 'Bearer $accessToken',
+    'Content-Type': 'application/json',
+  };
 
   Dio dio = DioClient(baseUrl: BaseUrls.knowledge).dio;
 
   try {
-    Response response = await dio.delete(
-      "/kb-core/v1/ai-assistant/$id",
+    Response response = await dio.patch(
+      "/kb-core/v1/ai-assistant/${req.id}",
+      data: {
+        "assistantName": req.name,
+        "instructions": req.instruction,
+        "description": req.description,
+      },
       options: Options(headers: headers),
     );
     switch (response.statusCode) {
@@ -26,24 +35,21 @@ Future<void> deleteBot({required String id}) async {
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.success,
-          text: "Bot deleted successfully!",
+          text: "Bot updated successfully!",
           onConfirmBtnTap:
-              () => {
-                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
-                GoRouter.of(
-                  rootNavigatorKey.currentContext!,
-                ).goNamed("all-bots"),
-              },
+              () => {GoRouter.of(rootNavigatorKey.currentContext!).pop()},
         );
-        break;
+        return true;
       default:
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.error,
           text: "Something went wrong! Please try again later.",
         );
+        return false;
     }
   } catch (e) {
     debugPrint("Error: $e");
   }
+  return false;
 }

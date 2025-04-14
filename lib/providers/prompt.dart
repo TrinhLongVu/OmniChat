@@ -86,12 +86,12 @@ class PromptProvider extends ChangeNotifier {
 
   void setFilteredCategory(String category) {
     filteredCategory = category;
-    loadList(isPublic: true);
+    reloadList(isPublic: true);
   }
 
   void searchPrompt(String queryStr) {
     query = queryStr;
-    load2List();
+    reload2List();
   }
 
   void initPromptLibrary() {
