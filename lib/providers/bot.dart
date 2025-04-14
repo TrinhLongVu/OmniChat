@@ -7,8 +7,8 @@ import 'package:omni_chat/models/bot.dart';
 class BotProvider extends ChangeNotifier {
   bool loadingList = false;
   List<Bot> botList;
-  Bot currentBot = Bot.placeholder();
   bool botLoading = false;
+  Bot currentBot = Bot.placeholder();
 
   BotProvider({this.botList = const []});
 

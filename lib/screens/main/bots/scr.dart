@@ -151,72 +151,77 @@ class _BotListScreenState extends State<BotListScreen> {
         ),
         SliverFillRemaining(
           hasScrollBody: context.watch<BotProvider>().botList.isNotEmpty,
-          child:
-              context.watch<BotProvider>().loadingList
-                  ? Column(
-                    children: List.generate(
-                      5,
-                      (index) => BotRect(
-                        id: "",
-                        title: "",
-                        shimmerizing: true,
-                        navigateToInfo: () {},
-                      ),
-                    ),
-                  )
-                  : context.watch<BotProvider>().botList.isEmpty
-                  ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "You don't have any bot yet",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey,
+          child: RefreshIndicator(
+            onRefresh: () => context.read<BotProvider>().loadList(),
+            child: SingleChildScrollView(
+              child:
+                  context.watch<BotProvider>().loadingList
+                      ? Column(
+                        children: List.generate(
+                          5,
+                          (index) => BotRect(
+                            id: "",
+                            title: "",
+                            shimmerizing: true,
+                            navigateToInfo: () {},
                           ),
                         ),
-                        RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: GoogleFonts.poppins().fontFamily,
-                            ),
-                            children: [
-                              TextSpan(text: 'Create one of your own  '),
-                              WidgetSpan(
-                                alignment: PlaceholderAlignment.middle,
-                                child: FitIconBtn(
-                                  onTap: () => context.push("/bots/new"),
-                                  icon: Icons.add_circle_outline,
-                                  iconColor: omniDarkBlue,
-                                  iconSize: 30,
-                                ),
+                      )
+                      : context.watch<BotProvider>().botList.isEmpty
+                      ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "You don't have any bot yet",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
                               ),
-                              TextSpan(text: '  now'),
-                            ],
-                          ),
+                            ),
+                            RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: GoogleFonts.poppins().fontFamily,
+                                ),
+                                children: [
+                                  TextSpan(text: 'Create one of your own  '),
+                                  WidgetSpan(
+                                    alignment: PlaceholderAlignment.middle,
+                                    child: FitIconBtn(
+                                      onTap: () => context.push("/bots/new"),
+                                      icon: Icons.add_circle_outline,
+                                      iconColor: omniDarkBlue,
+                                      iconSize: 30,
+                                    ),
+                                  ),
+                                  TextSpan(text: '  now'),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  )
-                  : Column(
-                    children:
-                        context.watch<BotProvider>().botList.map((bot) {
-                          return BotRect(
-                            title: bot.name,
-                            subtitle: bot.description,
-                            id: bot.id,
-                            navigateToInfo:
-                                () => context.push("/bots/${bot.id}"),
-                          );
-                        }).toList(),
-                  ),
+                      )
+                      : Column(
+                        children:
+                            context.watch<BotProvider>().botList.map((bot) {
+                              return BotRect(
+                                title: bot.name,
+                                subtitle: bot.description,
+                                id: bot.id,
+                                navigateToInfo:
+                                    () => context.push("/bots/${bot.id}"),
+                              );
+                            }).toList(),
+                      ),
+            ),
+          ),
         ),
       ],
     );
