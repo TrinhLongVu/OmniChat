@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:omni_chat/constants/color.dart';
+import 'package:omni_chat/widgets/shimmer/shimmer_ln.dart';
 
 class InfoField extends StatefulWidget {
   final String infoText;
   final double fontSz;
   final int lineNum;
+  final bool shimmerizing;
 
   const InfoField({
     super.key,
     required this.infoText,
     this.fontSz = 14,
     this.lineNum = 1,
+    this.shimmerizing = true,
   });
 
   @override
@@ -30,7 +33,6 @@ class _InfoFieldState extends State<InfoField> {
   void didUpdateWidget(covariant InfoField oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.infoText != widget.infoText) {
-      debugPrint(widget.infoText);
       _controller = TextEditingController(text: widget.infoText);
     }
   }
@@ -43,6 +45,14 @@ class _InfoFieldState extends State<InfoField> {
 
   @override
   Widget build(BuildContext context) {
+    Size viewport = MediaQuery.of(context).size;
+    if (widget.shimmerizing) {
+      return ShimmerLine(
+        height: viewport.height * 0.05 * widget.lineNum,
+        color: omniLightCyan,
+        borderRad: 3,
+      );
+    }
     return TextFormField(
       enabled: true,
       readOnly: true,

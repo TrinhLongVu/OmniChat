@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:omni_chat/apis/bot/controllers/get_info.dart';
 import 'package:omni_chat/apis/bot/controllers/get_list.dart';
 import 'package:omni_chat/apis/bot/models/response.dart';
 import 'package:omni_chat/models/bot.dart';
@@ -6,6 +7,8 @@ import 'package:omni_chat/models/bot.dart';
 class BotProvider extends ChangeNotifier {
   bool loadingList = false;
   List<Bot> botList;
+  Bot currentBot = Bot.placeholder();
+  bool botLoading = false;
 
   BotProvider({this.botList = const []});
 
@@ -17,6 +20,21 @@ class BotProvider extends ChangeNotifier {
       botList = res.data;
     }
     loadingList = false;
+    notifyListeners();
+  }
+
+  Future<void> loadInfo({
+    required String id,
+    required VoidCallback onSuccess,
+  }) async {
+    botLoading = true;
+    notifyListeners();
+    Bot? botInfo = await getBotInfo((id: id));
+    if (botInfo != null) {
+      currentBot = botInfo;
+      botLoading = false;
+      onSuccess();
+    }
     notifyListeners();
   }
 }

@@ -34,6 +34,7 @@ Future<void> updateBot(UpdateBotRequest req) async {
     );
     switch (response.statusCode) {
       case 200:
+        req.onComplete();
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.success,
@@ -45,6 +46,7 @@ Future<void> updateBot(UpdateBotRequest req) async {
               },
         );
       default:
+        req.onComplete();
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.error,

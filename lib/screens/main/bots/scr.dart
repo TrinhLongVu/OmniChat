@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:omni_chat/constants/color.dart';
-import 'package:omni_chat/models/bot.dart';
 import 'package:omni_chat/providers/bot.dart';
 import 'package:omni_chat/widgets/button/fit_ico_btn.dart';
 import 'package:omni_chat/widgets/rectangle/bot_rect.dart';
@@ -154,19 +153,16 @@ class _BotListScreenState extends State<BotListScreen> {
           hasScrollBody: context.watch<BotProvider>().botList.isNotEmpty,
           child:
               context.watch<BotProvider>().loadingList
-                  ? ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: 5,
-                    itemBuilder: (context, index) {
-                      final bot = Bot.placeholder();
-                      return BotRect(
-                        title: bot.name,
-                        subtitle: bot.description,
-                        id: bot.id,
+                  ? Column(
+                    children: List.generate(
+                      5,
+                      (index) => BotRect(
+                        id: "",
+                        title: "",
                         shimmerizing: true,
                         navigateToInfo: () {},
-                      );
-                    },
+                      ),
+                    ),
                   )
                   : context.watch<BotProvider>().botList.isEmpty
                   ? Center(
@@ -209,21 +205,17 @@ class _BotListScreenState extends State<BotListScreen> {
                       ],
                     ),
                   )
-                  : ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: context.watch<BotProvider>().botList.length,
-                    itemBuilder: (context, index) {
-                      if (context.watch<BotProvider>().botList.isEmpty) {
-                        return SizedBox.shrink();
-                      }
-                      final bot = context.watch<BotProvider>().botList[index];
-                      return BotRect(
-                        title: bot.name,
-                        subtitle: bot.description,
-                        id: bot.id,
-                        navigateToInfo: () => context.push("/bots/${bot.id}"),
-                      );
-                    },
+                  : Column(
+                    children:
+                        context.watch<BotProvider>().botList.map((bot) {
+                          return BotRect(
+                            title: bot.name,
+                            subtitle: bot.description,
+                            id: bot.id,
+                            navigateToInfo:
+                                () => context.push("/bots/${bot.id}"),
+                          );
+                        }).toList(),
                   ),
         ),
       ],

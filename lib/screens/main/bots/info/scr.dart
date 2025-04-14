@@ -3,16 +3,16 @@ import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/bot/controllers/create.dart';
 import 'package:omni_chat/apis/bot/controllers/delete.dart';
-import 'package:omni_chat/apis/bot/controllers/get_info.dart';
 import 'package:omni_chat/apis/bot/controllers/update.dart';
 import 'package:omni_chat/constants/color.dart';
-import 'package:omni_chat/models/bot.dart';
+import 'package:omni_chat/providers/bot.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
 import 'package:omni_chat/widgets/button/ico_txt_btn.dart';
 import 'package:omni_chat/widgets/text/info_field.dart';
 import 'package:omni_chat/widgets/text/input_field.dart';
 import 'package:omni_chat/widgets/text/input_header.dart';
 import 'package:omni_chat/widgets/popup/publish_bot.dart';
+import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:validatorless/validatorless.dart';
 
@@ -28,16 +28,11 @@ class BotInfoScreen extends StatefulWidget {
 }
 
 class _BotInfoScreenState extends State<BotInfoScreen> {
-  late TextEditingController nameController;
-  late TextEditingController instructionController;
-  late TextEditingController descriptionController;
+  late TextEditingController nameCtrlr;
+  late TextEditingController instructionCtrlr;
+  late TextEditingController descriptionCtrlr;
 
   String screenState = "";
-  bool isLoading = true;
-  Bot? bot;
-  String botNameInfoTxt = "";
-  String botInstructionInfoTxt = "";
-  String botDescriptionInfoTxt = "";
   final ValueNotifier<bool> loading = ValueNotifier(false);
 
   @override
@@ -45,50 +40,44 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
     super.initState();
     if (widget.id == null) {
       screenState = "create";
-      nameController = TextEditingController();
-      instructionController = TextEditingController();
-      descriptionController = TextEditingController();
-      isLoading = false;
+      nameCtrlr = TextEditingController();
+      instructionCtrlr = TextEditingController();
+      descriptionCtrlr = TextEditingController();
     } else {
       screenState = "info";
-      loadBotInfo();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.read<BotProvider>().loadInfo(
+          id: widget.id!,
+          onSuccess: () {
+            nameCtrlr = TextEditingController(
+              text: context.read<BotProvider>().currentBot.name,
+            );
+            instructionCtrlr = TextEditingController(
+              text: context.read<BotProvider>().currentBot.instruction,
+            );
+            descriptionCtrlr = TextEditingController(
+              text: context.read<BotProvider>().currentBot.description,
+            );
+          },
+        );
+      });
     }
   }
 
   @override
   void dispose() {
-    nameController.dispose();
-    instructionController.dispose();
-    descriptionController.dispose();
+    nameCtrlr.dispose();
+    instructionCtrlr.dispose();
+    descriptionCtrlr.dispose();
     super.dispose();
-  }
-
-  Future<void> loadBotInfo() async {
-    Bot? botInfo = await getBotInfo((id: widget.id!));
-    if (mounted && botInfo != null) {
-      setState(() {
-        bot = botInfo;
-        botNameInfoTxt = bot!.name;
-        botInstructionInfoTxt = bot!.instruction ?? "";
-        botDescriptionInfoTxt = bot!.description ?? "";
-        isLoading = false;
-      });
-      nameController = TextEditingController(text: bot?.name ?? "");
-      instructionController = TextEditingController(
-        text: bot?.instruction ?? "",
-      );
-      descriptionController = TextEditingController(
-        text: bot?.description ?? "",
-      );
-    }
   }
 
   Future<void> onCreateBot() async {
     loading.value = true;
     await createBot((
-      name: nameController.text,
-      instruction: instructionController.text,
-      description: descriptionController.text,
+      name: nameCtrlr.text,
+      instruction: instructionCtrlr.text,
+      description: descriptionCtrlr.text,
       onError: () {
         loading.value = false;
       },
@@ -105,21 +94,29 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
     ));
   }
 
+  Future<void> onUpdateBot() async {
+    loading.value = true;
+    await updateBot((
+      id: widget.id!,
+      name: nameCtrlr.text,
+      instruction: instructionCtrlr.text,
+      description: descriptionCtrlr.text,
+      onComplete: () {
+        context.read<BotProvider>().loadInfo(id: widget.id!, onSuccess: () {});
+        loading.value = false;
+      },
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return Scaffold(
-        appBar: AppBar(title: const Text("Loading...")),
-        body: const Center(child: CircularProgressIndicator()),
-      );
-    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
           screenState == "create" ? "Create New Bot" : "Bot's Information",
         ),
         actions: [
-          (screenState != "create")
+          (screenState != "create" && !context.watch<BotProvider>().botLoading)
               ? IconButton(
                 onPressed: () {
                   showDialog(
@@ -156,9 +153,18 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                         children: [
                           InputHeader(title: "Name", isRequired: true),
                           (screenState == "info")
-                              ? InfoField(infoText: botNameInfoTxt, fontSz: 16)
+                              ? InfoField(
+                                infoText:
+                                    context
+                                        .watch<BotProvider>()
+                                        .currentBot
+                                        .name,
+                                fontSz: 16,
+                                shimmerizing:
+                                    context.watch<BotProvider>().botLoading,
+                              )
                               : InputField(
-                                controller: nameController,
+                                controller: nameCtrlr,
                                 placeholder: "Bot's Name",
                                 validateFunc: Validatorless.required(
                                   "Name of the bot is required",
@@ -168,12 +174,19 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                           InputHeader(title: "Instructions", isRequired: false),
                           (screenState == "info")
                               ? InfoField(
-                                infoText: botInstructionInfoTxt,
+                                infoText:
+                                    context
+                                        .watch<BotProvider>()
+                                        .currentBot
+                                        .instruction ??
+                                    "",
                                 fontSz: 16,
                                 lineNum: 4,
+                                shimmerizing:
+                                    context.watch<BotProvider>().botLoading,
                               )
                               : InputField(
-                                controller: instructionController,
+                                controller: instructionCtrlr,
                                 placeholder: "Instruct the bot how to reply",
                                 minLns: 2,
                                 maxLns: 3,
@@ -181,12 +194,19 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                           InputHeader(title: "Description", isRequired: false),
                           (screenState == "info")
                               ? InfoField(
-                                infoText: botDescriptionInfoTxt,
+                                infoText:
+                                    context
+                                        .watch<BotProvider>()
+                                        .currentBot
+                                        .description ??
+                                    "",
                                 fontSz: 16,
                                 lineNum: 3,
+                                shimmerizing:
+                                    context.watch<BotProvider>().botLoading,
                               )
                               : InputField(
-                                controller: descriptionController,
+                                controller: descriptionCtrlr,
                                 placeholder:
                                     "Description of how you would use the bot for",
                                 minLns: 2,
@@ -198,88 +218,88 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                   ),
                 ),
               ),
-              Positioned(
-                right: 20,
-                left: 20,
-                bottom: 20,
-                child: ValueListenableBuilder<bool>(
-                  valueListenable: loading,
-                  builder: (context, loading, _) {
-                    return loading
-                        ? Lottie.asset(
-                          "assets/anims/loading.json",
-                          width: 120,
-                          height: 80,
-                        )
-                        : (screenState == "info")
-                        ? Row(
-                          spacing: 10,
-                          children: [
-                            IcoTxtBtn(
-                              title: "Edit",
-                              onTap: () {
-                                setState(() {
-                                  screenState = "edit";
-                                });
-                              },
-                            ),
-                            IcoTxtBtn(
-                              title: "Delete",
-                              bgColor: Colors.red,
-                              onTap: () {
-                                QuickAlert.show(
-                                  context: context,
-                                  type: QuickAlertType.confirm,
-                                  text:
-                                      "Are you sure you want to delete this bot?",
-                                  onCancelBtnTap: () => context.pop(),
-                                  onConfirmBtnTap: () {
-                                    context.pop();
-                                    onDeleteBot();
-                                  },
-                                );
-                              },
-                            ),
-                          ],
-                        )
-                        : CommonBtn(
-                          title: "Save",
-                          onTap: () {
-                            if (screenState == "create") {
-                              if (editBotFormKey.currentState!.validate()) {
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                onCreateBot();
-                              }
-                            } else if (screenState == "edit") {
-                              if (editBotFormKey.currentState!.validate()) {
-                                QuickAlert.show(
-                                  context: context,
-                                  type: QuickAlertType.confirm,
-                                  text:
-                                      "Are you sure you want to update this bot?",
-                                  onCancelBtnTap: () => context.pop(),
-                                  onConfirmBtnTap: () async {
-                                    FocusManager.instance.primaryFocus
-                                        ?.unfocus();
-                                    context.pop();
-                                    updateBot((
-                                      id: widget.id!,
-                                      name: nameController.text,
-                                      instruction: instructionController.text,
-                                      description: descriptionController.text,
-                                    ));
+              !context.watch<BotProvider>().botLoading
+                  ? Positioned(
+                    right: 20,
+                    left: 20,
+                    bottom: 20,
+                    child: ValueListenableBuilder<bool>(
+                      valueListenable: loading,
+                      builder: (context, loading, _) {
+                        return loading
+                            ? Lottie.asset(
+                              "assets/anims/loading.json",
+                              width: 120,
+                              height: 80,
+                            )
+                            : (screenState == "info")
+                            ? Row(
+                              spacing: 10,
+                              children: [
+                                IcoTxtBtn(
+                                  title: "Edit",
+                                  onTap: () {
                                     setState(() {
-                                      screenState = "info";
+                                      screenState = "edit";
                                     });
                                   },
-                                );
-                              }
-                            }
-                          },
-                        );
-                  },
-                ),
-              ),
+                                ),
+                                IcoTxtBtn(
+                                  title: "Delete",
+                                  bgColor: Colors.red,
+                                  onTap: () {
+                                    QuickAlert.show(
+                                      context: context,
+                                      type: QuickAlertType.confirm,
+                                      text:
+                                          "Are you sure you want to delete this bot?",
+                                      onCancelBtnTap: () => context.pop(),
+                                      onConfirmBtnTap: () {
+                                        context.pop();
+                                        onDeleteBot();
+                                      },
+                                    );
+                                  },
+                                ),
+                              ],
+                            )
+                            : CommonBtn(
+                              title: "Save",
+                              onTap: () {
+                                if (screenState == "create") {
+                                  if (editBotFormKey.currentState!.validate()) {
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+                                    onCreateBot();
+                                  }
+                                } else if (screenState == "edit") {
+                                  if (editBotFormKey.currentState!.validate()) {
+                                    QuickAlert.show(
+                                      context: context,
+                                      type: QuickAlertType.confirm,
+                                      text:
+                                          "Are you sure you want to update this bot?",
+                                      onCancelBtnTap: () => context.pop(),
+                                      onConfirmBtnTap: () async {
+                                        FocusManager.instance.primaryFocus
+                                            ?.unfocus();
+                                        context.pop();
+                                        FocusManager.instance.primaryFocus
+                                            ?.unfocus();
+                                        await onUpdateBot();
+                                        setState(() {
+                                          screenState = "info";
+                                        });
+                                      },
+                                    );
+                                  }
+                                }
+                              },
+                            );
+                      },
+                    ),
+                  )
+                  : SizedBox.shrink(),
             ],
           ),
         ),

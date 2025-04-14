@@ -12,6 +12,12 @@ typedef CreateBotRequest =
 typedef GetBotInfoRequest = ({String id});
 // Update Bot
 typedef UpdateBotRequest =
-    ({String id, String name, String instruction, String description});
+    ({
+      String id,
+      String name,
+      String instruction,
+      String description,
+      VoidCallback onComplete,
+    });
 // Delete Bot
 typedef DeleteBotRequest = ({String id, VoidCallback onError});
