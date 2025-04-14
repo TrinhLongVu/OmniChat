@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:omni_chat/constants/color.dart';
 
-class InfoField extends StatelessWidget {
+class InfoField extends StatefulWidget {
   final String infoText;
   final double fontSz;
   final int lineNum;
@@ -14,14 +14,42 @@ class InfoField extends StatelessWidget {
   });
 
   @override
+  State<InfoField> createState() => _InfoFieldState();
+}
+
+class _InfoFieldState extends State<InfoField> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.infoText);
+  }
+
+  @override
+  void didUpdateWidget(covariant InfoField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.infoText != widget.infoText) {
+      debugPrint(widget.infoText);
+      _controller = TextEditingController(text: widget.infoText);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return TextFormField(
       enabled: true,
       readOnly: true,
-      minLines: lineNum,
-      maxLines: lineNum,
-      initialValue: infoText,
-      style: TextStyle(color: Colors.blueGrey, fontSize: fontSz),
+      minLines: widget.lineNum,
+      maxLines: widget.lineNum,
+      controller: _controller,
+      style: TextStyle(color: Colors.blueGrey, fontSize: widget.fontSz),
       decoration: InputDecoration(
         filled: true,
         fillColor: omniLightCyan.withValues(alpha: 0.2),

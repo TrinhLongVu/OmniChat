@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:omni_chat/constants/color.dart';
-import 'package:omni_chat/widgets/common_btn.dart';
-import 'package:omni_chat/widgets/input_field.dart';
-import 'package:omni_chat/widgets/input_header.dart';
+import 'package:omni_chat/widgets/button/common_btn.dart';
+import 'package:omni_chat/widgets/text/input_field.dart';
+import 'package:omni_chat/widgets/text/input_header.dart';
 
 const List<Widget> languages = <Widget>[
   Text('VIE', style: TextStyle(fontWeight: FontWeight.bold)),

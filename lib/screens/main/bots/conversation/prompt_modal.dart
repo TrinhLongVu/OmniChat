@@ -1,15 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/constants/color.dart';
+import 'package:omni_chat/constants/prompt_category.dart';
+import 'package:omni_chat/models/prompt.dart';
+import 'package:omni_chat/providers/prompt.dart';
+import 'package:omni_chat/widgets/button/category_btn.dart';
 import 'package:omni_chat/widgets/popup/prompt_new.dart';
-import 'package:omni_chat/widgets/prompt_rect.dart';
-import 'package:omni_chat/widgets/search_box.dart';
+import 'package:omni_chat/widgets/rectangle/prompt_rect.dart';
+import 'package:omni_chat/widgets/rectangle/search_box.dart';
 import 'package:omni_chat/widgets/tab_item.dart';
+import 'package:provider/provider.dart';
 
-class PromptModal extends StatelessWidget {
+class PromptModal extends StatefulWidget {
+  const PromptModal({super.key});
+
+  @override
+  State<PromptModal> createState() => _PromptModalState();
+}
+
+class _PromptModalState extends State<PromptModal> {
   final TextEditingController searchPromptCtrlr = TextEditingController();
 
-  PromptModal({super.key});
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<PromptProvider>().initPromptLibrary();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +42,7 @@ class PromptModal extends StatelessWidget {
           topRight: Radius.circular(20),
         ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 6),
       child: DefaultTabController(
         length: 2,
         child: Column(
@@ -55,12 +73,19 @@ class PromptModal extends StatelessWidget {
                   child: SearchBox(
                     ctrlr: searchPromptCtrlr,
                     placeholder: "Search Prompts...",
+                    onSearch: (value) {
+                      context.read<PromptProvider>().searchPrompt(value);
+                    },
                   ),
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<PromptProvider>().toggleFavoriteFilter();
+                  },
                   icon: Icon(
-                    Icons.favorite_border,
+                    context.watch<PromptProvider>().favFiltered
+                        ? Icons.favorite
+                        : Icons.favorite_border,
                     size: 25,
                     color: Colors.red,
                   ),
@@ -82,25 +107,110 @@ class PromptModal extends StatelessWidget {
             Expanded(
               child: TabBarView(
                 children: [
-                  SingleChildScrollView(
-                    child: Column(
-                      children: List.generate(
-                        9,
-                        (index) => PromptRect(
-                          title: "Grammar Corrector",
-                          description:
-                              "Improve your spelling and grammar by checking your text for errors.",
+                  // PUBLIC
+                  Column(
+                    children: [
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ToggleButtons(
+                            splashColor: Colors.transparent,
+                            renderBorder: false,
+                            fillColor: Colors.transparent,
+                            isSelected:
+                                PromptCategory.values
+                                    .map(
+                                      (e) =>
+                                          e.name ==
+                                          context
+                                              .watch<PromptProvider>()
+                                              .filteredCategory,
+                                    )
+                                    .toList(),
+                            onPressed: (int index) {
+                              String filteredValue =
+                                  context
+                                      .read<PromptProvider>()
+                                      .filteredCategory;
+                              String strToFilter = "";
+                              if (PromptCategory.values[index].name ==
+                                  filteredValue) {
+                                strToFilter = "";
+                              } else {
+                                strToFilter = PromptCategory.values[index].name;
+                              }
+                              context
+                                  .read<PromptProvider>()
+                                  .setFilteredCategory(strToFilter);
+                            },
+                            borderRadius: BorderRadius.circular(30),
+                            children:
+                                PromptCategory.values
+                                    .map(
+                                      (e) => CategoryBtn(
+                                        title: e.name,
+                                        filtered:
+                                            e.name ==
+                                            context
+                                                .watch<PromptProvider>()
+                                                .filteredCategory,
+                                      ),
+                                    )
+                                    .toList(),
+                          ),
                         ),
                       ),
-                    ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Consumer<PromptProvider>(
+                            builder: (context, provider, child) {
+                              return Column(
+                                children:
+                                    provider.publicLoading
+                                        ? List.generate(
+                                          10,
+                                          (index) => PromptRect(
+                                            prompt: Prompt.placeholder(),
+                                            shimmerizing: true,
+                                          ),
+                                        ).toList()
+                                        : provider.publicPrompts
+                                            .map(
+                                              (prompt) => PromptRect(
+                                                prompt: prompt,
+                                                shimmerizing: false,
+                                              ),
+                                            )
+                                            .toList(),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   SingleChildScrollView(
                     child: Column(
                       children: [
+                        if (context
+                            .watch<PromptProvider>()
+                            .privatePrompts
+                            .isEmpty) ...[
+                          SizedBox(height: viewport.height * 0.2),
+                          Center(
+                            child: Text(
+                              "You don't have any private prompts yet",
+                            ),
+                          ),
+                        ] else ...[
+                          SizedBox.shrink(),
+                        ],
+
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: TextButton(
-                            onPressed: () {
+                            onPressed: () async {
                               showDialog(
                                 context: context,
                                 builder: (context) => PromptCreationPopUp(),
@@ -119,16 +229,28 @@ class PromptModal extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Column(
-                          children: List.generate(
-                            3,
-                            (index) => PromptRect(
-                              title:
-                                  "Grammar Corrector for English language (English (United States))",
-                              description:
-                                  "Improve your spelling and grammar by checking your text for errors.",
-                            ),
-                          ),
+                        Consumer<PromptProvider>(
+                          builder: (context, provider, child) {
+                            return Column(
+                              children:
+                                  provider.privateLoading
+                                      ? List.generate(
+                                        10,
+                                        (index) => PromptRect(
+                                          prompt: Prompt.placeholder(),
+                                          shimmerizing: true,
+                                        ),
+                                      ).toList()
+                                      : provider.privatePrompts
+                                          .map(
+                                            (prompt) => PromptRect(
+                                              prompt: prompt,
+                                              shimmerizing: false,
+                                            ),
+                                          )
+                                          .toList(),
+                            );
+                          },
                         ),
                       ],
                     ),

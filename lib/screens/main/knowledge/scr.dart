@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/constants/knowledge_type.dart';
-import 'package:omni_chat/screens/main/knowledge/knowledge_rect.dart';
-import 'package:omni_chat/widgets/search_box.dart';
+import 'package:omni_chat/widgets/rectangle/knowledge_rect.dart';
+import 'package:omni_chat/widgets/rectangle/search_box.dart';
 
 class KnowledgeLibraryScreen extends StatelessWidget {
   final TextEditingController searchKnowledgeCtrlr = TextEditingController();
@@ -22,6 +22,7 @@ class KnowledgeLibraryScreen extends StatelessWidget {
                 child: SearchBox(
                   ctrlr: searchKnowledgeCtrlr,
                   placeholder: "Search Knowledges...",
+                  onSearch: () {},
                 ),
               ),
               IconButton(

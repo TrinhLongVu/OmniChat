@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 class ConvoBox extends StatelessWidget {
-  final String message;
+  final String? message;
   final bool isBot;
-  const ConvoBox({super.key, required this.message, required this.isBot});
+  const ConvoBox({super.key, this.message, required this.isBot});
 
   @override
   Widget build(BuildContext context) {
+    Size viewport = MediaQuery.of(context).size;
     return Align(
       alignment: isBot ? Alignment.centerLeft : Alignment.centerRight,
       child: Container(
-        width: 280,
+        width: message == null ? viewport.width * 0.3 : viewport.width * 0.75,
         margin: EdgeInsets.symmetric(horizontal: 10),
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.all(message == null ? 0 : 10),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
@@ -25,10 +27,17 @@ class ConvoBox extends StatelessWidget {
             BoxShadow(color: Colors.grey, blurRadius: 1, offset: Offset(2, 2)),
           ],
         ),
-        child: Text(
-          message,
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
-        ),
+        child:
+            message == null
+                ? Lottie.asset(
+                  "assets/anims/loading.json",
+                  width: 100,
+                  height: 80,
+                )
+                : Text(
+                  message.toString(),
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                ),
       ),
     );
   }

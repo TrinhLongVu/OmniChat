@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:omni_chat/models/bot_model.dart';
 import 'package:omni_chat/models/knowledge_model.dart';
 import 'package:omni_chat/screens/auth/login/scr.dart';
 import 'package:omni_chat/screens/auth/register/scr.dart';
@@ -33,6 +32,7 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => LoginScreen(),
     ),
     GoRoute(
+      parentNavigatorKey: rootNavigatorKey,
       name: "register",
       path: "/auth/register",
       builder: (context, state) => RegisterScreen(),
@@ -55,22 +55,17 @@ final GoRouter appRouter = GoRouter(
                   builder: (context, state) => BotInfoScreen(),
                 ),
                 GoRoute(
-                  name: 'bot-info',
-                  path: 'info',
-                  builder: (context, state) {
-                    final bot = Bot(
-                      id: '123',
-                      name: 'Starry Bot',
-                      instruction: 'Respond politely and helpfully.',
-                      description: 'A dummy bot for debugging purposes.',
-                    );
-                    return BotInfoScreen(bot: bot);
-                  },
-                ),
-                GoRoute(
                   name: 'conversation',
                   path: 'conversation',
                   builder: (context, state) => ConversationScreen(),
+                ),
+                GoRoute(
+                  name: 'bot-info',
+                  path: ':id',
+                  builder: (context, state) {
+                    final botId = state.pathParameters['id'];
+                    return BotInfoScreen(id: botId);
+                  },
                 ),
               ],
             ),

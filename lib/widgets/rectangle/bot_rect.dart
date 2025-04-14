@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:icons_plus/icons_plus.dart';
+import 'package:omni_chat/constants/color.dart';
 
 class BotRect extends StatelessWidget {
-  const BotRect({super.key, required this.name, required this.description});
+  const BotRect({
+    super.key,
+    required this.id,
+    required this.title,
+    this.subtitle,
+    required this.navigateToInfo,
+    this.isOfficial = false,
+  });
 
-  final String name;
-  final String description;
+  final String id;
+  final String title;
+  final String? subtitle;
+  final Function navigateToInfo;
+  final bool isOfficial;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => {context.go("/bots/conversation")},
+      onTap: () => {if (isOfficial) context.go("/bots/conversation")},
       child: Container(
         padding: const EdgeInsets.only(right: 8),
         decoration: BoxDecoration(
@@ -26,7 +38,11 @@ class BotRect extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(10.0),
-              child: Icon(Icons.smart_toy, size: 60),
+              child: Icon(
+                isOfficial ? OctIcons.copilot : Icons.smart_toy,
+                size: 60,
+                color: isOfficial ? omniDarkCyan : Colors.black,
+              ),
             ),
             Expanded(
               child: Column(
@@ -34,29 +50,32 @@ class BotRect extends StatelessWidget {
                 spacing: 3,
                 children: [
                   Text(
-                    name,
+                    title,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  Text(
-                    description,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     softWrap: false,
-                    style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 14,
-                      color: Colors.black.withValues(alpha: 0.6),
-                    ),
                   ),
+                  subtitle != null
+                      ? Text(
+                        subtitle.toString(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: false,
+                        style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          fontSize: 14,
+                          color: Colors.black.withValues(alpha: 0.6),
+                        ),
+                      )
+                      : SizedBox(),
                 ],
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: IconButton(
-                onPressed: () {
-                  context.go("/bots/info");
-                },
+                onPressed: () => navigateToInfo(),
                 icon: Icon(Icons.more_vert, size: 20),
               ),
             ),

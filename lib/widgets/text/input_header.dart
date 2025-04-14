@@ -2,15 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class InputHeader extends StatelessWidget {
-  const InputHeader({super.key, required this.title, this.isRequired = false});
+  const InputHeader({
+    super.key,
+    required this.title,
+    this.leftPadding = 8,
+    this.isRequired = false,
+  });
 
   final String title;
+  final double leftPadding;
   final bool isRequired;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 8),
+      padding: EdgeInsets.only(left: leftPadding),
       child: RichText(
         text: TextSpan(
           style: TextStyle(
