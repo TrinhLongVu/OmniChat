@@ -26,13 +26,12 @@ class _BotListScreenState extends State<BotListScreen> {
   final FocusNode searchFocusNode = FocusNode();
   double searchBarHeight = 68.0;
 
-  List<Bot> botList = [];
-
   @override
   void initState() {
     super.initState();
-    context.read<BotProvider>().loadBotList();
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<BotProvider>().loadList();
+    });
     searchFocusNode.addListener(() {
       if (searchFocusNode.hasFocus) {
         scrollToSearchBar();
@@ -139,9 +138,7 @@ class _BotListScreenState extends State<BotListScreen> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {
-                      context.push("/bots/new");
-                    },
+                    onPressed: () => context.push("/bots/new"),
                     icon: Icon(
                       Icons.add_circle_outline,
                       size: 32,
@@ -154,9 +151,26 @@ class _BotListScreenState extends State<BotListScreen> {
           ),
         ),
         SliverFillRemaining(
-          hasScrollBody: context.watch<BotProvider>().botList.isNotEmpty,
+          hasScrollBody:
+              context.watch<BotProvider>().loadingList ||
+              context.watch<BotProvider>().botList.isNotEmpty,
           child:
-              context.watch<BotProvider>().botList.isEmpty
+              context.watch<BotProvider>().loadingList
+                  ? ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: 5,
+                    itemBuilder: (context, index) {
+                      final bot = Bot.placeholder();
+                      return BotRect(
+                        title: bot.name,
+                        subtitle: bot.description,
+                        id: bot.id,
+                        shimmerizing: true,
+                        navigateToInfo: () {},
+                      );
+                    },
+                  )
+                  : context.watch<BotProvider>().botList.isEmpty
                   ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -184,9 +198,7 @@ class _BotListScreenState extends State<BotListScreen> {
                               WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
                                 child: FitIconBtn(
-                                  onTap: () {
-                                    context.push("/bots/new");
-                                  },
+                                  onTap: () => context.push("/bots/new"),
                                   icon: Icons.add_circle_outline,
                                   iconColor: omniDarkBlue,
                                   iconSize: 30,
@@ -211,9 +223,7 @@ class _BotListScreenState extends State<BotListScreen> {
                         title: bot.name,
                         subtitle: bot.description,
                         id: bot.id,
-                        navigateToInfo: () {
-                          context.push("/bots/${bot.id}");
-                        },
+                        navigateToInfo: () => context.push("/bots/${bot.id}"),
                       );
                     },
                   ),

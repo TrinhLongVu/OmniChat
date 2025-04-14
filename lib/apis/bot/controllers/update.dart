@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/apis/bot/models/request.dart';
 import 'package:omni_chat/constants/base_urls.dart';
+import 'package:omni_chat/providers/bot.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:omni_chat/services/dio_client.dart';
+import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<bool> updateBot(UpdateBotRequest req) async {
+Future<void> updateBot(UpdateBotRequest req) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
 
@@ -37,19 +39,19 @@ Future<bool> updateBot(UpdateBotRequest req) async {
           type: QuickAlertType.success,
           text: "Bot updated successfully!",
           onConfirmBtnTap:
-              () => {GoRouter.of(rootNavigatorKey.currentContext!).pop()},
+              () => {
+                rootNavigatorKey.currentContext!.read<BotProvider>().loadList(),
+                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
+              },
         );
-        return true;
       default:
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.error,
           text: "Something went wrong! Please try again later.",
         );
-        return false;
     }
   } catch (e) {
     debugPrint("Error: $e");
   }
-  return false;
 }

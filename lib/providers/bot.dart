@@ -4,16 +4,19 @@ import 'package:omni_chat/apis/bot/models/response.dart';
 import 'package:omni_chat/models/bot.dart';
 
 class BotProvider extends ChangeNotifier {
+  bool loadingList = false;
   List<Bot> botList;
 
   BotProvider({this.botList = const []});
 
-  Future<void> loadBotList() async {
+  Future<void> loadList() async {
+    loadingList = true;
+    notifyListeners();
     GetBotListResponse? res = await getBotList();
     if (res != null) {
       botList = res.data;
     }
-    debugPrint(botList.toString());
+    loadingList = false;
     notifyListeners();
   }
 }

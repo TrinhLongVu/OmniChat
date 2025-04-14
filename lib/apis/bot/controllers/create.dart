@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/apis/bot/models/request.dart';
 import 'package:omni_chat/constants/base_urls.dart';
+import 'package:omni_chat/providers/bot.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:omni_chat/services/dio_client.dart';
+import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -38,8 +40,9 @@ Future<void> createBot(CreateBotRequest req) async {
           text: "Bot created successfully!",
           onConfirmBtnTap:
               () => {
+                rootNavigatorKey.currentContext!.read<BotProvider>().loadList(),
                 GoRouter.of(rootNavigatorKey.currentContext!).pop(),
-                GoRouter.of(rootNavigatorKey.currentContext!).pop(true),
+                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
               },
         );
         break;

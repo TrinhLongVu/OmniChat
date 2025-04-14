@@ -43,4 +43,21 @@ class Bot {
       openAiThreadIdPlay: json['openAiThreadIdPlay'],
     );
   }
+
+  factory Bot.placeholder() {
+    return Bot(
+      id: "",
+      userId: "",
+      name: "",
+      instruction: "",
+      description: "",
+      createdAt: "",
+      updatedAt: "",
+      deletedAt: "",
+      createdBy: "",
+      updatedBy: "",
+      openAiAssistantId: "",
+      openAiThreadIdPlay: "",
+    );
+  }
 }

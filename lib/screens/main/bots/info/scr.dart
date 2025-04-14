@@ -233,19 +233,15 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                                     FocusManager.instance.primaryFocus
                                         ?.unfocus();
                                     context.pop();
-                                    bool updateResult = await updateBot((
+                                    updateBot((
                                       id: widget.id!,
                                       name: nameController.text,
                                       instruction: instructionController.text,
                                       description: descriptionController.text,
                                     ));
-                                    if (updateResult) {
-                                      isLoading = true;
-                                      loadBotInfo();
-                                      setState(() {
-                                        screenState = "info";
-                                      });
-                                    }
+                                    setState(() {
+                                      screenState = "info";
+                                    });
                                   },
                                 );
                               }
