@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/knowledge/controllers/create.dart';
-import 'package:omni_chat/models/knowledge_model.dart';
+import 'package:omni_chat/models/knowledge.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
 import 'package:omni_chat/widgets/text/info_field.dart';
 import 'package:omni_chat/widgets/text/input_field.dart';

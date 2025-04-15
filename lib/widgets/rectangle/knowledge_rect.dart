@@ -1,25 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:omni_chat/constants/color.dart';
-import 'package:omni_chat/constants/knowledge_type.dart';
 
 class KnowledgeRect extends StatelessWidget {
   const KnowledgeRect({
     super.key,
     required this.name,
     required this.description,
-    required this.type,
   });
 
   final String name;
   final String description;
-  final KnowledgeType type;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.go("/knowledge/info");
+        // context.go("/knowledge/info");
       },
       child: Container(
         padding: const EdgeInsets.only(right: 8),
@@ -36,7 +32,11 @@ class KnowledgeRect extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(10.0),
-              child: Icon(type.icon, size: 60, color: omniDarkBlue),
+              child: Icon(
+                Icons.lightbulb_circle_rounded,
+                size: 60,
+                color: omniDarkBlue,
+              ),
             ),
             Expanded(
               child: Column(

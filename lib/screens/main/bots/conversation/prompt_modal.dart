@@ -162,41 +162,53 @@ class _PromptModalState extends State<PromptModal> {
                         ),
                       ),
                       Expanded(
-                        child: SingleChildScrollView(
-                          child: Consumer<PromptProvider>(
-                            builder: (context, provider, child) {
-                              return Column(
-                                children:
-                                    provider.publicLoading
-                                        ? List.generate(
-                                          10,
-                                          (index) => PromptRect(
-                                            prompt: Prompt.placeholder(),
-                                            shimmerizing: true,
-                                          ),
-                                        ).toList()
-                                        : provider.publicPrompts.isEmpty
-                                        ? [
-                                          SizedBox(
-                                            height: viewport.height * 0.2,
-                                          ),
-                                          Center(
-                                            child: Text(
-                                              "No public prompts meet the criteria you specified",
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ]
-                                        : provider.publicPrompts
-                                            .map(
-                                              (prompt) => PromptRect(
-                                                prompt: prompt,
-                                                shimmerizing: false,
+                        child: RefreshIndicator(
+                          onRefresh:
+                              () => context.read<PromptProvider>().loadList(
+                                isPublic: true,
+                              ),
+                          child: SingleChildScrollView(
+                            physics: AlwaysScrollableScrollPhysics(),
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minHeight: MediaQuery.of(context).size.height,
+                              ),
+                              child: Consumer<PromptProvider>(
+                                builder: (context, provider, child) {
+                                  return Column(
+                                    children:
+                                        provider.publicLoading
+                                            ? List.generate(
+                                              10,
+                                              (index) => PromptRect(
+                                                prompt: Prompt.placeholder(),
+                                                shimmerizing: true,
                                               ),
-                                            )
-                                            .toList(),
-                              );
-                            },
+                                            ).toList()
+                                            : provider.publicPrompts.isEmpty
+                                            ? [
+                                              SizedBox(
+                                                height: viewport.height * 0.2,
+                                              ),
+                                              Center(
+                                                child: Text(
+                                                  "No public prompts meet the criteria you specified",
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            ]
+                                            : provider.publicPrompts
+                                                .map(
+                                                  (prompt) => PromptRect(
+                                                    prompt: prompt,
+                                                    shimmerizing: false,
+                                                  ),
+                                                )
+                                                .toList(),
+                                  );
+                                },
+                              ),
+                            ),
                           ),
                         ),
                       ),

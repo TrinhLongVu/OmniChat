@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:omni_chat/models/knowledge_model.dart';
 import 'package:omni_chat/screens/auth/login/scr.dart';
 import 'package:omni_chat/screens/auth/register/scr.dart';
 import 'package:omni_chat/screens/landing/scr.dart';
@@ -83,18 +82,18 @@ final GoRouter appRouter = GoRouter(
                   path: 'new',
                   builder: (context, state) => KnowledgeInfoScreen(),
                 ),
-                GoRoute(
-                  name: 'knowledge-info',
-                  path: 'info',
-                  builder: (context, state) {
-                    final techKnowledge = Knowledge(
-                      name: 'Tech Overview',
-                      description:
-                          'Technology is a vast field that encompasses hardware, software, networks, AI, cybersecurity, and much more.',
-                    );
-                    return KnowledgeInfoScreen(knowledge: techKnowledge);
-                  },
-                ),
+                // GoRoute(
+                //   name: 'knowledge-info',
+                //   path: 'info',
+                //   builder: (context, state) {
+                //     final techKnowledge = Knowledge(
+                //       name: 'Tech Overview',
+                //       description:
+                //           'Technology is a vast field that encompasses hardware, software, networks, AI, cybersecurity, and much more.',
+                //     );
+                //     return KnowledgeInfoScreen(knowledge: techKnowledge);
+                //   },
+                // ),
               ],
             ),
           ],
