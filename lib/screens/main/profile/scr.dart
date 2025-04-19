@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
-import 'package:omni_chat/apis/auth/controllers/get_me.dart';
 import 'package:omni_chat/apis/auth/controllers/logout.dart';
-import 'package:omni_chat/apis/auth/models/response.dart';
+import 'package:omni_chat/providers/user.dart';
 import 'package:omni_chat/widgets/button/profile_btn.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -14,24 +14,12 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String username = "Loading...";
   String email = "example@example.com";
   bool loggingOut = false;
 
   @override
   void initState() {
     super.initState();
-    loadUserData();
-  }
-
-  Future<void> loadUserData() async {
-    GetMeResponse? fetchedUser = await getMe();
-    if (mounted && fetchedUser != null) {
-      setState(() {
-        username = fetchedUser.username;
-        email = fetchedUser.email;
-      });
-    }
   }
 
   @override
@@ -56,7 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          "Standard",
+                          context.watch<UserProvider>().subscriptionPlan,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 15,
@@ -68,13 +56,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
                 Text(
-                  username,
+                  context.watch<UserProvider>().username,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 25,
                   ),
                 ),
-                Text(email, style: const TextStyle(fontSize: 20)),
+                Text(
+                  context.watch<UserProvider>().email,
+                  style: const TextStyle(fontSize: 20),
+                ),
                 const SizedBox(height: 30),
                 Wrap(
                   runSpacing: 20,

@@ -70,4 +70,26 @@ class GetTokenResponse {
   }
 }
 
-// Refresh
+// Get Usage
+class GetUsageResponse {
+  GetUsageResponse({
+    required this.name,
+    required this.dailyTokens,
+    required this.monthlyTokens,
+    required this.annuallyTokens,
+  });
+
+  final String name;
+  final int dailyTokens;
+  final int monthlyTokens;
+  final int annuallyTokens;
+
+  factory GetUsageResponse.fromJson(Map<String, dynamic> json) {
+    return GetUsageResponse(
+      name: json['name'],
+      dailyTokens: json['dailyTokens'],
+      monthlyTokens: json['monthlyTokens'],
+      annuallyTokens: json['annuallyTokens'],
+    );
+  }
+}

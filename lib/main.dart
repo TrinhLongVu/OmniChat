@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:omni_chat/providers/bot.dart';
 import 'package:omni_chat/providers/convo.dart';
 import 'package:omni_chat/providers/prompt.dart';
+import 'package:omni_chat/providers/user.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:provider/provider.dart';
 
@@ -15,6 +16,7 @@ class OmniChatApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => BotProvider()),
         ChangeNotifierProvider(create: (context) => PromptProvider()),
         ChangeNotifierProvider(create: (context) => ConvoProvider()),

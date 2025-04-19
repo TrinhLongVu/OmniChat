@@ -29,7 +29,7 @@ class ConvoProvider extends ChangeNotifier {
       currentToken = tokenRes.currentToken;
     }
     GetConvosResponse? convosResponse = await getConversations((
-      assistantId: "gpt-4o-mini",
+      assistantId: "gemini-1.5-flash-latest",
     ));
     if (convosResponse != null) {
       convoList = convosResponse.items;
@@ -39,7 +39,7 @@ class ConvoProvider extends ChangeNotifier {
 
   Future<void> loadConvoList() async {
     GetConvosResponse? convosResponse = await getConversations((
-      assistantId: "gpt-4o-mini",
+      assistantId: "gemini-1.5-flash-latest",
     ));
     if (convosResponse != null) {
       convoList = convosResponse.items;
@@ -95,6 +95,11 @@ class ConvoProvider extends ChangeNotifier {
 
   void askChat(String message) {
     currentConvoHistoryList.add(ConvoHistoryItem(query: message));
+    notifyListeners();
+  }
+
+  void removeLastMessage() {
+    currentConvoHistoryList.removeLast();
     notifyListeners();
   }
 

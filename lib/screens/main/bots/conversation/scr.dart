@@ -109,7 +109,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
           context.read<ConvoProvider>().setCurrentConvoId("");
           context.read<ConvoProvider>().clearCurrentConvo();
         } else {
-          context.read<ConvoProvider>().currentConvoHistoryList.removeLast();
+          context.read<ConvoProvider>().removeLastMessage();
         }
         QuickAlert.show(
           context: context,

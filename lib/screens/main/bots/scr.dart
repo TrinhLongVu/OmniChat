@@ -157,7 +157,10 @@ class _BotListScreenState extends State<BotListScreen> {
               physics: AlwaysScrollableScrollPhysics(),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  minHeight: MediaQuery.of(context).size.height,
+                  minHeight:
+                      context.watch<BotProvider>().botList.isEmpty
+                          ? 400
+                          : MediaQuery.of(context).size.height,
                 ),
                 child:
                     context.watch<BotProvider>().loadingList

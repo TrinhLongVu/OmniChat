@@ -13,7 +13,7 @@ class InfoField extends StatefulWidget {
     required this.infoText,
     this.fontSz = 14,
     this.lineNum = 1,
-    this.shimmerizing = true,
+    this.shimmerizing = false,
   });
 
   @override

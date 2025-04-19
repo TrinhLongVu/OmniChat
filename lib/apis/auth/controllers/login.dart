@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:omni_chat/apis/auth/models/request.dart';
 import 'package:omni_chat/apis/auth/models/response.dart';
 import 'package:omni_chat/constants/base_urls.dart';
+import 'package:omni_chat/providers/user.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:omni_chat/services/dio_client.dart';
+import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,6 +36,7 @@ Future<void> login(AuthRequest req) async {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('access_token', loginData.accessToken);
         await prefs.setString('refresh_token', loginData.refreshToken);
+        rootNavigatorKey.currentContext!.read<UserProvider>().setUser();
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.success,
