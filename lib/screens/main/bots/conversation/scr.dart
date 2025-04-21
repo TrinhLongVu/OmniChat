@@ -4,6 +4,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:omni_chat/apis/chat/controllers/send_msg.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/prompt.dart';
+import 'package:omni_chat/providers/bot.dart';
 import 'package:omni_chat/providers/convo.dart';
 import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/widgets/button/fit_ico_btn.dart';
@@ -21,7 +22,9 @@ import 'package:quickalert/quickalert.dart';
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class ConversationScreen extends StatefulWidget {
-  const ConversationScreen({super.key});
+  const ConversationScreen({super.key, this.id});
+
+  final String? id;
 
   @override
   State<ConversationScreen> createState() => _ConversationScreenState();
@@ -33,10 +36,25 @@ class _ConversationScreenState extends State<ConversationScreen> {
   final ScrollController scrollCtrlr = ScrollController();
 
   bool showPromptTooltip = false;
+  bool isOfficial = true;
+  String botName = "Loading...";
 
   @override
   void initState() {
     super.initState();
+    if (widget.id != null) {
+      isOfficial = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.read<BotProvider>().loadInfo(
+          id: widget.id!,
+          onSuccess: () {
+            botName = context.read<BotProvider>().currentBot.name;
+          },
+        );
+      });
+    } else {
+      botName = "Omni Chat Bot";
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<PromptProvider>().loadSlashList();
       context.read<ConvoProvider>().initConvoList();
@@ -132,7 +150,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
             Padding(
               padding: const EdgeInsets.only(left: 8),
               child: Text(
-                "Omni Chat Bot",
+                botName,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
             ),
@@ -140,27 +158,33 @@ class _ConversationScreenState extends State<ConversationScreen> {
         ),
         backgroundColor: Colors.white,
         actions: [
-          IconButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => AgentChangePopUp(),
-              );
-            },
-            icon: Icon(Icons.smart_toy, color: omniDarkBlue),
-          ),
-          IconButton(
-            onPressed: () {
-              context.read<ConvoProvider>().loadConvoList();
-              _scaffoldKey.currentState!.openEndDrawer();
-            },
-            icon: Icon(BoxIcons.bxs_message_alt_detail, color: omniDarkBlue),
-          ),
+          if (isOfficial) ...[
+            IconButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AgentChangePopUp(),
+                );
+              },
+              icon: Icon(Icons.smart_toy, color: omniDarkBlue),
+            ),
+            IconButton(
+              onPressed: () {
+                context.read<ConvoProvider>().loadConvoList();
+                _scaffoldKey.currentState!.openEndDrawer();
+              },
+              icon: Icon(BoxIcons.bxs_message_alt_detail, color: omniDarkBlue),
+            ),
+          ] else
+            ...[],
         ],
       ),
-      endDrawer: ThreadDrawer(
-        conversations: context.watch<ConvoProvider>().convoList,
-      ),
+      endDrawer:
+          isOfficial
+              ? ThreadDrawer(
+                conversations: context.watch<ConvoProvider>().convoList,
+              )
+              : null,
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -191,7 +215,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                               spacing: 15,
                               children: [
                                 Icon(
-                                  OctIcons.copilot,
+                                  isOfficial
+                                      ? OctIcons.copilot
+                                      : Icons.smart_toy,
                                   size: 150,
                                   color: omniMilk,
                                 ),
@@ -204,50 +230,59 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                     color: omniMilk,
                                   ),
                                 ),
-                                Text(
-                                  "Or",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: omniMilk,
-                                  ),
-                                ),
-                                RichText(
-                                  textAlign: TextAlign.center,
-                                  text: TextSpan(
+                                if (isOfficial) ...[
+                                  Text(
+                                    "Or",
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 18,
-                                      color: omniMilk,
                                       fontWeight: FontWeight.bold,
-                                      fontFamily:
-                                          GoogleFonts.poppins().fontFamily,
+                                      color: omniMilk,
                                     ),
-                                    children: [
-                                      TextSpan(
-                                        text:
-                                            'Select a thread from the drawer  ',
-                                      ),
-                                      WidgetSpan(
-                                        alignment: PlaceholderAlignment.middle,
-                                        child: FitIconBtn(
-                                          onTap: () {
-                                            context
-                                                .read<ConvoProvider>()
-                                                .loadConvoList();
-                                            _scaffoldKey.currentState!
-                                                .openEndDrawer();
-                                          },
-                                          icon: BoxIcons.bxs_message_alt_detail,
-                                          iconColor: omniMilk,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: '  to continue your conversation',
-                                      ),
-                                    ],
                                   ),
-                                ),
+                                  RichText(
+                                    textAlign: TextAlign.center,
+                                    text: TextSpan(
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: omniMilk,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily:
+                                            GoogleFonts.poppins().fontFamily,
+                                      ),
+                                      children: [
+                                        TextSpan(
+                                          text:
+                                              'Select a thread from the drawer  ',
+                                        ),
+                                        WidgetSpan(
+                                          alignment:
+                                              PlaceholderAlignment.middle,
+                                          child: FitIconBtn(
+                                            onTap: () {
+                                              context
+                                                  .read<ConvoProvider>()
+                                                  .loadConvoList();
+                                              _scaffoldKey.currentState!
+                                                  .openEndDrawer();
+                                            },
+                                            icon:
+                                                BoxIcons.bxs_message_alt_detail,
+                                            iconColor: omniMilk,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text:
+                                              '  to continue your conversation',
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ] else
+                                  ...[
+                                  
+                                ]
+                                ,
                               ],
                             ),
                           )

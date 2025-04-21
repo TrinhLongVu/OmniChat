@@ -10,9 +10,9 @@ class MainLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String currentRoute = GoRouterState.of(context).uri.toString();
-    final bool isConversationScreen = currentRoute.contains(
-      '/bots/conversation',
-    );
+    final bool isConversationScreen =
+        currentRoute.contains('/bots/conversation') ||
+        currentRoute.startsWith('/bots/convo/');
 
     return Scaffold(
       body: SafeArea(child: navigationShell),

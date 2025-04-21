@@ -163,6 +163,8 @@ class _PromptModalState extends State<PromptModal> {
                       ),
                       Expanded(
                         child: RefreshIndicator(
+                          color: omniDarkBlue,
+                          backgroundColor: Colors.white,
                           onRefresh: () async {
                             context.read<PromptProvider>().loadList(
                               isPublic: true,
@@ -215,69 +217,81 @@ class _PromptModalState extends State<PromptModal> {
                       ),
                     ],
                   ),
-                  SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        if (context
-                            .watch<PromptProvider>()
-                            .privatePrompts
-                            .isEmpty) ...[
-                          SizedBox(height: viewport.height * 0.2),
-                          Center(
-                            child: Text(
-                              "You don't have any private prompts yet",
-                            ),
-                          ),
-                        ] else ...[
-                          SizedBox.shrink(),
-                        ],
-
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10),
-                          child: TextButton(
-                            onPressed: () async {
-                              showDialog(
-                                context: context,
-                                builder: (context) => PromptCreationPopUp(),
-                              );
-                            },
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              spacing: 10,
-                              children: [
-                                Text(
-                                  "Add Prompt",
-                                  style: TextStyle(color: omniDarkCyan),
+                  RefreshIndicator(
+                    color: omniDarkBlue,
+                    backgroundColor: Colors.white,
+                    onRefresh: () async {
+                      context.read<PromptProvider>().loadList(isPublic: false);
+                    },
+                    child: SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: MediaQuery.of(context).size.height,
+                        ),
+                        child: Column(
+                          children: [
+                            if (context
+                                .watch<PromptProvider>()
+                                .privatePrompts
+                                .isEmpty) ...[
+                              SizedBox(height: viewport.height * 0.2),
+                              Center(
+                                child: Text(
+                                  "You don't have any private prompts yet",
                                 ),
-                                Icon(Icons.add, color: omniDarkBlue),
-                              ],
+                              ),
+                            ] else ...[
+                              SizedBox.shrink(),
+                            ],
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              child: TextButton(
+                                onPressed: () async {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => PromptCreationPopUp(),
+                                  );
+                                },
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  spacing: 10,
+                                  children: [
+                                    Text(
+                                      "Add Prompt",
+                                      style: TextStyle(color: omniDarkCyan),
+                                    ),
+                                    Icon(Icons.add, color: omniDarkBlue),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        Consumer<PromptProvider>(
-                          builder: (context, provider, child) {
-                            return Column(
-                              children:
-                                  provider.privateLoading
-                                      ? List.generate(
-                                        10,
-                                        (index) => PromptRect(
-                                          prompt: Prompt.placeholder(),
-                                          shimmerizing: true,
-                                        ),
-                                      ).toList()
-                                      : provider.privatePrompts
-                                          .map(
-                                            (prompt) => PromptRect(
-                                              prompt: prompt,
-                                              shimmerizing: false,
+                            Consumer<PromptProvider>(
+                              builder: (context, provider, child) {
+                                return Column(
+                                  children:
+                                      provider.privateLoading
+                                          ? List.generate(
+                                            10,
+                                            (index) => PromptRect(
+                                              prompt: Prompt.placeholder(),
+                                              shimmerizing: true,
                                             ),
-                                          )
-                                          .toList(),
-                            );
-                          },
+                                          ).toList()
+                                          : provider.privatePrompts
+                                              .map(
+                                                (prompt) => PromptRect(
+                                                  prompt: prompt,
+                                                  shimmerizing: false,
+                                                ),
+                                              )
+                                              .toList(),
+                                );
+                              },
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ],

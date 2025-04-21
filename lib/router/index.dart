@@ -59,6 +59,14 @@ final GoRouter appRouter = GoRouter(
                   builder: (context, state) => ConversationScreen(),
                 ),
                 GoRoute(
+                  name: 'bot-convo',
+                  path: 'convo/:id',
+                  builder: (context, state) {
+                    final botId = state.pathParameters['id'];
+                    return ConversationScreen(id: botId);
+                  },
+                ),
+                GoRoute(
                   name: 'bot-info',
                   path: ':id',
                   builder: (context, state) {

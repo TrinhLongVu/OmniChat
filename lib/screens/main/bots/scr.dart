@@ -158,6 +158,8 @@ class _BotListScreenState extends State<BotListScreen> {
         SliverFillRemaining(
           hasScrollBody: context.watch<BotProvider>().botList.isNotEmpty,
           child: RefreshIndicator(
+            color: omniDarkBlue,
+            backgroundColor: Colors.white,
             onRefresh: () async {
               context.read<BotProvider>().loadList();
             },

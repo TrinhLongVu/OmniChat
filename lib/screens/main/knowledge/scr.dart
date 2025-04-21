@@ -57,6 +57,8 @@ class _KnowledgeLibraryScreenState extends State<KnowledgeLibraryScreen> {
         ),
         Expanded(
           child: RefreshIndicator(
+            color: omniDarkBlue,
+            backgroundColor: Colors.white,
             onRefresh: () async {
               context.read<KnowledgeProvider>().loadList();
             },

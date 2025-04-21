@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:omni_chat/widgets/shimmer/shimmer_ln.dart';
 
 class BotRect extends StatelessWidget {
@@ -21,7 +22,10 @@ class BotRect extends StatelessWidget {
   Widget build(BuildContext context) {
     final Size viewport = MediaQuery.of(context).size;
     return GestureDetector(
-      onTap: () => {if (shimmerizing) {}},
+      onTap:
+          () => {
+            if (!shimmerizing) {context.go('/bots/convo/$id')},
+          },
       child: Container(
         padding: const EdgeInsets.only(right: 8),
         decoration: BoxDecoration(
