@@ -37,7 +37,9 @@ class _KnowledgeLibraryScreenState extends State<KnowledgeLibraryScreen> {
                 child: SearchBox(
                   ctrlr: searchKnowledgeCtrlr,
                   placeholder: "Search Knowledges...",
-                  onSearch: () {},
+                  onSearch: (value) {
+                    context.read<KnowledgeProvider>().searchKnowledge(value);
+                  },
                 ),
               ),
               IconButton(
@@ -55,7 +57,9 @@ class _KnowledgeLibraryScreenState extends State<KnowledgeLibraryScreen> {
         ),
         Expanded(
           child: RefreshIndicator(
-            onRefresh: () => context.read<KnowledgeProvider>().loadList(),
+            onRefresh: () async {
+              context.read<KnowledgeProvider>().loadList();
+            },
             child: SingleChildScrollView(
               physics: AlwaysScrollableScrollPhysics(),
               scrollDirection: Axis.vertical,
