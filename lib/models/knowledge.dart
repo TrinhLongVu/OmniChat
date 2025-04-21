@@ -40,4 +40,19 @@ class Knowledge {
       updatedBy: json['updatedBy'],
     );
   }
+
+  factory Knowledge.placeholder() {
+    return Knowledge(
+      id: "",
+      name: "",
+      description: "",
+      userId: "",
+      numUnits: 0,
+      totalSize: 0,
+      createdAt: "",
+      updatedAt: "",
+      createdBy: "",
+      updatedBy: "",
+    );
+  }
 }

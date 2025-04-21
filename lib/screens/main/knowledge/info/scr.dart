@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/knowledge/controllers/create.dart';
-import 'package:omni_chat/models/knowledge.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
 import 'package:omni_chat/widgets/text/info_field.dart';
 import 'package:omni_chat/widgets/text/input_field.dart';
@@ -11,9 +10,9 @@ import 'package:validatorless/validatorless.dart';
 final editKnowledgeFormKey = GlobalKey<FormState>();
 
 class KnowledgeInfoScreen extends StatefulWidget {
-  final Knowledge? knowledge;
+  final String? id;
 
-  const KnowledgeInfoScreen({super.key, this.knowledge});
+  const KnowledgeInfoScreen({super.key, this.id});
 
   @override
   State<KnowledgeInfoScreen> createState() => _KnowledgeInfoScreenState();
@@ -31,10 +30,13 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
   void initState() {
     super.initState();
     screenState = "create";
-    nameCtrlr = TextEditingController(text: widget.knowledge?.name ?? "");
-    descriptionCtrlr = TextEditingController(
-      text: widget.knowledge?.description ?? "",
-    );
+    if (widget.id == null) {
+      screenState = "create";
+      nameCtrlr = TextEditingController();
+      descriptionCtrlr = TextEditingController();
+    } else {
+      screenState = "info";
+    }
   }
 
   @override
@@ -57,7 +59,6 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool editable = widget.knowledge != null;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -86,12 +87,9 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         spacing: 8,
                         children: [
-                          InputHeader(title: "Name", isRequired: !editable),
+                          InputHeader(title: "Name", isRequired: true),
                           (screenState == "info")
-                              ? InfoField(
-                                infoText: widget.knowledge?.name ?? "",
-                                fontSz: 16,
-                              )
+                              ? InfoField(infoText: "", fontSz: 16)
                               : InputField(
                                 controller: nameCtrlr,
                                 placeholder: "Name of the knowledge",
@@ -102,11 +100,7 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
                               ),
                           InputHeader(title: "Description"),
                           (screenState == "info")
-                              ? InfoField(
-                                infoText: widget.knowledge?.description ?? "",
-                                fontSz: 16,
-                                lineNum: 5,
-                              )
+                              ? InfoField(infoText: "", fontSz: 16, lineNum: 5)
                               : InputField(
                                 controller: descriptionCtrlr,
                                 placeholder:

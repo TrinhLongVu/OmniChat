@@ -18,7 +18,6 @@ Future<GetUsageResponse?> getUsage() async {
       "/api/v1/subscriptions/me",
       options: Options(headers: headers),
     );
-    debugPrint(response.data.toString());
     switch (response.statusCode) {
       case 200:
         final data = response.data as Map<String, dynamic>;

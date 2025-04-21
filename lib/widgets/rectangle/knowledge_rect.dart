@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:omni_chat/constants/color.dart';
+import 'package:omni_chat/models/knowledge.dart';
+import 'package:omni_chat/widgets/shimmer/shimmer_ln.dart';
 
 class KnowledgeRect extends StatelessWidget {
   const KnowledgeRect({
     super.key,
-    required this.name,
-    required this.description,
+    required this.knowledge,
+    this.shimmerizing = false,
   });
 
-  final String name;
-  final String description;
+  final Knowledge knowledge;
+  final bool shimmerizing;
 
   @override
   Widget build(BuildContext context) {
+    final Size viewport = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {
-        // context.go("/knowledge/info");
+        context.push('/knowledge/${knowledge.id}');
       },
       child: Container(
         padding: const EdgeInsets.only(right: 8),
@@ -43,21 +47,37 @@ class KnowledgeRect extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 3,
                 children: [
-                  Text(
-                    name,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  Text(
-                    description,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    softWrap: false,
-                    style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 14,
-                      color: Colors.black.withValues(alpha: 0.6),
-                    ),
-                  ),
+                  shimmerizing
+                      ? ShimmerLine(
+                        height: viewport.height * 0.03,
+                        color: Colors.black54,
+                        borderRad: 3,
+                      )
+                      : Text(
+                        knowledge.name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                  shimmerizing
+                      ? ShimmerLine(
+                        height: viewport.height * 0.025,
+                        width: viewport.width * 0.5,
+                        color: Colors.black38,
+                        borderRad: 3,
+                      )
+                      : Text(
+                        knowledge.description,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: false,
+                        style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          fontSize: 14,
+                          color: Colors.black.withValues(alpha: 0.6),
+                        ),
+                      ),
                 ],
               ),
             ),

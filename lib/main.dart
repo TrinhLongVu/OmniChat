@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:omni_chat/providers/bot.dart';
 import 'package:omni_chat/providers/convo.dart';
+import 'package:omni_chat/providers/knowledge.dart';
 import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/providers/user.dart';
 import 'package:omni_chat/router/index.dart';
@@ -18,6 +19,7 @@ class OmniChatApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => BotProvider()),
+        ChangeNotifierProvider(create: (context) => KnowledgeProvider()),
         ChangeNotifierProvider(create: (context) => PromptProvider()),
         ChangeNotifierProvider(create: (context) => ConvoProvider()),
       ],

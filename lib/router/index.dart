@@ -82,18 +82,14 @@ final GoRouter appRouter = GoRouter(
                   path: 'new',
                   builder: (context, state) => KnowledgeInfoScreen(),
                 ),
-                // GoRoute(
-                //   name: 'knowledge-info',
-                //   path: 'info',
-                //   builder: (context, state) {
-                //     final techKnowledge = Knowledge(
-                //       name: 'Tech Overview',
-                //       description:
-                //           'Technology is a vast field that encompasses hardware, software, networks, AI, cybersecurity, and much more.',
-                //     );
-                //     return KnowledgeInfoScreen(knowledge: techKnowledge);
-                //   },
-                // ),
+                GoRoute(
+                  name: 'knowledge-info',
+                  path: ':id',
+                  builder: (context, state) {
+                    final knowledgeId = state.pathParameters['id'];
+                    return KnowledgeInfoScreen(id: knowledgeId);
+                  },
+                ),
               ],
             ),
           ],

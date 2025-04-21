@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:omni_chat/apis/knowledge/controllers/get_list.dart';
-import 'package:omni_chat/apis/knowledge/models/response.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/knowledge.dart';
+import 'package:omni_chat/providers/knowledge.dart';
 import 'package:omni_chat/widgets/rectangle/knowledge_rect.dart';
 import 'package:omni_chat/widgets/rectangle/search_box.dart';
+import 'package:provider/provider.dart';
 
 class KnowledgeLibraryScreen extends StatefulWidget {
   const KnowledgeLibraryScreen({super.key});
@@ -17,21 +17,12 @@ class KnowledgeLibraryScreen extends StatefulWidget {
 class _KnowledgeLibraryScreenState extends State<KnowledgeLibraryScreen> {
   final TextEditingController searchKnowledgeCtrlr = TextEditingController();
 
-  List<Knowledge> knowledgeList = [];
-
   @override
   void initState() {
     super.initState();
-    loadList();
-  }
-
-  Future<void> loadList() async {
-    GetKnowledgeListResponse? res = await getKnowledgeList();
-    if (mounted && res != null) {
-      setState(() {
-        knowledgeList = res.data;
-      });
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<KnowledgeProvider>().loadList();
+    });
   }
 
   @override
@@ -64,7 +55,7 @@ class _KnowledgeLibraryScreenState extends State<KnowledgeLibraryScreen> {
         ),
         Expanded(
           child: RefreshIndicator(
-            onRefresh: () => loadList(),
+            onRefresh: () => context.read<KnowledgeProvider>().loadList(),
             child: SingleChildScrollView(
               physics: AlwaysScrollableScrollPhysics(),
               scrollDirection: Axis.vertical,
@@ -72,17 +63,28 @@ class _KnowledgeLibraryScreenState extends State<KnowledgeLibraryScreen> {
                 constraints: BoxConstraints(
                   minHeight: MediaQuery.of(context).size.height,
                 ),
-                child: Column(
-                  children:
-                      knowledgeList
-                          .map(
-                            (knowledge) => KnowledgeRect(
-                              name: knowledge.name,
-                              description: knowledge.description,
+                child:
+                    context.watch<KnowledgeProvider>().loadingList
+                        ? Column(
+                          children: List.generate(
+                            10,
+                            (index) => KnowledgeRect(
+                              knowledge: Knowledge.placeholder(),
+                              shimmerizing: true,
                             ),
-                          )
-                          .toList(),
-                ),
+                          ),
+                        )
+                        : Column(
+                          children:
+                              context
+                                  .watch<KnowledgeProvider>()
+                                  .knowledgeList
+                                  .map(
+                                    (knowledge) =>
+                                        KnowledgeRect(knowledge: knowledge),
+                                  )
+                                  .toList(),
+                        ),
               ),
             ),
           ),
