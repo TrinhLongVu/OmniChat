@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/knowledge/controllers/create.dart';
 import 'package:omni_chat/apis/knowledge/controllers/delete.dart';
+import 'package:omni_chat/apis/knowledge/controllers/update.dart';
+import 'package:omni_chat/models/knowledge.dart';
 import 'package:omni_chat/providers/knowledge.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
 import 'package:omni_chat/widgets/button/ico_txt_btn.dart';
@@ -46,7 +48,9 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
       nameCtrlr = TextEditingController(
         text: context.read<KnowledgeProvider>().currentKnowledge.name,
       );
-      descriptionCtrlr = TextEditingController();
+      descriptionCtrlr = TextEditingController(
+        text: context.read<KnowledgeProvider>().currentKnowledge.description,
+      );
     }
   }
 
@@ -72,6 +76,35 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
     loading.value = true;
     await deleteKnowledge((
       id: widget.id!,
+      onError: () {
+        loading.value = false;
+      },
+    ));
+  }
+
+  Future<void> onUpdateKnowledge() async {
+    loading.value = true;
+    await updateKnowledge((
+      id: widget.id!,
+      name: nameCtrlr.text,
+      description: descriptionCtrlr.text,
+      onSuccess: () {
+        Knowledge updatedKnowledge = Knowledge(
+          id: widget.id!,
+          name: nameCtrlr.text,
+          description: descriptionCtrlr.text,
+          userId: context.read<KnowledgeProvider>().currentKnowledge.userId,
+          numUnits: context.read<KnowledgeProvider>().currentKnowledge.numUnits,
+          totalSize:
+              context.read<KnowledgeProvider>().currentKnowledge.totalSize,
+          createdAt:
+              context.read<KnowledgeProvider>().currentKnowledge.createdAt,
+          updatedAt:
+              context.read<KnowledgeProvider>().currentKnowledge.updatedAt,
+        );
+        context.read<KnowledgeProvider>().setCurrentKnowledge(updatedKnowledge);
+        loading.value = false;
+      },
       onError: () {
         loading.value = false;
       },
@@ -202,6 +235,26 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
                                   .validate()) {
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 await onCreateKnowledge();
+                              }
+                            } else if (screenState == "edit") {
+                              if (editKnowledgeFormKey.currentState!
+                                  .validate()) {
+                                QuickAlert.show(
+                                  context: context,
+                                  type: QuickAlertType.confirm,
+                                  text:
+                                      "Are you sure you want to save changes?",
+                                  onCancelBtnTap: () => context.pop(),
+                                  onConfirmBtnTap: () async {
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+                                    context.pop();
+                                    await onUpdateKnowledge();
+                                    setState(() {
+                                      screenState = "info";
+                                    });
+                                  },
+                                );
                               }
                             }
                           },
