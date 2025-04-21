@@ -9,17 +9,27 @@ class BotProvider extends ChangeNotifier {
   List<Bot> botList;
   bool botLoading = false;
   Bot currentBot = Bot.placeholder();
+  String query = "";
 
   BotProvider({this.botList = const []});
 
-  Future<void> loadList() async {
-    loadingList = true;
-    notifyListeners();
-    GetBotListResponse? res = await getBotList();
+  Future<void> getListFromApi() async {
+    GetBotListResponse? res = await getBotList((query: query));
     if (res != null) {
       botList = res.data;
     }
+  }
+
+  void loadList() async {
+    loadingList = true;
+    notifyListeners();
+    await getListFromApi();
     loadingList = false;
+    notifyListeners();
+  }
+
+  void reloadList() async {
+    await getListFromApi();
     notifyListeners();
   }
 
@@ -36,5 +46,10 @@ class BotProvider extends ChangeNotifier {
       onSuccess();
     }
     notifyListeners();
+  }
+
+  void searchBot(String queryStr) {
+    query = queryStr;
+    reloadList();
   }
 }

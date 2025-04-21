@@ -41,7 +41,9 @@ Future<void> updateBot(UpdateBotRequest req) async {
           text: "Bot updated successfully!",
           onConfirmBtnTap:
               () => {
-                rootNavigatorKey.currentContext!.read<BotProvider>().loadList(),
+                rootNavigatorKey.currentContext!
+                    .read<BotProvider>()
+                    .reloadList(),
                 GoRouter.of(rootNavigatorKey.currentContext!).pop(),
               },
         );

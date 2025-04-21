@@ -8,6 +8,8 @@ typedef CreateBotRequest =
       String description,
       VoidCallback onError,
     });
+// Get Bot List
+typedef GetBotListRequest = ({String query});
 // Get Bot Info
 typedef GetBotInfoRequest = ({String id});
 // Update Bot

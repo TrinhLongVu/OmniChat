@@ -51,10 +51,13 @@ class _BotListScreenState extends State<BotListScreen> {
   void scrollToSearchBar() {
     final ctx = searchBarKey.currentContext;
     if (ctx != null) {
-      Scrollable.ensureVisible(
-        ctx,
+      final box = ctx.findRenderObject() as RenderBox;
+      final offset =
+          box.localToGlobal(Offset.zero).dy + scrollController.offset;
+
+      scrollController.animateTo(
+        offset - searchBarHeight, // scroll to just before the search bar starts
         duration: const Duration(milliseconds: 300),
-        alignment: 0.0, // top
         curve: Curves.easeInOut,
       );
     }
@@ -64,6 +67,7 @@ class _BotListScreenState extends State<BotListScreen> {
   Widget build(BuildContext context) {
     Size viewport = MediaQuery.of(context).size;
     return CustomScrollView(
+      controller: scrollController,
       slivers: [
         SliverAppBar(
           backgroundColor: Colors.white,
@@ -132,7 +136,9 @@ class _BotListScreenState extends State<BotListScreen> {
                     child: SearchBox(
                       ctrlr: searchBotCtrlr,
                       placeholder: "Search Bots...",
-                      onSearch: () {},
+                      onSearch:
+                          (value) =>
+                              context.read<BotProvider>().searchBot(value),
                       focusNod: searchFocusNode,
                     ),
                   ),
@@ -152,7 +158,9 @@ class _BotListScreenState extends State<BotListScreen> {
         SliverFillRemaining(
           hasScrollBody: context.watch<BotProvider>().botList.isNotEmpty,
           child: RefreshIndicator(
-            onRefresh: () => context.read<BotProvider>().loadList(),
+            onRefresh: () async {
+              context.read<BotProvider>().loadList();
+            },
             child: SingleChildScrollView(
               physics: AlwaysScrollableScrollPhysics(),
               child: ConstrainedBox(
