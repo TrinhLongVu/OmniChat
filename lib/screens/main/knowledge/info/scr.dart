@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/knowledge/controllers/create.dart';
+import 'package:omni_chat/apis/knowledge/controllers/delete.dart';
 import 'package:omni_chat/providers/knowledge.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
 import 'package:omni_chat/widgets/button/ico_txt_btn.dart';
@@ -69,12 +70,12 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
 
   Future<void> onDeleteKnowledge() async {
     loading.value = true;
-    // await deleteBot((
-    //   id: widget.id!,
-    //   onError: () {
-    //     loading.value = false;
-    //   },
-    // ));
+    await deleteKnowledge((
+      id: widget.id!,
+      onError: () {
+        loading.value = false;
+      },
+    ));
   }
 
   @override
