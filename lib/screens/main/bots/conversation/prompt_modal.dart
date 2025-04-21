@@ -163,10 +163,11 @@ class _PromptModalState extends State<PromptModal> {
                       ),
                       Expanded(
                         child: RefreshIndicator(
-                          onRefresh:
-                              () => context.read<PromptProvider>().loadList(
-                                isPublic: true,
-                              ),
+                          onRefresh: () async {
+                            context.read<PromptProvider>().loadList(
+                              isPublic: true,
+                            );
+                          },
                           child: SingleChildScrollView(
                             physics: AlwaysScrollableScrollPhysics(),
                             child: ConstrainedBox(

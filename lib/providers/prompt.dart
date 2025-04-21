@@ -19,45 +19,40 @@ class PromptProvider extends ChangeNotifier {
     this.slashPrompts = const [],
   });
 
-  Future<void> loadList({required bool isPublic}) async {
+  Future<void> getListFromApi({required bool isPublic}) async {
+    PromptListResponse? promptListResponse = await getPromptList((
+      isFavorite: favFiltered,
+      isPublic: isPublic,
+      query: query,
+      category: filteredCategory,
+    ));
+    if (promptListResponse != null) {
+      if (isPublic) {
+        publicPrompts = promptListResponse.items;
+      } else {
+        privatePrompts = promptListResponse.items;
+      }
+    }
+  }
+
+  void loadList({required bool isPublic}) async {
     if (isPublic) {
       publicLoading = true;
     } else {
       privateLoading = true;
     }
     notifyListeners();
-    PromptListResponse? promptListResponse = await getPromptList((
-      isFavorite: favFiltered,
-      isPublic: isPublic,
-      query: query,
-      category: filteredCategory,
-    ));
-    if (promptListResponse != null) {
-      if (isPublic) {
-        publicPrompts = promptListResponse.items;
-        publicLoading = false;
-      } else {
-        privatePrompts = promptListResponse.items;
-        privateLoading = false;
-      }
+    await getListFromApi(isPublic: isPublic);
+    if (isPublic) {
+      publicLoading = false;
+    } else {
+      privateLoading = false;
     }
     notifyListeners();
   }
 
-  Future<void> reloadList({required bool isPublic}) async {
-    PromptListResponse? promptListResponse = await getPromptList((
-      isFavorite: favFiltered,
-      isPublic: isPublic,
-      query: query,
-      category: filteredCategory,
-    ));
-    if (promptListResponse != null) {
-      if (isPublic) {
-        publicPrompts = promptListResponse.items;
-      } else {
-        privatePrompts = promptListResponse.items;
-      }
-    }
+  void reloadList({required bool isPublic}) async {
+    await getListFromApi(isPublic: isPublic);
     notifyListeners();
   }
 
@@ -104,8 +99,8 @@ class PromptProvider extends ChangeNotifier {
   }
 
   Future<void> loadSlashList() async {
-    await loadList(isPublic: true);
-    await loadList(isPublic: false);
+    loadList(isPublic: true);
+    loadList(isPublic: false);
     slashPrompts = [...publicPrompts, ...privatePrompts];
     notifyListeners();
   }
