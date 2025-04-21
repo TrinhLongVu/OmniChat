@@ -36,4 +36,9 @@ class KnowledgeProvider extends ChangeNotifier {
     query = queryStr;
     reloadList();
   }
+
+  void setCurrentKnowledge(Knowledge knowledge) {
+    currentKnowledge = knowledge;
+    notifyListeners();
+  }
 }

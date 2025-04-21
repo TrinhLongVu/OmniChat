@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/knowledge.dart';
+import 'package:omni_chat/providers/knowledge.dart';
 import 'package:omni_chat/widgets/shimmer/shimmer_ln.dart';
+import 'package:provider/provider.dart';
 
 class KnowledgeRect extends StatelessWidget {
   const KnowledgeRect({
@@ -19,6 +21,7 @@ class KnowledgeRect extends StatelessWidget {
     final Size viewport = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {
+        context.read<KnowledgeProvider>().setCurrentKnowledge(knowledge);
         context.push('/knowledge/${knowledge.id}');
       },
       child: Container(

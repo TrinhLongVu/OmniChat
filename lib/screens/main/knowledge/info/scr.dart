@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/knowledge/controllers/create.dart';
+import 'package:omni_chat/providers/knowledge.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
+import 'package:omni_chat/widgets/button/ico_txt_btn.dart';
 import 'package:omni_chat/widgets/text/info_field.dart';
 import 'package:omni_chat/widgets/text/input_field.dart';
 import 'package:omni_chat/widgets/text/input_header.dart';
+import 'package:provider/provider.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:validatorless/validatorless.dart';
 
 final editKnowledgeFormKey = GlobalKey<FormState>();
@@ -36,6 +42,10 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
       descriptionCtrlr = TextEditingController();
     } else {
       screenState = "info";
+      nameCtrlr = TextEditingController(
+        text: context.read<KnowledgeProvider>().currentKnowledge.name,
+      );
+      descriptionCtrlr = TextEditingController();
     }
   }
 
@@ -55,6 +65,16 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
         loading.value = false;
       },
     ));
+  }
+
+  Future<void> onDeleteKnowledge() async {
+    loading.value = true;
+    // await deleteBot((
+    //   id: widget.id!,
+    //   onError: () {
+    //     loading.value = false;
+    //   },
+    // ));
   }
 
   @override
@@ -89,7 +109,14 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
                         children: [
                           InputHeader(title: "Name", isRequired: true),
                           (screenState == "info")
-                              ? InfoField(infoText: "", fontSz: 16)
+                              ? InfoField(
+                                infoText:
+                                    context
+                                        .watch<KnowledgeProvider>()
+                                        .currentKnowledge
+                                        .name,
+                                fontSz: 16,
+                              )
                               : InputField(
                                 controller: nameCtrlr,
                                 placeholder: "Name of the knowledge",
@@ -100,7 +127,15 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
                               ),
                           InputHeader(title: "Description"),
                           (screenState == "info")
-                              ? InfoField(infoText: "", fontSz: 16, lineNum: 5)
+                              ? InfoField(
+                                infoText:
+                                    context
+                                        .watch<KnowledgeProvider>()
+                                        .currentKnowledge
+                                        .description,
+                                fontSz: 16,
+                                lineNum: 5,
+                              )
                               : InputField(
                                 controller: descriptionCtrlr,
                                 placeholder:
@@ -126,6 +161,37 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
                           "assets/anims/loading.json",
                           width: 120,
                           height: 80,
+                        )
+                        : (screenState == "info")
+                        ? Row(
+                          spacing: 10,
+                          children: [
+                            IcoTxtBtn(
+                              title: "Edit",
+                              onTap: () {
+                                setState(() {
+                                  screenState = "edit";
+                                });
+                              },
+                            ),
+                            IcoTxtBtn(
+                              title: "Delete",
+                              bgColor: Colors.red,
+                              onTap: () {
+                                QuickAlert.show(
+                                  context: context,
+                                  type: QuickAlertType.confirm,
+                                  text:
+                                      "Are you sure you want to delete this knowledge?",
+                                  onCancelBtnTap: () => context.pop(),
+                                  onConfirmBtnTap: () {
+                                    context.pop();
+                                    onDeleteKnowledge();
+                                  },
+                                );
+                              },
+                            ),
+                          ],
                         )
                         : CommonBtn(
                           title: "Save",
