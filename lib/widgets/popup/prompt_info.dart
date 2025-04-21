@@ -17,8 +17,6 @@ import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:validatorless/validatorless.dart';
 
-final editPromptFormKey = GlobalKey<FormState>();
-
 class PromptInfoPopUp extends StatefulWidget {
   const PromptInfoPopUp({super.key, required this.prompt, required this.used});
 
@@ -30,6 +28,7 @@ class PromptInfoPopUp extends StatefulWidget {
 }
 
 class _PromptInfoPopUpState extends State<PromptInfoPopUp> {
+  final editPromptFormKey = GlobalKey<FormState>();
   bool editing = false;
   String promptTitle = "";
   String promptContent = "";

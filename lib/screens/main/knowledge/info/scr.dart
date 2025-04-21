@@ -16,8 +16,6 @@ import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:validatorless/validatorless.dart';
 
-final editKnowledgeFormKey = GlobalKey<FormState>();
-
 class KnowledgeInfoScreen extends StatefulWidget {
   final String? id;
 
@@ -28,6 +26,7 @@ class KnowledgeInfoScreen extends StatefulWidget {
 }
 
 class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
+  final editKnowledgeFormKey = GlobalKey<FormState>();
   late TextEditingController nameCtrlr;
   late TextEditingController descriptionCtrlr;
 

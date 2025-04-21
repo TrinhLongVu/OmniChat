@@ -9,9 +9,8 @@ import 'package:omni_chat/widgets/button/common_btn.dart';
 import 'package:omni_chat/widgets/text/input_field.dart';
 import 'package:validatorless/validatorless.dart';
 
-final loginFormKey = GlobalKey<FormState>();
-
 class LoginScreen extends StatelessWidget {
+  final loginFormKey = GlobalKey<FormState>();
   final TextEditingController emailCtrlr = TextEditingController();
   final TextEditingController passwordCtrlr = TextEditingController();
   final ValueNotifier<bool> loading = ValueNotifier(false);

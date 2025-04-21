@@ -11,9 +11,8 @@ import 'package:omni_chat/widgets/text/input_header.dart';
 import 'package:provider/provider.dart';
 import 'package:validatorless/validatorless.dart';
 
-final newPromptFormKey = GlobalKey<FormState>();
-
 class PromptCreationPopUp extends StatelessWidget {
+  final newPromptFormKey = GlobalKey<FormState>();
   final TextEditingController promptNameCtrlr = TextEditingController();
   final TextEditingController promptContentCtrlr = TextEditingController();
   final TextEditingController promptDescriptionCtrlr = TextEditingController();

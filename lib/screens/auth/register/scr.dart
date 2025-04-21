@@ -8,9 +8,8 @@ import 'package:omni_chat/widgets/button/common_btn.dart';
 import 'package:omni_chat/widgets/text/input_field.dart';
 import 'package:validatorless/validatorless.dart';
 
-final registerFormKey = GlobalKey<FormState>();
-
 class RegisterScreen extends StatelessWidget {
+  final registerFormKey = GlobalKey<FormState>();
   final TextEditingController emailCtrlr = TextEditingController();
   final TextEditingController passwordCtrlr = TextEditingController();
   final TextEditingController confirmPwdCtrlr = TextEditingController();

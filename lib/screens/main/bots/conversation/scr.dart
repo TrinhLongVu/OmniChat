@@ -45,19 +45,18 @@ class _ConversationScreenState extends State<ConversationScreen> {
     if (widget.id != null) {
       isOfficial = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.read<BotProvider>().loadInfo(
-          id: widget.id!,
-          onSuccess: () {
-            botName = context.read<BotProvider>().currentBot.name;
-          },
-        );
+        context.read<BotProvider>().loadInfo(id: widget.id!, onSuccess: () {});
+        context.read<ConvoProvider>().setCurrentConvoId("");
       });
+      botName = context.read<BotProvider>().currentBot.name;
     } else {
       botName = "Omni Chat Bot";
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<PromptProvider>().loadSlashList();
-      context.read<ConvoProvider>().initConvoList();
+      if (widget.id == null) {
+        context.read<ConvoProvider>().initConvoList();
+      }
     });
     focusNod.addListener(scrollToBottom);
   }

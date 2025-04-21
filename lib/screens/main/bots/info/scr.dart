@@ -16,8 +16,6 @@ import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:validatorless/validatorless.dart';
 
-final editBotFormKey = GlobalKey<FormState>();
-
 class BotInfoScreen extends StatefulWidget {
   final String? id;
 
@@ -28,6 +26,7 @@ class BotInfoScreen extends StatefulWidget {
 }
 
 class _BotInfoScreenState extends State<BotInfoScreen> {
+  final editBotFormKey = GlobalKey<FormState>();
   late TextEditingController nameCtrlr;
   late TextEditingController instructionCtrlr;
   late TextEditingController descriptionCtrlr;
