@@ -23,5 +23,7 @@ typedef UpdateBotRequest =
     });
 // Delete Bot
 typedef DeleteBotRequest = ({String id, VoidCallback onError});
+// Import Knowledge
+typedef ImportKnowledgeRequest = ({String botId, String knowledgeId});
 // Get Imported Knowledges
 typedef GetImportedKnowledgeListRequest = ({String botId});

@@ -8,6 +8,7 @@ import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/providers/bot.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
 import 'package:omni_chat/widgets/button/ico_txt_btn.dart';
+import 'package:omni_chat/widgets/popup/knowledge_import.dart';
 import 'package:omni_chat/widgets/rectangle/knowledge_rect.dart';
 import 'package:omni_chat/widgets/text/info_field.dart';
 import 'package:omni_chat/widgets/text/input_field.dart';
@@ -216,7 +217,13 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                               children: [
                                 InputHeader(title: "Knowledges"),
                                 TextButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder:
+                                          (context) => KnowledgeImportPopUp(),
+                                    );
+                                  },
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     spacing: 10,
@@ -246,6 +253,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                                   ),
                                 )
                                 : Column(
+                                  spacing: 10,
                                   children:
                                       context
                                           .watch<BotProvider>()

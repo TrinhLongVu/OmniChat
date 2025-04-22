@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:omni_chat/apis/bot/controllers/import_knowledge.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/knowledge.dart';
+import 'package:omni_chat/providers/bot.dart';
 import 'package:omni_chat/providers/knowledge.dart';
 import 'package:omni_chat/widgets/shimmer/shimmer_ln.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 
 class KnowledgeRect extends StatelessWidget {
   const KnowledgeRect({
@@ -12,17 +15,33 @@ class KnowledgeRect extends StatelessWidget {
     required this.knowledge,
     this.shimmerizing = false,
     this.imported = false,
+    this.importing = true,
   });
 
   final Knowledge knowledge;
   final bool shimmerizing;
   final bool imported;
+  final bool importing;
 
   @override
   Widget build(BuildContext context) {
     final Size viewport = MediaQuery.of(context).size;
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
+        if (importing) {
+          QuickAlert.show(
+            context: context,
+            type: QuickAlertType.confirm,
+            text: 'Are you sure you want to import this knowledge?',
+            onConfirmBtnTap: () async {
+              await importKnowledge((
+                botId: context.read<BotProvider>().currentBot.id,
+                knowledgeId: knowledge.id,
+              ));
+            },
+          );
+          return;
+        }
         context.read<KnowledgeProvider>().setCurrentKnowledge(knowledge);
         context.push('/knowledge/${knowledge.id}');
       },
