@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> importKnowledge(ImportKnowledgeRequest req) async {
+Future<void> unimportKnowledge(UnimportKnowledgeRequest req) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
 
@@ -19,7 +19,7 @@ Future<void> importKnowledge(ImportKnowledgeRequest req) async {
   Dio dio = DioClient(baseUrl: BaseUrls.knowledge).dio;
 
   try {
-    Response response = await dio.post(
+    Response response = await dio.delete(
       "/kb-core/v1/ai-assistant/${req.botId}/knowledges/${req.knowledgeId}",
       options: Options(headers: headers),
     );
@@ -28,15 +28,13 @@ Future<void> importKnowledge(ImportKnowledgeRequest req) async {
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.success,
-          text: "Knowledge imported successfully!",
+          text: "Knowledge removed successfully!",
           onConfirmBtnTap:
               () => {
                 rootNavigatorKey.currentContext!.read<BotProvider>().loadInfo(
                   id: req.botId,
                   onSuccess: () {},
                 ),
-                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
-                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
                 GoRouter.of(rootNavigatorKey.currentContext!).pop(),
               },
         );

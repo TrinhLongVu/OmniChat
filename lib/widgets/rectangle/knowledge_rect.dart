@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/apis/bot/controllers/import_knowledge.dart';
+import 'package:omni_chat/apis/bot/controllers/unimport_knowledge.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/knowledge.dart';
 import 'package:omni_chat/providers/bot.dart';
@@ -111,6 +112,26 @@ class KnowledgeRect extends StatelessWidget {
                 ],
               ),
             ),
+            imported
+                ? IconButton(
+                  onPressed: () {
+                    QuickAlert.show(
+                      context: context,
+                      type: QuickAlertType.confirm,
+                      text:
+                          'Are you sure you want to remove this knowledge from this bot?',
+                      onConfirmBtnTap: () async {
+                        context.pop();
+                        await unimportKnowledge((
+                          botId: context.read<BotProvider>().currentBot.id,
+                          knowledgeId: knowledge.id,
+                        ));
+                      },
+                    );
+                  },
+                  icon: Icon(Icons.remove_circle_outline, color: Colors.red),
+                )
+                : SizedBox.shrink(),
           ],
         ),
       ),

@@ -25,5 +25,7 @@ typedef UpdateBotRequest =
 typedef DeleteBotRequest = ({String id, VoidCallback onError});
 // Import Knowledge
 typedef ImportKnowledgeRequest = ({String botId, String knowledgeId});
+// Remove Knowledge from Bot
+typedef UnimportKnowledgeRequest = ({String botId, String knowledgeId});
 // Get Imported Knowledges
 typedef GetImportedKnowledgeListRequest = ({String botId});
