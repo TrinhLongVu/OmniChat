@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/constants/base_urls.dart';
+import 'package:omni_chat/providers/bot.dart';
 import 'package:omni_chat/providers/convo.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:omni_chat/services/dio_client.dart';
@@ -38,6 +39,7 @@ Future<void> logout() async {
         prefs.remove("refresh_token");
         GoRouter.of(rootNavigatorKey.currentContext!).goNamed("landing");
         rootNavigatorKey.currentContext!.read<ConvoProvider>().exitConvo();
+        rootNavigatorKey.currentContext!.read<BotProvider>().clearProvider();
         break;
       default:
         QuickAlert.show(

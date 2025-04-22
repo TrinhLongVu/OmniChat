@@ -45,10 +45,16 @@ class _ConversationScreenState extends State<ConversationScreen> {
     if (widget.id != null) {
       isOfficial = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.read<BotProvider>().loadInfo(id: widget.id!, onSuccess: () {});
+        context.read<BotProvider>().loadInfo(
+          id: widget.id!,
+          onSuccess: () {
+            setState(() {
+              botName = context.read<BotProvider>().currentBot.name;
+            });
+          },
+        );
         context.read<ConvoProvider>().setCurrentConvoId("");
       });
-      botName = context.read<BotProvider>().currentBot.name;
     } else {
       botName = "Omni Chat Bot";
     }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:omni_chat/providers/bot.dart';
 import 'package:omni_chat/providers/knowledge.dart';
 import 'package:omni_chat/widgets/rectangle/knowledge_rect.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +25,12 @@ class _KnowledgeImportPopUpState extends State<KnowledgeImportPopUp> {
   @override
   Widget build(BuildContext context) {
     final Size viewport = MediaQuery.of(context).size;
+    final excludedIds =
+        context
+            .watch<BotProvider>()
+            .currentBotKnowledges
+            .map((e) => e.id)
+            .toList();
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: EdgeInsets.all(10),
@@ -36,15 +43,18 @@ class _KnowledgeImportPopUpState extends State<KnowledgeImportPopUp> {
         padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             spacing: 10,
             children: [
-              Center(
-                child: Text(
-                  "Import Knowledge to Bot",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
+              Text(
+                "Import Knowledge to Bot",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                "Choose a knowledge in the list below to import to this bot",
+                style: TextStyle(color: Colors.grey, fontSize: 15),
+                textAlign: TextAlign.center,
               ),
               ConstrainedBox(
                 constraints: BoxConstraints(maxHeight: viewport.height * 0.4),
@@ -55,6 +65,10 @@ class _KnowledgeImportPopUpState extends State<KnowledgeImportPopUp> {
                         context
                             .watch<KnowledgeProvider>()
                             .knowledgeList
+                            .where(
+                              (knowledge) =>
+                                  !excludedIds.contains(knowledge.id),
+                            )
                             .map(
                               (knowledge) => KnowledgeRect(
                                 knowledge: knowledge,

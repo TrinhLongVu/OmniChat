@@ -8,8 +8,8 @@ import 'package:omni_chat/models/knowledge.dart';
 
 class BotProvider extends ChangeNotifier {
   bool loadingList = false;
-  List<Bot> botList;
   bool botLoading = false;
+  List<Bot> botList;
   Bot currentBot = Bot.placeholder();
   List<Knowledge> currentBotKnowledges;
   String query = "";
@@ -64,5 +64,15 @@ class BotProvider extends ChangeNotifier {
   void searchBot(String queryStr) {
     query = queryStr;
     reloadList();
+  }
+
+  void clearProvider() {
+    currentBot = Bot.placeholder();
+    currentBotKnowledges = [];
+    botList = [];
+    botLoading = false;
+    loadingList = false;
+    query = "";
+    notifyListeners();
   }
 }
