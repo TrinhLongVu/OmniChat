@@ -1,22 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:omni_chat/apis/bot/controllers/get_import_knowledge.dart';
 import 'package:omni_chat/apis/bot/controllers/get_info.dart';
 import 'package:omni_chat/apis/bot/controllers/get_list.dart';
 import 'package:omni_chat/apis/bot/models/response.dart';
 import 'package:omni_chat/models/bot.dart';
+import 'package:omni_chat/models/knowledge.dart';
 
 class BotProvider extends ChangeNotifier {
   bool loadingList = false;
   List<Bot> botList;
   bool botLoading = false;
   Bot currentBot = Bot.placeholder();
+  List<Knowledge> currentBotKnowledges;
   String query = "";
 
-  BotProvider({this.botList = const []});
+  BotProvider({this.botList = const [], this.currentBotKnowledges = const []});
 
   Future<void> getListFromApi() async {
     GetBotListResponse? res = await getBotList((query: query));
     if (res != null) {
       botList = res.data;
+    }
+  }
+
+  Future<void> getImportedKnowledges(String botId) async {
+    GetImportedKnowledgeListResponse? res = await getImportedKnowledgeList((
+      botId: botId,
+    ));
+    if (res != null) {
+      currentBotKnowledges = res.data;
     }
   }
 
@@ -42,6 +54,7 @@ class BotProvider extends ChangeNotifier {
     Bot? botInfo = await getBotInfo((id: id));
     if (botInfo != null) {
       currentBot = botInfo;
+      await getImportedKnowledges(id);
       botLoading = false;
       onSuccess();
     }

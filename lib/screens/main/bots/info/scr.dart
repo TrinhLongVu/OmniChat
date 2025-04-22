@@ -8,6 +8,7 @@ import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/providers/bot.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
 import 'package:omni_chat/widgets/button/ico_txt_btn.dart';
+import 'package:omni_chat/widgets/rectangle/knowledge_rect.dart';
 import 'package:omni_chat/widgets/text/info_field.dart';
 import 'package:omni_chat/widgets/text/input_field.dart';
 import 'package:omni_chat/widgets/text/input_header.dart';
@@ -135,22 +136,19 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
           child: Stack(
             children: [
               Padding(
-                padding: const EdgeInsets.only(
-                  left: 20,
-                  right: 20,
-                  top: 20,
-                  bottom: 100,
-                ),
+                padding: const EdgeInsets.only(left: 20, right: 20, bottom: 70),
                 child: SingleChildScrollView(
                   child: Column(
-                    spacing: 10,
                     children: [
-                      const Icon(Icons.smart_toy_outlined, size: 80),
+                      const Icon(Icons.smart_toy_outlined, size: 40),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         spacing: 8,
                         children: [
-                          InputHeader(title: "Name", isRequired: true),
+                          InputHeader(
+                            title: "Name",
+                            isRequired: !(screenState == "info"),
+                          ),
                           (screenState == "info")
                               ? InfoField(
                                 infoText:
@@ -187,8 +185,8 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                               : InputField(
                                 controller: instructionCtrlr,
                                 placeholder: "Instruct the bot how to reply",
-                                minLns: 2,
-                                maxLns: 3,
+                                minLns: 3,
+                                maxLns: 5,
                               ),
                           InputHeader(title: "Description", isRequired: false),
                           (screenState == "info")
@@ -208,9 +206,59 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                                 controller: descriptionCtrlr,
                                 placeholder:
                                     "Description of how you would use the bot for",
-                                minLns: 2,
+                                minLns: 3,
                                 maxLns: 5,
                               ),
+                          if (!context.watch<BotProvider>().botLoading &&
+                              screenState == "info") ...[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                InputHeader(title: "Knowledges"),
+                                TextButton(
+                                  onPressed: () {},
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    spacing: 10,
+                                    children: [
+                                      Text(
+                                        "Import",
+                                        style: TextStyle(color: omniDarkCyan),
+                                      ),
+                                      Icon(Icons.add, color: omniDarkBlue),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            context
+                                    .watch<BotProvider>()
+                                    .currentBotKnowledges
+                                    .isEmpty
+                                ? Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "No Imported Knowledges Yet",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                )
+                                : Column(
+                                  children:
+                                      context
+                                          .watch<BotProvider>()
+                                          .currentBotKnowledges
+                                          .map((knowledge) {
+                                            return KnowledgeRect(
+                                              knowledge: knowledge,
+                                              imported: true,
+                                            );
+                                          })
+                                          .toList(),
+                                ),
+                          ],
                         ],
                       ),
                     ],
@@ -221,7 +269,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                   ? Positioned(
                     right: 20,
                     left: 20,
-                    bottom: 20,
+                    bottom: 5,
                     child: ValueListenableBuilder<bool>(
                       valueListenable: loading,
                       builder: (context, loading, _) {

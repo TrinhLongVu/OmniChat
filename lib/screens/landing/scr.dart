@@ -35,7 +35,10 @@ class LandingScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 50),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 15,
+                    horizontal: 25,
+                  ),
                   child: CommonBtn(
                     title: "Continue",
                     onTap: () {

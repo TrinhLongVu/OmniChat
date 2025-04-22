@@ -11,10 +11,12 @@ class KnowledgeRect extends StatelessWidget {
     super.key,
     required this.knowledge,
     this.shimmerizing = false,
+    this.imported = false,
   });
 
   final Knowledge knowledge;
   final bool shimmerizing;
+  final bool imported;
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +30,16 @@ class KnowledgeRect extends StatelessWidget {
         padding: const EdgeInsets.only(right: 8),
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.symmetric(
-            horizontal: BorderSide(
-              width: 0.5,
-              color: Colors.black.withValues(alpha: 0.05),
-            ),
-          ),
+          border:
+              imported
+                  ? Border.all(width: 1.5, color: omniDarkCyan)
+                  : Border.symmetric(
+                    horizontal: BorderSide(
+                      width: 0.5,
+                      color: Colors.black.withValues(alpha: 0.05),
+                    ),
+                  ),
+          borderRadius: imported ? BorderRadius.circular(10) : null,
         ),
         child: Row(
           children: [
@@ -41,7 +47,7 @@ class KnowledgeRect extends StatelessWidget {
               padding: const EdgeInsets.all(10.0),
               child: Icon(
                 Icons.lightbulb_circle_rounded,
-                size: 60,
+                size: imported ? 40 : 60,
                 color: omniDarkBlue,
               ),
             ),
@@ -63,7 +69,9 @@ class KnowledgeRect extends StatelessWidget {
                           fontSize: 16,
                         ),
                       ),
-                  shimmerizing
+                  imported
+                      ? SizedBox.shrink()
+                      : shimmerizing
                       ? ShimmerLine(
                         height: viewport.height * 0.025,
                         width: viewport.width * 0.5,

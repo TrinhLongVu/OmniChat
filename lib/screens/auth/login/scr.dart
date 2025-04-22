@@ -119,9 +119,14 @@ class LoginScreen extends StatelessWidget {
                                   width: 150,
                                   height: 100,
                                 )
-                                : CommonBtn(
-                                  title: "Login",
-                                  onTap: () => loginUser(),
+                                : Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 15,
+                                  ),
+                                  child: CommonBtn(
+                                    title: "Login",
+                                    onTap: () => loginUser(),
+                                  ),
                                 );
                           },
                         ),

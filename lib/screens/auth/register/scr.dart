@@ -133,9 +133,14 @@ class RegisterScreen extends StatelessWidget {
                                   width: 150,
                                   height: 100,
                                 )
-                                : CommonBtn(
-                                  title: "Register",
-                                  onTap: () => registerUser(),
+                                : Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 15,
+                                  ),
+                                  child: CommonBtn(
+                                    title: "Register",
+                                    onTap: () => registerUser(),
+                                  ),
                                 );
                           },
                         ),

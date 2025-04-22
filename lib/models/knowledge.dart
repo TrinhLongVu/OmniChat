@@ -4,8 +4,8 @@ class Knowledge {
     required this.name,
     required this.description,
     required this.userId,
-    required this.numUnits,
-    required this.totalSize,
+    this.numUnits,
+    this.totalSize,
     required this.createdAt,
     required this.updatedAt,
     this.deletedAt,
@@ -17,8 +17,8 @@ class Knowledge {
   final String name;
   final String description;
   final String userId;
-  final int numUnits;
-  final int totalSize;
+  final int? numUnits;
+  final int? totalSize;
   final String createdAt;
   final String updatedAt;
   final String? deletedAt;
