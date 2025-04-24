@@ -25,6 +25,8 @@ typedef UpdateBotRequest =
 typedef DeleteBotRequest = ({String id, VoidCallback onError});
 // Chat with Bot
 typedef ChatRequest = ({String botId, String msgContent});
+// Get Bot Threads
+typedef GetBotThreadsRequest = ({String botId});
 // Import Knowledge
 typedef ImportKnowledgeRequest = ({String botId, String knowledgeId});
 // Remove Knowledge from Bot

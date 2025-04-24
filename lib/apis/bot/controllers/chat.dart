@@ -3,12 +3,45 @@ import 'package:flutter/material.dart';
 import 'package:omni_chat/apis/bot/models/request.dart';
 import 'package:omni_chat/apis/bot/models/response.dart';
 import 'package:omni_chat/constants/base_urls.dart';
+import 'package:omni_chat/models/conversation/convo_history_item.dart';
 import 'package:omni_chat/providers/bot.dart';
 import 'package:omni_chat/providers/convo.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:omni_chat/services/dio_client.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+List<Map<String, dynamic>> mapToChatFormat(
+  List<ConvoHistoryItem> historyItems,
+  String botId,
+) {
+  var assistantMeta = {
+    "model": "knowledge-base",
+    "name": "votutrinh2002's Default Team Assistant",
+    "id": botId,
+  };
+
+  final chatList = <Map<String, dynamic>>[];
+
+  for (final item in historyItems) {
+    chatList.add({
+      "role": "user",
+      "content": item.query,
+      "files": [],
+      "assistant": assistantMeta,
+    });
+
+    if (item.answer != null) {
+      chatList.add({
+        "role": "model",
+        "content": item.answer,
+        "assistant": assistantMeta,
+      });
+    }
+  }
+
+  return chatList;
+}
 
 Future<void> chatWithBot(ChatRequest req) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -21,7 +54,18 @@ Future<void> chatWithBot(ChatRequest req) async {
 
   Dio dio = DioClient(baseUrl: BaseUrls.jarvis).dio;
 
-  Map<String, Object> chatConvo = {"messages": []};
+  Map<String, Object> botObject = {
+    "model": "knowledge-base",
+    "name": "votutrinh2002's Default Team Assistant",
+    "id": req.botId,
+  };
+
+  List<Map<String, dynamic>> chatConvo = mapToChatFormat(
+    rootNavigatorKey.currentContext!
+        .read<BotProvider>()
+        .currentBotConvoHistoryList,
+    req.botId,
+  );
 
   try {
     Response response = await dio.post(
@@ -29,16 +73,13 @@ Future<void> chatWithBot(ChatRequest req) async {
       data: {
         "content": req.msgContent,
         "files": [],
-        "metadata": {"conversation": chatConvo},
-        "assistant": {
-          "model": "knowledge-base",
-          "name": "votutrinh2002's Default Team Assistant",
-          "id": req.botId,
+        "metadata": {
+          "conversation": {"messages": chatConvo},
         },
+        "assistant": botObject,
       },
       options: Options(headers: headers),
     );
-    debugPrint(response.data.toString());
     switch (response.statusCode) {
       case 200:
         ChatResponse res = ChatResponse.fromJson(response.data);

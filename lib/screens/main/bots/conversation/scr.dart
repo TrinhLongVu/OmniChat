@@ -239,9 +239,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                   spacing: 15,
                                   children: [
                                     Icon(
-                                      isOfficial
-                                          ? OctIcons.copilot
-                                          : Icons.smart_toy,
+                                      OctIcons.copilot,
                                       size: 150,
                                       color: omniMilk,
                                     ),
