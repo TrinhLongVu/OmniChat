@@ -23,11 +23,15 @@ class ConvoProvider extends ChangeNotifier {
     this.convoList = const [],
   });
 
-  Future<void> initConvoList() async {
+  Future<void> getCurrentToken() async {
     GetTokenResponse? tokenRes = await getToken();
     if (tokenRes != null) {
       currentToken = tokenRes.currentToken;
     }
+    notifyListeners();
+  }
+
+  Future<void> initConvoList() async {
     GetConvosResponse? convosResponse = await getConversations((
       assistantId: "gemini-1.5-flash-latest",
     ));

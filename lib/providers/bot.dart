@@ -4,6 +4,7 @@ import 'package:omni_chat/apis/bot/controllers/get_info.dart';
 import 'package:omni_chat/apis/bot/controllers/get_list.dart';
 import 'package:omni_chat/apis/bot/models/response.dart';
 import 'package:omni_chat/models/bot.dart';
+import 'package:omni_chat/models/conversation/convo_history_item.dart';
 import 'package:omni_chat/models/knowledge.dart';
 
 class BotProvider extends ChangeNotifier {
@@ -12,9 +13,14 @@ class BotProvider extends ChangeNotifier {
   List<Bot> botList;
   Bot currentBot = Bot.placeholder();
   List<Knowledge> currentBotKnowledges;
+  List<ConvoHistoryItem> currentBotConvoHistoryList = [];
   String query = "";
 
-  BotProvider({this.botList = const [], this.currentBotKnowledges = const []});
+  BotProvider({
+    this.botList = const [],
+    this.currentBotKnowledges = const [],
+    this.currentBotConvoHistoryList = const [],
+  });
 
   Future<void> getListFromApi() async {
     GetBotListResponse? res = await getBotList((query: query));
@@ -58,6 +64,25 @@ class BotProvider extends ChangeNotifier {
       botLoading = false;
       onSuccess();
     }
+    notifyListeners();
+  }
+
+  void clearCurrentBotConvo() {
+    currentBotConvoHistoryList = [];
+    notifyListeners();
+  }
+
+  void askBot(String message) {
+    currentBotConvoHistoryList.add(ConvoHistoryItem(query: message));
+    notifyListeners();
+  }
+
+  void botAnswer(String answerStr) {
+    String query = currentBotConvoHistoryList.last.query;
+    currentBotConvoHistoryList.removeLast();
+    currentBotConvoHistoryList.add(
+      ConvoHistoryItem(query: query, answer: answerStr),
+    );
     notifyListeners();
   }
 

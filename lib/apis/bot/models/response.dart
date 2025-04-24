@@ -35,3 +35,18 @@ class GetImportedKnowledgeListResponse {
     );
   }
 }
+
+// Chat With Bot
+class ChatResponse {
+  ChatResponse({required this.message, required this.remainingTokens});
+
+  final String message;
+  final int remainingTokens;
+
+  factory ChatResponse.fromJson(Map<String, dynamic> json) {
+    return ChatResponse(
+      message: json['message'],
+      remainingTokens: json['remainingUsage'],
+    );
+  }
+}

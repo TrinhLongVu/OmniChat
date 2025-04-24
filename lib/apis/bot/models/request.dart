@@ -23,6 +23,8 @@ typedef UpdateBotRequest =
     });
 // Delete Bot
 typedef DeleteBotRequest = ({String id, VoidCallback onError});
+// Chat with Bot
+typedef ChatRequest = ({String botId, String msgContent});
 // Import Knowledge
 typedef ImportKnowledgeRequest = ({String botId, String knowledgeId});
 // Remove Knowledge from Bot
