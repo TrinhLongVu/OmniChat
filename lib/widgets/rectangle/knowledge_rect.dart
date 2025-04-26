@@ -16,7 +16,7 @@ class KnowledgeRect extends StatelessWidget {
     required this.knowledge,
     this.shimmerizing = false,
     this.imported = false,
-    this.importing = true,
+    this.importing = false,
   });
 
   final Knowledge knowledge;

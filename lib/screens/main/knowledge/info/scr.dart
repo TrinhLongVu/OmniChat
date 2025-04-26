@@ -3,11 +3,14 @@ import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/knowledge/controllers/create.dart';
 import 'package:omni_chat/apis/knowledge/controllers/delete.dart';
+import 'package:omni_chat/apis/knowledge/controllers/get_units.dart';
 import 'package:omni_chat/apis/knowledge/controllers/update.dart';
+import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/knowledge.dart';
 import 'package:omni_chat/providers/knowledge.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
 import 'package:omni_chat/widgets/button/ico_txt_btn.dart';
+import 'package:omni_chat/widgets/popup/knowledge_unit_upload.dart';
 import 'package:omni_chat/widgets/text/info_field.dart';
 import 'package:omni_chat/widgets/text/input_field.dart';
 import 'package:omni_chat/widgets/text/input_header.dart';
@@ -37,13 +40,13 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
   @override
   void initState() {
     super.initState();
-    screenState = "create";
     if (widget.id == null) {
       screenState = "create";
       nameCtrlr = TextEditingController();
       descriptionCtrlr = TextEditingController();
     } else {
       screenState = "info";
+      loadKnowledgeUnits();
       nameCtrlr = TextEditingController(
         text: context.read<KnowledgeProvider>().currentKnowledge.name,
       );
@@ -58,6 +61,10 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
     nameCtrlr.dispose();
     descriptionCtrlr.dispose();
     super.dispose();
+  }
+
+  Future<void> loadKnowledgeUnits() async {
+    await getKnowledgeUnits((id: widget.id!));
   }
 
   Future<void> onCreateKnowledge() async {
@@ -135,7 +142,7 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
                   child: Column(
                     spacing: 20,
                     children: [
-                      Icon(Icons.lightbulb_circle_rounded, size: 80),
+                      Icon(Icons.lightbulb_circle_rounded, size: 50),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         spacing: 8,
@@ -176,6 +183,32 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
                                 minLns: 3,
                                 maxLns: 5,
                               ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              InputHeader(title: "Knowledge Units"),
+                              TextButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder:
+                                        (context) => KnowledgeUnitUploadPopUp(),
+                                  );
+                                },
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  spacing: 10,
+                                  children: [
+                                    Text(
+                                      "Upload",
+                                      style: TextStyle(color: omniDarkCyan),
+                                    ),
+                                    Icon(Icons.upload, color: omniDarkBlue),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ],
