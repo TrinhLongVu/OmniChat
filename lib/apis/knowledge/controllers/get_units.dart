@@ -1,11 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:omni_chat/apis/knowledge/models/request.dart';
+import 'package:omni_chat/apis/knowledge/models/response.dart';
 import 'package:omni_chat/constants/base_urls.dart';
 import 'package:omni_chat/services/dio_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> getKnowledgeUnits(GetKnowledgeUnitsRequest req) async {
+Future<GetKnowledgeUnitsResponse?> getKnowledgeUnits(
+  GetKnowledgeUnitsRequest req,
+) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
 
@@ -21,10 +24,15 @@ Future<void> getKnowledgeUnits(GetKnowledgeUnitsRequest req) async {
     debugPrint(response.data.toString());
     switch (response.statusCode) {
       case 200:
-        return;
+        GetKnowledgeUnitsResponse res = GetKnowledgeUnitsResponse.fromJson(
+          response.data,
+        );
+        return res;
       default:
+        return null;
     }
   } catch (e) {
     debugPrint("Error: $e");
   }
+  return null;
 }

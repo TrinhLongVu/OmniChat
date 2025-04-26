@@ -5,12 +5,15 @@ import 'package:omni_chat/apis/knowledge/controllers/create.dart';
 import 'package:omni_chat/apis/knowledge/controllers/delete.dart';
 import 'package:omni_chat/apis/knowledge/controllers/get_units.dart';
 import 'package:omni_chat/apis/knowledge/controllers/update.dart';
+import 'package:omni_chat/apis/knowledge/models/response.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/knowledge.dart';
+import 'package:omni_chat/models/knowledge_unit.dart';
 import 'package:omni_chat/providers/knowledge.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
 import 'package:omni_chat/widgets/button/ico_txt_btn.dart';
 import 'package:omni_chat/widgets/popup/knowledge_unit_upload.dart';
+import 'package:omni_chat/widgets/rectangle/knowledge_unit_rect.dart';
 import 'package:omni_chat/widgets/text/info_field.dart';
 import 'package:omni_chat/widgets/text/input_field.dart';
 import 'package:omni_chat/widgets/text/input_header.dart';
@@ -36,6 +39,8 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
   bool editing = false;
   String screenState = "";
   final ValueNotifier<bool> loading = ValueNotifier(false);
+
+  List<KnowledgeUnit> knowledgeUnits = [];
 
   @override
   void initState() {
@@ -64,7 +69,14 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
   }
 
   Future<void> loadKnowledgeUnits() async {
-    await getKnowledgeUnits((id: widget.id!));
+    GetKnowledgeUnitsResponse? units = await getKnowledgeUnits((
+      id: widget.id!,
+    ));
+    if (mounted && units != null) {
+      setState(() {
+        knowledgeUnits = units.data;
+      });
+    }
   }
 
   Future<void> onCreateKnowledge() async {
@@ -209,6 +221,24 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
                               ),
                             ],
                           ),
+                          (knowledgeUnits.isEmpty)
+                              ? Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "No Uploaded Knowledge Units Yet",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              )
+                              : Column(
+                                spacing: 10,
+                                children:
+                                    knowledgeUnits.map((unit) {
+                                      return KnowledgeUnitRect(unit: unit);
+                                    }).toList(),
+                              ),
                         ],
                       ),
                     ],
