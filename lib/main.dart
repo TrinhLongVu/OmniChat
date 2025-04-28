@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:omni_chat/providers/bot.dart';
 import 'package:omni_chat/providers/convo.dart';
@@ -8,7 +9,10 @@ import 'package:omni_chat/providers/user.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:provider/provider.dart';
 
-void main() => runApp(const OmniChatApp());
+Future<void> main() async {
+  await dotenv.load();
+  runApp(const OmniChatApp());
+}
 
 class OmniChatApp extends StatelessWidget {
   const OmniChatApp({super.key});

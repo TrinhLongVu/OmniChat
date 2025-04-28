@@ -1,5 +1,7 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class BaseUrls {
-  static const String auth = "https://auth-api.dev.jarvis.cx";
-  static const String jarvis = "https://api.dev.jarvis.cx";
-  static const String knowledge = "https://knowledge-api.dev.jarvis.cx";
+  static final String auth = dotenv.env['AUTH_API_URL'] ?? '';
+  static final String jarvis = dotenv.env['JARVIS_API_URL'] ?? '';
+  static final String knowledge = dotenv.env['KB_API_URL'] ?? '';
 }
