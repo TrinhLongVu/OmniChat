@@ -21,7 +21,6 @@ Future<GetKnowledgeUnitsResponse?> getKnowledgeUnits(
       "/kb-core/v1/knowledge/${req.id}/units",
       options: Options(headers: headers),
     );
-    debugPrint(response.data.toString());
     switch (response.statusCode) {
       case 200:
         GetKnowledgeUnitsResponse res = GetKnowledgeUnitsResponse.fromJson(

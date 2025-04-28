@@ -5,6 +5,7 @@ import 'package:omni_chat/apis/auth/controllers/logout.dart';
 import 'package:omni_chat/providers/user.dart';
 import 'package:omni_chat/widgets/button/profile_btn.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -14,6 +15,10 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final subscriptionUri = Uri.parse(
+    'https://admin.dev.jarvis.cx/pricing/overview',
+  );
+
   String email = "example@example.com";
   bool loggingOut = false;
 
@@ -74,7 +79,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       icon: Icons.stars_rounded,
                       title: "Subscription Plans",
                       onNavi: () {
-                        context.go("/me/sub-plan");
+                        // context.go("/me/sub-plan");
+                        setState(() {
+                          launchUrl(
+                            subscriptionUri,
+                            mode: LaunchMode.inAppBrowserView,
+                          );
+                        });
                       },
                     ),
                     ProfileBtn(

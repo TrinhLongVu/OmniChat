@@ -23,4 +23,19 @@ typedef UploadWebToKnowledgeRequest =
     ({String id, String unitName, String webUrl});
 // Upload Slack To Knowledge
 typedef UploadSlackToKnowledgeRequest =
-    ({String id, String unitName, String slackWorkspace, String slackBotToken});
+    ({
+      String id,
+      String unitName,
+      String slackWorkspace,
+      String slackBotToken,
+      VoidCallback onError,
+    });
+// Upload Confluence To Knowledge
+typedef UploadConfluenceToKnowledgeRequest =
+    ({
+      String id,
+      String unitName,
+      String wikiUrl,
+      String username,
+      String confluenceToken,
+    });

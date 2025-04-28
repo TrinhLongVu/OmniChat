@@ -29,10 +29,7 @@ class KnowledgeUnitRect extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Brand(
-              KnowledgeUnitType.fromString(unit.type)!.icon,
-              size: 40,
-            ),
+            child: Brand(KnowledgeUnitType.iconize(unit.type)!.icon, size: 40),
           ),
           Expanded(
             child: Column(

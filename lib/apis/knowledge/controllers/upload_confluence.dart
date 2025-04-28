@@ -1,16 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:omni_chat/apis/knowledge/models/request.dart';
 import 'package:omni_chat/constants/base_urls.dart';
-import 'package:omni_chat/providers/knowledge.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:omni_chat/services/dio_client.dart';
-import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> uploadSlackToKnowledge(UploadSlackToKnowledgeRequest req) async {
+Future<void> uploadConfluenceToKnowledge(
+  UploadConfluenceToKnowledgeRequest req,
+) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
 
@@ -24,32 +23,20 @@ Future<void> uploadSlackToKnowledge(UploadSlackToKnowledgeRequest req) async {
 
   try {
     Response response = await dio.post(
-      "/kb-core/v1/knowledge/${req.id}/slack",
+      "/kb-core/v1/knowledge/${req.id}/confluence",
       data: {
         "unitName": req.unitName,
-        "slackWorkspace": req.slackWorkspace,
-        "slackBotToken": req.slackBotToken,
+        "wikiPageUrl": req.wikiUrl,
+        "confluenceUsername": req.username,
+        "confluenceAccessToken": req.confluenceToken,
       },
       options: Options(headers: headers),
     );
+    debugPrint(response.data.toString());
     switch (response.statusCode) {
       case 201:
-        QuickAlert.show(
-          context: rootNavigatorKey.currentContext!,
-          type: QuickAlertType.success,
-          text: "Successfully uploaded to knowledge",
-          onConfirmBtnTap:
-              () => {
-                rootNavigatorKey.currentContext!
-                    .read<KnowledgeProvider>()
-                    .reloadKnowledgeUnits(),
-                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
-                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
-              },
-        );
         break;
       default:
-        req.onError();
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.error,
@@ -57,7 +44,6 @@ Future<void> uploadSlackToKnowledge(UploadSlackToKnowledgeRequest req) async {
         );
     }
   } catch (e) {
-    req.onError();
     debugPrint("Error: $e");
   }
 }
