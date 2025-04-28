@@ -1,12 +1,16 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/knowledge/controllers/upload_confluence.dart';
+import 'package:omni_chat/apis/knowledge/controllers/upload_file.dart';
 import 'package:omni_chat/apis/knowledge/controllers/upload_slack.dart';
+import 'package:omni_chat/constants/color.dart';
+import 'package:omni_chat/constants/file_extension.dart';
 import 'package:omni_chat/constants/knowledge_unit_type.dart';
 import 'package:omni_chat/providers/knowledge.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:omni_chat/widgets/button/ico_txt_btn.dart';
+import 'package:omni_chat/widgets/text/info_field.dart';
 import 'package:omni_chat/widgets/text/input_field.dart';
 import 'package:omni_chat/widgets/text/input_header.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +34,8 @@ class _KnowledgeUnitUploadPopUpState extends State<KnowledgeUnitUploadPopUp> {
   final ValueNotifier<bool> uploading = ValueNotifier(false);
 
   String unitType = "";
+  String selectedFileName = "File name";
+  String selectedFilePath = "";
 
   @override
   void dispose() {
@@ -40,11 +46,15 @@ class _KnowledgeUnitUploadPopUpState extends State<KnowledgeUnitUploadPopUp> {
     super.dispose();
   }
 
-  void clearTextControllers() {
+  void clearUploadForm() {
     txtCtrlr1.clear();
     txtCtrlr2.clear();
     txtCtrlr3.clear();
     txtCtrlr4.clear();
+    setState(() {
+      selectedFileName = "File name";
+      selectedFilePath = "";
+    });
   }
 
   Future<void> onUpload() async {
@@ -55,10 +65,18 @@ class _KnowledgeUnitUploadPopUpState extends State<KnowledgeUnitUploadPopUp> {
               .read<KnowledgeProvider>()
               .currentKnowledge
               .id;
-
+      uploading.value = true;
       switch (unitType) {
+        case "file":
+          uploadFileToKnowledge((
+            fileName: selectedFileName,
+            filePath: selectedFilePath,
+            id: knowledgeId,
+            onError: () {
+              uploading.value = false;
+            },
+          ));
         case "slack":
-          uploading.value = true;
           uploadSlackToKnowledge((
             id: knowledgeId,
             unitName: txtCtrlr1.text,
@@ -131,7 +149,10 @@ class _KnowledgeUnitUploadPopUpState extends State<KnowledgeUnitUploadPopUp> {
                                         unitType = type.name;
                                       });
                                     },
-                                    icon: Brand(type.icon, size: 50),
+                                    icon: KnowledgeUnitType.iconize(
+                                      type.name,
+                                      size: 50,
+                                    ),
                                   ),
                                 );
                               }).toList(),
@@ -139,24 +160,54 @@ class _KnowledgeUnitUploadPopUpState extends State<KnowledgeUnitUploadPopUp> {
                       ],
                     )
                     : Align(
-                      child: Brand(
-                        KnowledgeUnitType.iconize(unitType)!.icon,
-                        size: 50,
-                      ),
+                      child: KnowledgeUnitType.iconize(unitType, size: 50),
                     ),
                 if (unitType.isNotEmpty) ...[
                   InputHeader(title: "Name", isRequired: true),
-                  InputField(
-                    controller: txtCtrlr1,
-                    placeholder: "Name of the unit",
-                    fontSz: 14,
-                    validateFunc: Validatorless.required(
-                      "Unit's name is required",
-                    ),
-                    formKey: unitFormKey,
-                  ),
+                  unitType != KnowledgeUnitType.file.name
+                      ? InputField(
+                        controller: txtCtrlr1,
+                        placeholder: "Name of the unit",
+                        fontSz: 14,
+                        validateFunc: Validatorless.required(
+                          "Unit's name is required",
+                        ),
+                        formKey: unitFormKey,
+                      )
+                      : InfoField(infoText: selectedFileName, lineNum: 1),
                 ],
                 ...switch (unitType) {
+                  "file" => [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IcoTxtBtn(
+                          onTap: () async {
+                            final file = await FilePicker.platform.pickFiles(
+                              type: FileType.custom,
+                              allowedExtensions:
+                                  FileExtensionType.values
+                                      .map((e) => e.toString().split('.').last)
+                                      .toList(),
+                            );
+                            if (file != null) {
+                              setState(() {
+                                selectedFileName = file.files.first.name;
+                                selectedFilePath =
+                                    file.files.first.path.toString();
+                              });
+                            }
+                          },
+                          title: "Choose a file",
+                          icon: Icons.attach_file,
+                          bgColor: omniDarkCyan,
+                          fontSz: 13,
+                          borderRadius: 10,
+                          isExpanded: false,
+                        ),
+                      ],
+                    ),
+                  ],
                   "slack" => [
                     InputHeader(title: "Slack Workspace", isRequired: true),
                     InputField(
@@ -221,7 +272,7 @@ class _KnowledgeUnitUploadPopUpState extends State<KnowledgeUnitUploadPopUp> {
                         title: "Back",
                         onTap:
                             () => {
-                              clearTextControllers(),
+                              clearUploadForm(),
                               setState(() {
                                 unitType = "";
                               }),

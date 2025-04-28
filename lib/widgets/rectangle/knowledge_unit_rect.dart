@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/constants/knowledge_unit_type.dart';
 import 'package:omni_chat/models/knowledge_unit.dart';
@@ -29,7 +28,7 @@ class KnowledgeUnitRect extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Brand(KnowledgeUnitType.iconize(unit.type)!.icon, size: 40),
+            child: KnowledgeUnitType.iconize(unit.type.toString(), size: 40),
           ),
           Expanded(
             child: Column(
