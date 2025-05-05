@@ -41,9 +41,11 @@ Future<void> uploadFileToKnowledge(UploadFileToKnowledgeRequest req) async {
       ),
     });
 
+    FormData clonedFormData = formData.clone();
+
     Response response = await dio.post(
       "/kb-core/v1/knowledge/${req.id}/local-file",
-      data: formData,
+      data: clonedFormData,
       options: Options(headers: headers),
     );
     switch (response.statusCode) {

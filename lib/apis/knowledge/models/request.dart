@@ -23,7 +23,7 @@ typedef UploadFileToKnowledgeRequest =
     ({String id, String fileName, String filePath, VoidCallback onError});
 // Upload Web To Knowledge
 typedef UploadWebToKnowledgeRequest =
-    ({String id, String unitName, String webUrl});
+    ({String id, String unitName, String webUrl, VoidCallback onError});
 // Upload Slack To Knowledge
 typedef UploadSlackToKnowledgeRequest =
     ({

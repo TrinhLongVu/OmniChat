@@ -4,6 +4,7 @@ import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/knowledge/controllers/upload_confluence.dart';
 import 'package:omni_chat/apis/knowledge/controllers/upload_file.dart';
 import 'package:omni_chat/apis/knowledge/controllers/upload_slack.dart';
+import 'package:omni_chat/apis/knowledge/controllers/upload_web.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/constants/file_extension.dart';
 import 'package:omni_chat/constants/knowledge_unit_type.dart';
@@ -66,8 +67,19 @@ class _KnowledgeUnitUploadPopUpState extends State<KnowledgeUnitUploadPopUp> {
               .currentKnowledge
               .id;
       uploading.value = true;
-      switch (unitType) {
-        case "file":
+      final type = KnowledgeUnitType.fromName(unitType);
+      switch (type) {
+        case KnowledgeUnitType.web:
+          uploadWebToKnowledge((
+            id: knowledgeId,
+            unitName: txtCtrlr1.text,
+            webUrl: txtCtrlr2.text,
+            onError: () {
+              uploading.value = false;
+            },
+          ));
+          break;
+        case KnowledgeUnitType.file:
           uploadFileToKnowledge((
             fileName: selectedFileName,
             filePath: selectedFilePath,
@@ -76,7 +88,8 @@ class _KnowledgeUnitUploadPopUpState extends State<KnowledgeUnitUploadPopUp> {
               uploading.value = false;
             },
           ));
-        case "slack":
+          break;
+        case KnowledgeUnitType.slack:
           uploadSlackToKnowledge((
             id: knowledgeId,
             unitName: txtCtrlr1.text,
@@ -87,7 +100,7 @@ class _KnowledgeUnitUploadPopUpState extends State<KnowledgeUnitUploadPopUp> {
             },
           ));
           break;
-        case "confluence":
+        case KnowledgeUnitType.confluence:
           uploadConfluenceToKnowledge((
             id: knowledgeId,
             unitName: txtCtrlr1.text,
@@ -96,7 +109,6 @@ class _KnowledgeUnitUploadPopUpState extends State<KnowledgeUnitUploadPopUp> {
             confluenceToken: txtCtrlr4.text,
           ));
           break;
-        default:
       }
     }
   }
@@ -177,6 +189,18 @@ class _KnowledgeUnitUploadPopUpState extends State<KnowledgeUnitUploadPopUp> {
                       : InfoField(infoText: selectedFileName, lineNum: 1),
                 ],
                 ...switch (unitType) {
+                  "web" => [
+                    InputHeader(title: "Web URL", isRequired: true),
+                    InputField(
+                      controller: txtCtrlr2,
+                      placeholder: "URL of the website",
+                      fontSz: 14,
+                      validateFunc: Validatorless.required(
+                        "Website URL is required",
+                      ),
+                      formKey: unitFormKey,
+                    ),
+                  ],
                   "file" => [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

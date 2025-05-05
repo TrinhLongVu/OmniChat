@@ -1,16 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:omni_chat/apis/knowledge/models/request.dart';
+import 'package:omni_chat/apis/mail/models/request.dart';
 import 'package:omni_chat/constants/base_urls.dart';
-import 'package:omni_chat/providers/knowledge.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:omni_chat/services/dio_client.dart';
-import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> uploadWebToKnowledge(UploadWebToKnowledgeRequest req) async {
+Future<void> replyEmail(ReplyEmailRequest req) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
 
@@ -20,33 +17,30 @@ Future<void> uploadWebToKnowledge(UploadWebToKnowledgeRequest req) async {
     'Content-Type': 'application/json',
   };
 
-  Dio dio = DioClient(baseUrl: BaseUrls.knowledge).dio;
+  Dio dio = DioClient(baseUrl: BaseUrls.jarvis).dio;
 
   try {
     Response response = await dio.post(
-      "/kb-core/v1/knowledge/${req.id}/web",
-      data: {"unitName": req.unitName, "webUrl": req.webUrl},
+      "/api/v1/ai-email/reply-ideas",
+      data: {
+        "action": req.action,
+        "email": req.content,
+        "metadata": {
+          "context": [],
+          "subject": req.subject,
+          "sender": req.sender,
+          "receiver": req.receiver,
+          "language": req.language,
+        },
+      },
       options: Options(headers: headers),
     );
+    debugPrint(response.statusCode.toString());
     debugPrint(response.data.toString());
     switch (response.statusCode) {
-      case 201:
-        QuickAlert.show(
-          context: rootNavigatorKey.currentContext!,
-          type: QuickAlertType.success,
-          text: "Successfully uploaded to knowledge",
-          onConfirmBtnTap:
-              () => {
-                rootNavigatorKey.currentContext!
-                    .read<KnowledgeProvider>()
-                    .reloadKnowledgeUnits(),
-                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
-                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
-              },
-        );
+      case 200:
         break;
       default:
-        req.onError();
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.error,
@@ -54,7 +48,6 @@ Future<void> uploadWebToKnowledge(UploadWebToKnowledgeRequest req) async {
         );
     }
   } catch (e) {
-    req.onError();
     debugPrint("Error: $e");
   }
 }
