@@ -74,6 +74,11 @@ Future<void> uploadFileToKnowledge(UploadFileToKnowledgeRequest req) async {
     }
   } catch (e) {
     req.onError();
+    QuickAlert.show(
+      context: rootNavigatorKey.currentContext!,
+      type: QuickAlertType.error,
+      text: "Something went wrong! Please try again later.",
+    );
     debugPrint("Error: $e");
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/auth/controllers/logout.dart';
@@ -15,9 +16,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final subscriptionUri = Uri.parse(
-    'https://admin.dev.jarvis.cx/pricing/overview',
-  );
+  final subscriptionUri = Uri.parse(dotenv.env['SUBSCRIPTION_URL'] ?? '');
 
   String email = "example@example.com";
   bool loggingOut = false;

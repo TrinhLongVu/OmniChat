@@ -148,7 +148,9 @@ class _MailComposerScreenState extends State<MailComposerScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: CommonBtn(
                             title: "Generate",
-                            onTap: () => onReply(),
+                            onTap: () {
+                              onReply();
+                            },
                           ),
                         );
                   },

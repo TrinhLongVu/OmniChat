@@ -24,8 +24,8 @@ class Bot {
   final String? deletedAt;
   final String? createdBy;
   final String? updatedBy;
-  final String openAiAssistantId;
-  final String openAiThreadIdPlay;
+  final String? openAiAssistantId;
+  final String? openAiThreadIdPlay;
 
   factory Bot.fromJson(Map<String, dynamic> json) {
     return Bot(

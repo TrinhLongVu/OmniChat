@@ -107,6 +107,9 @@ class _KnowledgeUnitUploadPopUpState extends State<KnowledgeUnitUploadPopUp> {
             wikiUrl: txtCtrlr2.text,
             username: txtCtrlr3.text,
             confluenceToken: txtCtrlr4.text,
+            onError: () {
+              uploading.value = false;
+            },
           ));
           break;
       }

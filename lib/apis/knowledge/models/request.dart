@@ -41,4 +41,5 @@ typedef UploadConfluenceToKnowledgeRequest =
       String wikiUrl,
       String username,
       String confluenceToken,
+      VoidCallback onError,
     });

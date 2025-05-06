@@ -8,6 +8,7 @@ import 'package:omni_chat/models/prompt.dart';
 import 'package:omni_chat/providers/bot.dart';
 import 'package:omni_chat/providers/convo.dart';
 import 'package:omni_chat/providers/prompt.dart';
+import 'package:omni_chat/services/ad_mob.dart';
 import 'package:omni_chat/widgets/button/fit_ico_btn.dart';
 import 'package:omni_chat/widgets/popup/agent_change.dart';
 import 'package:omni_chat/widgets/rectangle/convo_box.dart';
@@ -43,6 +44,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   @override
   void initState() {
     super.initState();
+    AdMobService().showInterstitialAd();
     if (widget.id != null) {
       isOfficial = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {

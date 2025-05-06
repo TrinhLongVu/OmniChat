@@ -47,5 +47,9 @@
 	</array>
 	<key>UISupportsDocumentBrowser</key>
 	<true/>
+
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-2779785204864253~5876241656</string>
+
 </dict>
 </plist>
