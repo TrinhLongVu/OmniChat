@@ -17,7 +17,8 @@ List<Map<String, dynamic>> mapToChatFormat(
 ) {
   var assistantMeta = {
     "model": "knowledge-base",
-    "name": "votutrinh2002's Default Team Assistant",
+    "name":
+        rootNavigatorKey.currentContext!.read<BotProvider>().currentBot.name,
     "id": botId,
   };
 

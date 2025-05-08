@@ -10,8 +10,9 @@ class Bot {
     this.deletedAt,
     this.createdBy,
     this.updatedBy,
-    required this.openAiAssistantId,
-    required this.openAiThreadIdPlay,
+    required this.isDefault,
+    required this.isFavorite,
+    this.permissions,
   });
 
   final String id;
@@ -24,8 +25,9 @@ class Bot {
   final String? deletedAt;
   final String? createdBy;
   final String? updatedBy;
-  final String? openAiAssistantId;
-  final String? openAiThreadIdPlay;
+  final bool isDefault;
+  final bool isFavorite;
+  final List<String>? permissions;
 
   factory Bot.fromJson(Map<String, dynamic> json) {
     return Bot(
@@ -39,8 +41,12 @@ class Bot {
       deletedAt: json['deletedAt'],
       createdBy: json['createdBy'],
       updatedBy: json['updatedBy'],
-      openAiAssistantId: json['openAiAssistantId'],
-      openAiThreadIdPlay: json['openAiThreadIdPlay'],
+      isDefault: json['isDefault'],
+      isFavorite: json['isFavorite'],
+      permissions:
+          json['permissions'] != null
+              ? List<String>.from(json['permissions'])
+              : null,
     );
   }
 
@@ -56,8 +62,9 @@ class Bot {
       deletedAt: "",
       createdBy: "",
       updatedBy: "",
-      openAiAssistantId: "",
-      openAiThreadIdPlay: "",
+      isDefault: false,
+      isFavorite: false,
+      permissions: [],
     );
   }
 }

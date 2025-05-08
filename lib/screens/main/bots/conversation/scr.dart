@@ -44,7 +44,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   @override
   void initState() {
     super.initState();
-    AdMobService().showInterstitialAd();
+    AdMobService().showInterstitialAdIfAllowed();
     if (widget.id != null) {
       isOfficial = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {

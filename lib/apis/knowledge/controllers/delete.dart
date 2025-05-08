@@ -25,7 +25,7 @@ Future<void> deleteKnowledge(DeleteKnowledgeRequest req) async {
       options: Options(headers: headers),
     );
     switch (response.statusCode) {
-      case 200:
+      case 204:
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.success,

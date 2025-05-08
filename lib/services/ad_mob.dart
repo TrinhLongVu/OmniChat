@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AdMobService {
-  // Singleton setup
   static final AdMobService _instance = AdMobService._internal();
 
   factory AdMobService() => _instance;
@@ -11,7 +10,10 @@ class AdMobService {
 
   InterstitialAd? _interstitialAd;
 
-  // Get platform-specific interstitial ad unit ID
+  DateTime? _lastShownTime;
+
+  final Duration cooldownDuration = const Duration(minutes: 10);
+
   static String? get interstitialAdUnitId {
     if (Platform.isIOS) {
       return "ca-app-pub-3940256099942544/4411468910";
@@ -46,7 +48,17 @@ class AdMobService {
     );
   }
 
-  void showInterstitialAd() {
+  void showInterstitialAdIfAllowed() {
+    final now = DateTime.now();
+
+    if (_lastShownTime == null ||
+        now.difference(_lastShownTime!) >= cooldownDuration) {
+      _showInterstitialAd();
+      _lastShownTime = now;
+    }
+  }
+
+  void _showInterstitialAd() {
     if (_interstitialAd != null) {
       _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
         onAdDismissedFullScreenContent: (InterstitialAd ad) {

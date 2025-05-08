@@ -112,7 +112,7 @@ class KnowledgeRect extends StatelessWidget {
                 ],
               ),
             ),
-            imported
+            imported && !importing
                 ? IconButton(
                   onPressed: () {
                     QuickAlert.show(

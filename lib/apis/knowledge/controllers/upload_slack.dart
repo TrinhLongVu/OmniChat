@@ -24,11 +24,15 @@ Future<void> uploadSlackToKnowledge(UploadSlackToKnowledgeRequest req) async {
 
   try {
     Response response = await dio.post(
-      "/kb-core/v1/knowledge/${req.id}/slack",
+      "/kb-core/v1/knowledge/${req.id}/datasources",
       data: {
-        "unitName": req.unitName,
-        "slackWorkspace": req.slackWorkspace,
-        "slackBotToken": req.slackBotToken,
+        "datasources": [
+          {
+            "name": req.unitName,
+            "type": "slack",
+            "credentials": {"token": req.slackBotToken},
+          },
+        ],
       },
       options: Options(headers: headers),
     );

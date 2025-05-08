@@ -182,7 +182,7 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
                               : InputField(
                                 controller: descriptionCtrlr,
                                 placeholder:
-                                    "Everything about this knowledge base",
+                                    "Description about this knowledge base",
                                 minLns: 3,
                                 maxLns: 5,
                               ),

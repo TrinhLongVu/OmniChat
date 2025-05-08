@@ -2,8 +2,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/knowledge/controllers/upload_confluence.dart';
-import 'package:omni_chat/apis/knowledge/controllers/upload_file.dart';
 import 'package:omni_chat/apis/knowledge/controllers/upload_slack.dart';
+import 'package:omni_chat/apis/knowledge/controllers/upload_file_unit.dart';
 import 'package:omni_chat/apis/knowledge/controllers/upload_web.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/constants/file_extension.dart';
@@ -35,7 +35,7 @@ class _KnowledgeUnitUploadPopUpState extends State<KnowledgeUnitUploadPopUp> {
   final ValueNotifier<bool> uploading = ValueNotifier(false);
 
   String unitType = "";
-  String selectedFileName = "File name";
+  String selectedFileName = "No File Selected";
   String selectedFilePath = "";
 
   @override
@@ -53,7 +53,7 @@ class _KnowledgeUnitUploadPopUpState extends State<KnowledgeUnitUploadPopUp> {
     txtCtrlr3.clear();
     txtCtrlr4.clear();
     setState(() {
-      selectedFileName = "File name";
+      selectedFileName = "No File Selected";
       selectedFilePath = "";
     });
   }
@@ -93,8 +93,7 @@ class _KnowledgeUnitUploadPopUpState extends State<KnowledgeUnitUploadPopUp> {
           uploadSlackToKnowledge((
             id: knowledgeId,
             unitName: txtCtrlr1.text,
-            slackWorkspace: txtCtrlr2.text,
-            slackBotToken: txtCtrlr3.text,
+            slackBotToken: txtCtrlr2.text,
             onError: () {
               uploading.value = false;
             },
@@ -236,19 +235,9 @@ class _KnowledgeUnitUploadPopUpState extends State<KnowledgeUnitUploadPopUp> {
                     ),
                   ],
                   "slack" => [
-                    InputHeader(title: "Slack Workspace", isRequired: true),
-                    InputField(
-                      controller: txtCtrlr2,
-                      placeholder: "Name of the workspace",
-                      fontSz: 14,
-                      validateFunc: Validatorless.required(
-                        "Workspace is required",
-                      ),
-                      formKey: unitFormKey,
-                    ),
                     InputHeader(title: "Slack Bot Token", isRequired: true),
                     InputField(
-                      controller: txtCtrlr3,
+                      controller: txtCtrlr2,
                       placeholder: "Bot token",
                       fontSz: 14,
                       validateFunc: Validatorless.required(

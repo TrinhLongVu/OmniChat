@@ -18,7 +18,7 @@ Future<GetKnowledgeUnitsResponse?> getKnowledgeUnits(
 
   try {
     Response response = await dio.get(
-      "/kb-core/v1/knowledge/${req.id}/units",
+      "/kb-core/v1/knowledge/${req.id}/datasources",
       options: Options(headers: headers),
     );
     switch (response.statusCode) {

@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_chat/apis/knowledge/models/request.dart';
 import 'package:omni_chat/constants/base_urls.dart';
+import 'package:omni_chat/providers/knowledge.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:omni_chat/services/dio_client.dart';
+import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -35,7 +37,12 @@ Future<void> createKnowledge(CreateKnowledgeRequest req) async {
           type: QuickAlertType.success,
           text: "Knowledge created successfully!",
           onConfirmBtnTap:
-              () => GoRouter.of(rootNavigatorKey.currentContext!).pop(),
+              () => {
+                rootNavigatorKey.currentContext!
+                    .read<KnowledgeProvider>()
+                    .reloadList(),
+                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
+              },
         );
         break;
       default:

@@ -6,6 +6,7 @@ class KnowledgeUnit {
     this.type,
     this.size,
     this.status,
+    required this.knowledgeId,
     required this.createdAt,
     required this.updatedAt,
     this.deletedAt,
@@ -19,6 +20,7 @@ class KnowledgeUnit {
   final String? type;
   final int? size;
   final bool? status;
+  final String knowledgeId;
   final String createdAt;
   final String updatedAt;
   final String? deletedAt;
@@ -38,6 +40,7 @@ class KnowledgeUnit {
       deletedAt: json['deletedAt'],
       createdBy: json['createdBy'],
       updatedBy: json['updatedBy'],
+      knowledgeId: json['knowledgeId'],
     );
   }
 
@@ -49,6 +52,7 @@ class KnowledgeUnit {
       userId: "",
       size: 0,
       status: false,
+      knowledgeId: "",
       createdAt: "",
       updatedAt: "",
       createdBy: "",
