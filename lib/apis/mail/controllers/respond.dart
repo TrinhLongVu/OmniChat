@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:omni_chat/apis/mail/models/request.dart';
 import 'package:omni_chat/apis/mail/models/response.dart';
 import 'package:omni_chat/constants/base_urls.dart';
+import 'package:omni_chat/providers/convo.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:omni_chat/services/dio_client.dart';
+import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<ReplyEmailResponse?> replyEmail(ReplyEmailRequest req) async {
+Future<RespondEmailResponse?> respondEmail(RespondEmailRequest req) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
 
@@ -22,24 +24,50 @@ Future<ReplyEmailResponse?> replyEmail(ReplyEmailRequest req) async {
 
   try {
     Response response = await dio.post(
-      "/api/v1/ai-email/reply-ideas",
+      "/api/v1/ai-email/",
       data: {
-        "action": "Suggest 3 ideas for this email",
+        "action": "Reply to this email",
+        "mainIdea": req.mainIdea,
         "email": req.content,
+        "availableImprovedActions": [
+          "More engaging",
+          "More Informative",
+          "Add humor",
+          "Add details",
+          "More apologetic",
+          "Make it polite",
+          "Add clarification",
+          "Simplify language",
+          "Improve structure",
+          "Add empathy",
+          "Add a summary",
+          "Insert professional jargon",
+          "Make longer",
+          "Make shorter",
+        ],
         "metadata": {
           "context": [],
-          "receiver": "me",
-          "sender": req.sender,
           "subject": req.subject,
+          "sender": req.sender,
+          "receiver": req.receiver,
+          "style": {
+            "length": "long",
+            "formality": "neutral",
+            "tone": "friendly",
+          },
         },
       },
       options: Options(headers: headers),
     );
     switch (response.statusCode) {
       case 200:
-        ReplyEmailResponse res = ReplyEmailResponse.fromJson(response.data);
+        RespondEmailResponse res = RespondEmailResponse.fromJson(response.data);
+        rootNavigatorKey.currentContext!.read<ConvoProvider>().setCurrentToken(
+          res.token,
+        );
         return res;
       default:
+        req.onError();
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.error,
@@ -48,12 +76,13 @@ Future<ReplyEmailResponse?> replyEmail(ReplyEmailRequest req) async {
         return null;
     }
   } catch (e) {
-    debugPrint("Error: $e");
+    req.onError();
     QuickAlert.show(
       context: rootNavigatorKey.currentContext!,
       type: QuickAlertType.error,
       text: "Something went wrong! Please try again later.",
     );
+    debugPrint("Error: $e");
     return null;
   }
 }

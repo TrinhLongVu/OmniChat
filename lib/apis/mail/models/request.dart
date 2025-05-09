@@ -9,4 +9,12 @@ typedef ReplyEmailRequest =
       VoidCallback onError,
     });
 
-typedef RespondEmailRequest = ({VoidCallback onError});
+typedef RespondEmailRequest =
+    ({
+      String sender,
+      String receiver,
+      String subject,
+      String content,
+      String mainIdea,
+      VoidCallback onError,
+    });

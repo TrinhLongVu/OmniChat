@@ -1,5 +1,10 @@
+import 'package:delightful_toast/delight_toast.dart';
+import 'package:delightful_toast/toast/components/toast_card.dart';
+import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:omni_chat/constants/color.dart';
+import 'package:omni_chat/router/index.dart';
 import 'package:omni_chat/widgets/shimmer/shimmer_ln.dart';
 
 class InfoField extends StatefulWidget {
@@ -7,6 +12,7 @@ class InfoField extends StatefulWidget {
   final double fontSz;
   final int lineNum;
   final bool shimmerizing;
+  final bool copiable;
 
   const InfoField({
     super.key,
@@ -14,6 +20,7 @@ class InfoField extends StatefulWidget {
     this.fontSz = 14,
     this.lineNum = 1,
     this.shimmerizing = false,
+    this.copiable = false,
   });
 
   @override
@@ -61,6 +68,36 @@ class _InfoFieldState extends State<InfoField> {
       controller: _controller,
       style: TextStyle(color: Colors.blueGrey, fontSize: widget.fontSz),
       decoration: InputDecoration(
+        suffixIcon:
+            widget.copiable
+                ? IconButton(
+                  icon: Icon(Icons.copy),
+                  onPressed: () {
+                    Clipboard.setData(
+                      ClipboardData(text: widget.infoText),
+                    ).then((_) {
+                      DelightToastBar(
+                        builder: (context) {
+                          return ToastCard(
+                            title: Text(
+                              "Copied to clipboard",
+                              style: TextStyle(
+                                color: omniMilk,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            color: omniLightCyan,
+                          );
+                        },
+                        position: DelightSnackbarPosition.bottom,
+                        autoDismiss: true,
+                        snackbarDuration: Durations.extralong4,
+                      ).show(rootNavigatorKey.currentContext!);
+                    });
+                  },
+                )
+                : null,
         filled: true,
         fillColor: omniLightCyan.withValues(alpha: 0.2),
         enabledBorder: OutlineInputBorder(

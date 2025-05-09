@@ -3,7 +3,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/providers/convo.dart';
 import 'package:omni_chat/providers/prompt.dart';
-import 'package:omni_chat/screens/main/bots/conversation/prompt_modal.dart';
+import 'package:omni_chat/widgets/prompt_modal.dart';
 import 'package:omni_chat/widgets/button/fit_ico_btn.dart';
 import 'package:provider/provider.dart';
 
