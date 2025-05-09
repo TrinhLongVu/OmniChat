@@ -4,7 +4,6 @@ import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/knowledge/controllers/upload_confluence.dart';
 import 'package:omni_chat/apis/knowledge/controllers/upload_slack.dart';
 import 'package:omni_chat/apis/knowledge/controllers/upload_file_unit.dart';
-import 'package:omni_chat/apis/knowledge/controllers/upload_web.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/constants/file_extension.dart';
 import 'package:omni_chat/constants/knowledge_unit_type.dart';
@@ -69,16 +68,6 @@ class _KnowledgeUnitUploadPopUpState extends State<KnowledgeUnitUploadPopUp> {
       uploading.value = true;
       final type = KnowledgeUnitType.fromName(unitType);
       switch (type) {
-        case KnowledgeUnitType.web:
-          uploadWebToKnowledge((
-            id: knowledgeId,
-            unitName: txtCtrlr1.text,
-            webUrl: txtCtrlr2.text,
-            onError: () {
-              uploading.value = false;
-            },
-          ));
-          break;
         case KnowledgeUnitType.file:
           uploadFileToKnowledge((
             fileName: selectedFileName,

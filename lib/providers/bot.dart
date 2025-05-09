@@ -14,6 +14,7 @@ class BotProvider extends ChangeNotifier {
   Bot currentBot = Bot.placeholder();
   List<Knowledge> currentBotKnowledges;
   List<ConvoHistoryItem> currentBotConvoHistoryList = [];
+  List<ConvoHistoryItem> previewBotConvoHistoryList = [];
   String query = "";
 
   BotProvider({
@@ -72,8 +73,27 @@ class BotProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clearPreviewBotConvo() {
+    previewBotConvoHistoryList = [];
+    notifyListeners();
+  }
+
   void askBot(String message) {
     currentBotConvoHistoryList.add(ConvoHistoryItem(query: message));
+    notifyListeners();
+  }
+
+  void previewAskBot(String message) {
+    previewBotConvoHistoryList.add(ConvoHistoryItem(query: message));
+    notifyListeners();
+  }
+
+  void botPreviewAnswer(String answerStr) {
+    String query = previewBotConvoHistoryList.last.query;
+    previewBotConvoHistoryList.removeLast();
+    previewBotConvoHistoryList.add(
+      ConvoHistoryItem(query: query, answer: answerStr),
+    );
     notifyListeners();
   }
 

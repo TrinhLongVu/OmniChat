@@ -23,14 +23,13 @@ Future<void> replyEmail(ReplyEmailRequest req) async {
     Response response = await dio.post(
       "/api/v1/ai-email/reply-ideas",
       data: {
-        "action": req.action,
+        "action": "Suggest 3 ideas for this email",
         "email": req.content,
         "metadata": {
           "context": [],
-          "subject": req.subject,
+          "receiver": "me",
           "sender": req.sender,
-          "receiver": req.receiver,
-          "language": req.language,
+          "subject": req.subject,
         },
       },
       options: Options(headers: headers),

@@ -23,6 +23,8 @@ typedef UpdateBotRequest =
     });
 // Delete Bot
 typedef DeleteBotRequest = ({String id, VoidCallback onError});
+// Chat Preview with Bot
+typedef AskRequest = ({String botId, String msgContent});
 // Chat with Bot
 typedef ChatRequest = ({String botId, String msgContent});
 // Get Bot Threads

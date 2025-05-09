@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:lottie/lottie.dart';
+import 'package:omni_chat/apis/bot/controllers/ask.dart';
 import 'package:omni_chat/apis/bot/controllers/create.dart';
 import 'package:omni_chat/apis/bot/controllers/delete.dart';
 import 'package:omni_chat/apis/bot/controllers/update.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/providers/bot.dart';
 import 'package:omni_chat/providers/convo.dart';
+import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
 import 'package:omni_chat/widgets/button/fit_ico_btn.dart';
 import 'package:omni_chat/widgets/button/ico_txt_btn.dart';
 import 'package:omni_chat/widgets/popup/knowledge_import.dart';
+import 'package:omni_chat/widgets/rectangle/chat_box.dart';
 import 'package:omni_chat/widgets/rectangle/convo_box.dart';
 import 'package:omni_chat/widgets/rectangle/knowledge_rect.dart';
 import 'package:omni_chat/widgets/tab_item.dart';
@@ -19,6 +22,7 @@ import 'package:omni_chat/widgets/text/info_field.dart';
 import 'package:omni_chat/widgets/text/input_field.dart';
 import 'package:omni_chat/widgets/text/input_header.dart';
 import 'package:omni_chat/widgets/popup/publish_bot.dart';
+import 'package:omni_chat/widgets/text/prompt_slash.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:validatorless/validatorless.dart';
@@ -40,6 +44,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
   late TextEditingController chatCtrlr;
   String screenState = "";
   final ValueNotifier<bool> loading = ValueNotifier(false);
+  bool showPromptTooltip = false;
 
   @override
   void initState() {
@@ -67,6 +72,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
             );
           },
         );
+        context.read<BotProvider>().clearPreviewBotConvo();
       });
     }
   }
@@ -114,6 +120,19 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
         loading.value = false;
       },
     ));
+  }
+
+  Future<void> onPreviewChat() async {
+    var promptToSend = context.read<ConvoProvider>().currentPrompt;
+    var msgContentToSend = chatCtrlr.text;
+    if (promptToSend.content.isNotEmpty) {
+      msgContentToSend = "${promptToSend.content}\n${chatCtrlr.text}";
+    }
+    chatCtrlr.clear();
+    FocusManager.instance.primaryFocus?.unfocus();
+    context.read<BotProvider>().previewAskBot(msgContentToSend);
+    context.read<ConvoProvider>().clearPrompt();
+    await askBot((botId: widget.id!, msgContent: msgContentToSend));
   }
 
   @override
@@ -191,7 +210,13 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            const Icon(Icons.smart_toy_outlined, size: 40),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              child: const Icon(
+                                Icons.smart_toy_outlined,
+                                size: 40,
+                              ),
+                            ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               spacing: 8,
@@ -448,7 +473,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                               SizedBox(height: viewport.height * .03),
                               context
                                       .watch<BotProvider>()
-                                      .currentBotConvoHistoryList
+                                      .previewBotConvoHistoryList
                                       .isEmpty
                                   ? Container(
                                     width: double.infinity,
@@ -481,7 +506,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                                     children:
                                         context
                                             .watch<BotProvider>()
-                                            .currentBotConvoHistoryList
+                                            .previewBotConvoHistoryList
                                             .map((convo) {
                                               return Column(
                                                 spacing: 10,
@@ -599,92 +624,66 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
                         left: 15,
                         right: 15,
                         bottom: 15,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withValues(alpha: .5),
-                                spreadRadius: 2,
-                                blurRadius: 5,
-                                offset: Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              TextField(
-                                controller: chatCtrlr,
-                                textInputAction: TextInputAction.newline,
-                                style: TextStyle(fontSize: 14),
-                                minLines: 1,
-                                maxLines: 3,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  hintText: "Test me by sending me a message",
-                                  hintStyle: TextStyle(color: Colors.grey),
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                                onChanged: (value) => {},
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                  10,
-                                  0,
-                                  10,
-                                  8,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Row(
-                                        spacing: 10,
-                                        children: [
-                                          Row(
-                                            spacing: 4,
-                                            children: [
-                                              Icon(
-                                                Icons.token_rounded,
-                                                color: omniDarkBlue,
-                                              ),
-                                              Text(
-                                                "${context.watch<ConvoProvider>().currentToken}",
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Row(
-                                      spacing: 10,
-                                      children: [
-                                        FitIconBtn(
-                                          icon: Icons.send,
-                                          iconColor:
-                                              chatCtrlr.text.isEmpty
-                                                  ? Colors.grey
-                                                  : omniDarkBlue,
-                                          onTap: () async {},
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                        child: ChatBox(
+                          isPreview: true,
+                          ctrlr: chatCtrlr,
+                          focusNode: FocusNode(),
+                          onType: (value) {
+                            if (chatCtrlr.text == "/") {
+                              setState(() {
+                                showPromptTooltip = true;
+                              });
+                            } else {
+                              setState(() {
+                                showPromptTooltip = false;
+                              });
+                            }
+                          },
+                          onSendMessage: () {
+                            if (chatCtrlr.text.isNotEmpty) {
+                              onPreviewChat();
+                            }
+                          },
                         ),
                       ),
+                      showPromptTooltip
+                          ? Positioned(
+                            left: 20,
+                            right: 20,
+                            bottom: 110,
+                            child: Container(
+                              height: viewport.height * 0.3,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(width: 0.5),
+                              ),
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children:
+                                      context
+                                          .watch<PromptProvider>()
+                                          .slashPrompts
+                                          .map(
+                                            (prompt) => PromptSlash(
+                                              title: prompt.title,
+                                              onUse: () {
+                                                context
+                                                    .read<ConvoProvider>()
+                                                    .setPrompt(prompt);
+                                                chatCtrlr.clear();
+                                                setState(() {
+                                                  showPromptTooltip = false;
+                                                });
+                                              },
+                                            ),
+                                          )
+                                          .toList(),
+                                ),
+                              ),
+                            ),
+                          )
+                          : SizedBox.shrink(),
                     ],
                   ),
                 ),

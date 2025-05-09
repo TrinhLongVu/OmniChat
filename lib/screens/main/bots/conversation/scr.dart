@@ -11,8 +11,8 @@ import 'package:omni_chat/providers/prompt.dart';
 import 'package:omni_chat/services/ad_mob.dart';
 import 'package:omni_chat/widgets/button/fit_ico_btn.dart';
 import 'package:omni_chat/widgets/popup/agent_change.dart';
+import 'package:omni_chat/widgets/rectangle/chat_box.dart';
 import 'package:omni_chat/widgets/rectangle/convo_box.dart';
-import 'package:omni_chat/screens/main/bots/conversation/prompt_modal.dart';
 import 'package:omni_chat/screens/main/bots/conversation/thread_drawer.dart';
 import 'package:omni_chat/widgets/text/info_field.dart';
 import 'package:omni_chat/widgets/popup/prompt_info.dart';
@@ -64,8 +64,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
       });
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<PromptProvider>().loadSlashList();
-      context.read<ConvoProvider>().getCurrentToken();
       if (widget.id == null) {
         context.read<ConvoProvider>().initConvoList();
       }
@@ -516,124 +514,29 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 left: 15,
                 right: 15,
                 bottom: 15,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withValues(alpha: .5),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      TextField(
-                        controller: msgCtrlr,
-                        focusNode: focusNod,
-                        textInputAction: TextInputAction.newline,
-                        style: TextStyle(fontSize: 14),
-                        minLines: 1,
-                        maxLines: 3,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          hintText:
-                              context.watch<ConvoProvider>().currentPrompt.id !=
-                                      ""
-                                  ? "Asking with promt activated"
-                                  : "Ask me anthing or type '/' to use a prompt",
-                          hintStyle: TextStyle(color: Colors.grey),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        onChanged:
-                            (value) => {
-                              if (msgCtrlr.text == "/")
-                                {
-                                  setState(() {
-                                    showPromptTooltip = true;
-                                  }),
-                                }
-                              else
-                                {
-                                  setState(() {
-                                    showPromptTooltip = false;
-                                  }),
-                                },
-                            },
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                spacing: 10,
-                                children: [
-                                  Row(
-                                    spacing: 4,
-                                    children: [
-                                      Icon(
-                                        Icons.token_rounded,
-                                        color: omniDarkBlue,
-                                      ),
-                                      Text(
-                                        "${context.watch<ConvoProvider>().currentToken}",
-                                      ),
-                                    ],
-                                  ),
-                                  FitIconBtn(
-                                    icon: FontAwesome.envelope_open_text_solid,
-                                    onTap: () {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        builder: (context) {
-                                          return PromptModal();
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Row(
-                              spacing: 10,
-                              children: [
-                                FitIconBtn(onTap: () {}, icon: Icons.photo),
-                                FitIconBtn(
-                                  icon: Icons.send,
-                                  iconColor:
-                                      msgCtrlr.text.isEmpty
-                                          ? Colors.grey
-                                          : omniDarkBlue,
-                                  onTap: () async {
-                                    if (msgCtrlr.text.isNotEmpty) {
-                                      if (isOfficial) {
-                                        await sendConvoMessage();
-                                      } else {
-                                        await sendMessageToBot();
-                                      }
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                child: ChatBox(
+                  ctrlr: msgCtrlr,
+                  focusNode: focusNod,
+                  onType: (value) {
+                    if (msgCtrlr.text == "/") {
+                      setState(() {
+                        showPromptTooltip = true;
+                      });
+                    } else {
+                      setState(() {
+                        showPromptTooltip = false;
+                      });
+                    }
+                  },
+                  onSendMessage: () async {
+                    if (msgCtrlr.text.isNotEmpty) {
+                      if (isOfficial) {
+                        await sendConvoMessage();
+                      } else {
+                        await sendMessageToBot();
+                      }
+                    }
+                  },
                 ),
               ),
               showPromptTooltip
