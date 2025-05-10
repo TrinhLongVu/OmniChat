@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:omni_chat/apis/chat/models/request.dart';
 import 'package:omni_chat/apis/chat/models/response.dart';
 import 'package:omni_chat/constants/base_urls.dart';
+import 'package:omni_chat/providers/bot.dart';
 import 'package:omni_chat/providers/convo.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:omni_chat/services/dio_client.dart';
@@ -27,6 +28,29 @@ Future<void> sendMessage(SendMessageRequest req) async {
     chatConvo = {'id': req.convoId, 'messages': []};
   }
 
+  Map<String, Object> assistantObj = {
+    "id":
+        rootNavigatorKey.currentContext!
+            .read<ConvoProvider>()
+            .currentAssistant
+            .id,
+    "model": "dify",
+    "name":
+        rootNavigatorKey.currentContext!
+            .read<ConvoProvider>()
+            .currentAssistant
+            .name,
+  };
+
+  if (!req.official) {
+    assistantObj = {
+      "id": rootNavigatorKey.currentContext!.read<BotProvider>().currentBot.id,
+      "model": "knowledge-base",
+      "name":
+          rootNavigatorKey.currentContext!.read<BotProvider>().currentBot.name,
+    };
+  }
+  debugPrint(assistantObj.toString());
   try {
     Response response = await dio.post(
       "/api/v1/ai-chat/messages",
@@ -34,11 +58,7 @@ Future<void> sendMessage(SendMessageRequest req) async {
         "content": req.msgContent,
         "files": [],
         "metadata": {"conversation": chatConvo},
-        "assistant": {
-          "id": "gemini-1.5-flash-latest",
-          "model": "dify",
-          "name": "Gemini 1.5 Flash",
-        },
+        "assistant": assistantObj,
       },
       options: Options(headers: headers),
     );
@@ -56,9 +76,15 @@ Future<void> sendMessage(SendMessageRequest req) async {
               .read<ConvoProvider>()
               .loadConvoList();
         }
-        rootNavigatorKey.currentContext!
-            .read<ConvoProvider>()
-            .loadCurrentConvo();
+        if (req.official) {
+          rootNavigatorKey.currentContext!
+              .read<ConvoProvider>()
+              .loadCurrentConvo();
+        } else {
+          rootNavigatorKey.currentContext!.read<ConvoProvider>().chatAnswer(
+            res.message,
+          );
+        }
         break;
       default:
         req.onError();

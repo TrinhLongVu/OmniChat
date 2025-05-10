@@ -13,15 +13,10 @@ class BotProvider extends ChangeNotifier {
   List<Bot> botList;
   Bot currentBot = Bot.placeholder();
   List<Knowledge> currentBotKnowledges;
-  List<ConvoHistoryItem> currentBotConvoHistoryList = [];
   List<ConvoHistoryItem> previewBotConvoHistoryList = [];
   String query = "";
 
-  BotProvider({
-    this.botList = const [],
-    this.currentBotKnowledges = const [],
-    this.currentBotConvoHistoryList = const [],
-  });
+  BotProvider({this.botList = const [], this.currentBotKnowledges = const []});
 
   Future<void> getListFromApi() async {
     GetBotListResponse? res = await getBotList((query: query));
@@ -68,18 +63,8 @@ class BotProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void clearCurrentBotConvo() {
-    currentBotConvoHistoryList = [];
-    notifyListeners();
-  }
-
   void clearPreviewBotConvo() {
     previewBotConvoHistoryList = [];
-    notifyListeners();
-  }
-
-  void askBot(String message) {
-    currentBotConvoHistoryList.add(ConvoHistoryItem(query: message));
     notifyListeners();
   }
 
@@ -92,15 +77,6 @@ class BotProvider extends ChangeNotifier {
     String query = previewBotConvoHistoryList.last.query;
     previewBotConvoHistoryList.removeLast();
     previewBotConvoHistoryList.add(
-      ConvoHistoryItem(query: query, answer: answerStr),
-    );
-    notifyListeners();
-  }
-
-  void botAnswer(String answerStr) {
-    String query = currentBotConvoHistoryList.last.query;
-    currentBotConvoHistoryList.removeLast();
-    currentBotConvoHistoryList.add(
       ConvoHistoryItem(query: query, answer: answerStr),
     );
     notifyListeners();
