@@ -47,6 +47,7 @@ dependencies:
   flutter_dotenv: ^5.2.1
   http_parser: ^4.1.2
   google_mobile_ads: ^6.0.0
+  flutter_inappwebview: ^6.1.5
   delightful_toast: ^1.1.0
 
 dev_dependencies:

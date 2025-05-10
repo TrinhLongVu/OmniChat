@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/auth/controllers/logout.dart';
+import 'package:omni_chat/apis/auth/controllers/subscribe.dart';
 import 'package:omni_chat/providers/user.dart';
 import 'package:omni_chat/widgets/button/profile_btn.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -16,8 +17,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final subscriptionUri = Uri.parse(dotenv.env['SUBSCRIPTION_URL'] ?? '');
-
   String email = "example@example.com";
   bool loggingOut = false;
 
@@ -44,7 +43,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Container(
                         padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Colors.grey,
+                          color:
+                              context.watch<UserProvider>().subscriptionPlan ==
+                                      "Starter"
+                                  ? Colors.orange
+                                  : Colors.grey,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
@@ -77,11 +80,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ProfileBtn(
                       icon: Icons.stars_rounded,
                       title: "Subscription Plans",
-                      onNavi: () {
-                        // context.go("/me/sub-plan");
+                      onNavi: () async {
+                        if (context.read<UserProvider>().subscriptionPlan ==
+                            "Starter") {
+                          QuickAlert.show(
+                            context: context,
+                            type: QuickAlertType.info,
+                            text:
+                                "You're already on a starter plan! Enjoy using our app",
+                          );
+                        }
+                        String? subscribeUri = await subscribe();
+                        if (subscribeUri == null) return;
                         setState(() {
                           launchUrl(
-                            subscriptionUri,
+                            Uri.parse(subscribeUri),
                             mode: LaunchMode.inAppBrowserView,
                           );
                         });
