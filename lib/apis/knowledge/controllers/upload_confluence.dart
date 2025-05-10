@@ -31,7 +31,7 @@ Future<void> uploadConfluenceToKnowledge(
         "datasources": [
           {
             "name": req.unitName,
-            "type": "slack",
+            "type": "confluence",
             "credentials": {
               "token": req.confluenceToken,
               "url": req.wikiUrl,

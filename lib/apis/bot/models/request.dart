@@ -35,3 +35,6 @@ typedef ImportKnowledgeRequest = ({String botId, String knowledgeId});
 typedef UnimportKnowledgeRequest = ({String botId, String knowledgeId});
 // Get Imported Knowledges
 typedef GetImportedKnowledgeListRequest = ({String botId});
+// Publish Bot
+// To Telegram
+typedef PublishToTelegramRequest = ({String botId, String telegramToken});
