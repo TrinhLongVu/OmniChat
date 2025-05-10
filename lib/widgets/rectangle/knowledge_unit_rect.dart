@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:omni_chat/apis/knowledge/controllers/delete_unit.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/constants/knowledge_unit_type.dart';
 import 'package:omni_chat/models/knowledge_unit.dart';
 import 'package:omni_chat/widgets/shimmer/shimmer_ln.dart';
+import 'package:quickalert/quickalert.dart';
 
 class KnowledgeUnitRect extends StatelessWidget {
   const KnowledgeUnitRect({
@@ -50,6 +53,25 @@ class KnowledgeUnitRect extends StatelessWidget {
                     ),
               ],
             ),
+          ),
+          IconButton(
+            onPressed: () {
+              QuickAlert.show(
+                context: context,
+                type: QuickAlertType.confirm,
+                title: "Delete Unit",
+                text:
+                    "Are you sure you want to delete this unit from the knowledge?",
+                onConfirmBtnTap: () async {
+                  context.pop();
+                  await deleteKnowledgeUnit((
+                    knowledgeId: unit.knowledgeId,
+                    unitId: unit.id,
+                  ));
+                },
+              );
+            },
+            icon: Icon(Icons.delete, color: Colors.red),
           ),
         ],
       ),

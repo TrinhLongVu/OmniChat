@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/knowledge/controllers/upload_confluence.dart';
 import 'package:omni_chat/apis/knowledge/controllers/upload_slack.dart';
-import 'package:omni_chat/apis/knowledge/controllers/upload_file_unit.dart';
+import 'package:omni_chat/apis/knowledge/controllers/upload_local_file.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/constants/file_extension.dart';
 import 'package:omni_chat/constants/knowledge_unit_type.dart';
@@ -69,7 +69,7 @@ class _KnowledgeUnitUploadPopUpState extends State<KnowledgeUnitUploadPopUp> {
       final type = KnowledgeUnitType.fromName(unitType);
       switch (type) {
         case KnowledgeUnitType.file:
-          uploadFileToKnowledge((
+          await uploadFileToKnowledge((
             fileName: selectedFileName,
             filePath: selectedFilePath,
             id: knowledgeId,

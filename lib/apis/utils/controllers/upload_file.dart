@@ -18,29 +18,11 @@ Future<String> uploadFile(UploadFileRequest req) async {
 
   Dio dio = DioClient(baseUrl: BaseUrls.knowledge).dio;
   try {
-    String fileExtension = req.fileName.split('.').last.toLowerCase();
-
-    FileExtensionType fileType;
-    try {
-      fileType = FileExtensionType.values.firstWhere(
-        (e) => e.toString().split('.').last == fileExtension,
-      );
-    } catch (e) {
-      fileType = FileExtensionType.pdf;
-    }
-    FormData formData = FormData.fromMap({
-      "files": await MultipartFile.fromFile(
-        req.filePath,
-        filename: req.fileName,
-        contentType: fileType.mediaType,
-      ),
-    });
-
-    FormData clonedFormData = formData.clone();
+    FormData formData = await createFormData(req);
 
     Response response = await dio.post(
       "/kb-core/v1/knowledge/files",
-      data: clonedFormData,
+      data: formData,
       options: Options(headers: headers),
     );
     switch (response.statusCode) {
@@ -53,4 +35,25 @@ Future<String> uploadFile(UploadFileRequest req) async {
     debugPrint("Error: $e");
     return "";
   }
+}
+
+Future<FormData> createFormData(UploadFileRequest req) async {
+  String fileExtension = req.fileName.split('.').last.toLowerCase();
+
+  FileExtensionType fileType;
+  try {
+    fileType = FileExtensionType.values.firstWhere(
+      (e) => e.toString().split('.').last == fileExtension,
+    );
+  } catch (e) {
+    fileType = FileExtensionType.pdf;
+  }
+
+  return FormData.fromMap({
+    "files": await MultipartFile.fromFile(
+      req.filePath,
+      filename: req.fileName,
+      contentType: fileType.mediaType,
+    ),
+  });
 }

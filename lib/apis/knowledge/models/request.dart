@@ -18,6 +18,8 @@ typedef UpdateKnowledgeRequest =
 typedef DeleteKnowledgeRequest = ({String id, VoidCallback onError});
 // Get Knowledge Units
 typedef GetKnowledgeUnitsRequest = ({String id});
+// Delete Knowledge Units
+typedef DeleteKnowledgeUnitRequest = ({String knowledgeId, String unitId});
 // Upload File To Knowledge
 typedef UploadFileToKnowledgeRequest =
     ({String id, String fileName, String filePath, VoidCallback onError});

@@ -1,9 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:omni_chat/apis/knowledge/models/request.dart';
 import 'package:omni_chat/constants/base_urls.dart';
+import 'package:omni_chat/providers/knowledge.dart';
 import 'package:omni_chat/router/index.dart';
 import 'package:omni_chat/services/dio_client.dart';
+import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,18 +26,37 @@ Future<void> uploadConfluenceToKnowledge(
 
   try {
     Response response = await dio.post(
-      "/kb-core/v1/knowledge/${req.id}/confluence",
+      "/kb-core/v1/knowledge/${req.id}/datasources",
       data: {
-        "unitName": req.unitName,
-        "wikiPageUrl": req.wikiUrl,
-        "confluenceUsername": req.username,
-        "confluenceAccessToken": req.confluenceToken,
+        "datasources": [
+          {
+            "name": req.unitName,
+            "type": "slack",
+            "credentials": {
+              "token": req.confluenceToken,
+              "url": req.wikiUrl,
+              "username": req.username,
+            },
+          },
+        ],
       },
       options: Options(headers: headers),
     );
-    debugPrint(response.data.toString());
     switch (response.statusCode) {
       case 201:
+        QuickAlert.show(
+          context: rootNavigatorKey.currentContext!,
+          type: QuickAlertType.success,
+          text: "Successfully uploaded datasource to knowledge",
+          onConfirmBtnTap:
+              () => {
+                rootNavigatorKey.currentContext!
+                    .read<KnowledgeProvider>()
+                    .reloadKnowledgeUnits(),
+                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
+                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
+              },
+        );
         break;
       default:
         QuickAlert.show(

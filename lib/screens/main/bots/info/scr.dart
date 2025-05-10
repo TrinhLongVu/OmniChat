@@ -54,6 +54,7 @@ class _BotInfoScreenState extends State<BotInfoScreen> {
       nameCtrlr = TextEditingController();
       instructionCtrlr = TextEditingController();
       descriptionCtrlr = TextEditingController();
+      chatCtrlr = TextEditingController();
     } else {
       screenState = "info";
       chatCtrlr = TextEditingController();

@@ -10,50 +10,35 @@ import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> uploadSlackToKnowledge(UploadSlackToKnowledgeRequest req) async {
+Future<void> deleteKnowledgeUnit(DeleteKnowledgeUnitRequest req) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
 
-  var headers = {
-    'x-jarvis-guid': '',
-    'Authorization': 'Bearer $accessToken',
-    'Content-Type': 'application/json',
-  };
+  var headers = {'x-jarvis-guid': '', 'Authorization': 'Bearer $accessToken'};
 
   Dio dio = DioClient(baseUrl: BaseUrls.knowledge).dio;
 
   try {
-    Response response = await dio.post(
-      "/kb-core/v1/knowledge/${req.id}/datasources",
-      data: {
-        "datasources": [
-          {
-            "name": req.unitName,
-            "type": "slack",
-            "credentials": {"token": req.slackBotToken},
-          },
-        ],
-      },
+    Response response = await dio.delete(
+      "https://knowledge-api.dev.jarvis.cx/kb-core/v1/knowledge/${req.knowledgeId}/datasources/${req.unitId}",
       options: Options(headers: headers),
     );
     switch (response.statusCode) {
-      case 201:
+      case 204:
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.success,
-          text: "Successfully uploaded datasource to knowledge",
+          text: "Knowledge Unit deleted successfully!",
           onConfirmBtnTap:
               () => {
                 rootNavigatorKey.currentContext!
                     .read<KnowledgeProvider>()
                     .reloadKnowledgeUnits(),
                 GoRouter.of(rootNavigatorKey.currentContext!).pop(),
-                GoRouter.of(rootNavigatorKey.currentContext!).pop(),
               },
         );
         break;
       default:
-        req.onError();
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.error,
@@ -61,12 +46,6 @@ Future<void> uploadSlackToKnowledge(UploadSlackToKnowledgeRequest req) async {
         );
     }
   } catch (e) {
-    req.onError();
-    QuickAlert.show(
-      context: rootNavigatorKey.currentContext!,
-      type: QuickAlertType.error,
-      text: "Something went wrong! Please try again later.",
-    );
     debugPrint("Error: $e");
   }
 }

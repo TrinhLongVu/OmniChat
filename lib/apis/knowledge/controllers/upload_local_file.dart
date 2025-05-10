@@ -39,20 +39,18 @@ Future<void> uploadFileToKnowledge(UploadFileToKnowledgeRequest req) async {
           {
             "name": req.fileName,
             "type": "local_file",
-            "credentials": {"files": fileId},
+            "credentials": {"file": fileId},
           },
         ],
       },
       options: Options(headers: headers),
     );
-    debugPrint(response.data.toString());
-    debugPrint(response.statusCode.toString());
     switch (response.statusCode) {
       case 201:
         QuickAlert.show(
           context: rootNavigatorKey.currentContext!,
           type: QuickAlertType.success,
-          text: "Successfully uploaded to knowledge",
+          text: "Successfully uploaded datasource to knowledge",
           onConfirmBtnTap:
               () => {
                 rootNavigatorKey.currentContext!
