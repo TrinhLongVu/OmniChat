@@ -7,7 +7,7 @@ import 'package:omni_chat/services/dio_client.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> publishToSlack(PublishToSlackRequest req) async {
+Future<void> publishToMessenger(PublishToMessengerRequest req) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? accessToken = prefs.getString("access_token");
 
@@ -17,23 +17,21 @@ Future<void> publishToSlack(PublishToSlackRequest req) async {
 
   try {
     Response verifyRes = await dio.post(
-      "/kb-core/v1/bot-integration/slack/validation",
+      "/kb-core/v1/bot-integration/messenger/validation",
       data: {
         "botToken": req.botToken,
-        "clientId": req.clientId,
-        "clientSecret": req.clientSecret,
-        "signingSecret": req.signingSecret,
+        "pageId": req.pageId,
+        "appSecret": req.appSecret,
       },
       options: Options(headers: headers),
     );
     if (verifyRes.statusCode.toString() == "200") {
       Response response = await dio.post(
-        "/kb-core/v1/bot-integration/slack/publish/${req.botId}",
+        "/kb-core/v1/bot-integration/messenger/publish/${req.botId}",
         data: {
           "botToken": req.botToken,
-          "clientId": req.clientId,
-          "clientSecret": req.clientSecret,
-          "signingSecret": req.signingSecret,
+          "pageId": req.pageId,
+          "appSecret": req.appSecret,
         },
         options: Options(headers: headers),
       );
@@ -42,7 +40,7 @@ Future<void> publishToSlack(PublishToSlackRequest req) async {
           QuickAlert.show(
             context: rootNavigatorKey.currentContext!,
             type: QuickAlertType.success,
-            text: "Bot published to Slack successfully!",
+            text: "Bot published to Messenger successfully!",
             onConfirmBtnTap:
                 () => {
                   GoRouter.of(rootNavigatorKey.currentContext!).pop(),

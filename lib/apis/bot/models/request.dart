@@ -37,7 +37,8 @@ typedef UnimportKnowledgeRequest = ({String botId, String knowledgeId});
 typedef GetImportedKnowledgeListRequest = ({String botId});
 // Publish Bot
 // To Telegram
-typedef PublishToTelegramRequest = ({String botId, String telegramToken});
+typedef PublishToTelegramRequest =
+    ({String botId, String telegramToken, VoidCallback onError});
 // To Slack
 typedef PublishToSlackRequest =
     ({
@@ -46,4 +47,14 @@ typedef PublishToSlackRequest =
       String clientId,
       String clientSecret,
       String signingSecret,
+      VoidCallback onError,
+    });
+// To Messenger
+typedef PublishToMessengerRequest =
+    ({
+      String botId,
+      String botToken,
+      String pageId,
+      String appSecret,
+      VoidCallback onError,
     });
