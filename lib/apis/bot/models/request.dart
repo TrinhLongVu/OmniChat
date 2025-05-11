@@ -38,3 +38,12 @@ typedef GetImportedKnowledgeListRequest = ({String botId});
 // Publish Bot
 // To Telegram
 typedef PublishToTelegramRequest = ({String botId, String telegramToken});
+// To Slack
+typedef PublishToSlackRequest =
+    ({
+      String botId,
+      String botToken,
+      String clientId,
+      String clientSecret,
+      String signingSecret,
+    });

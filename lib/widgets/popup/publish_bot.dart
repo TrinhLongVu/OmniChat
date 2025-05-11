@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:omni_chat/apis/bot/controllers/publish_slack.dart';
 import 'package:omni_chat/apis/bot/controllers/publish_telegram.dart';
 import 'package:omni_chat/constants/publish_type.dart';
 import 'package:omni_chat/providers/bot.dart';
@@ -21,17 +22,26 @@ class _BotPublishingPopUpState extends State<BotPublishingPopUp> {
   final publishBotFormKey = GlobalKey<FormState>();
 
   final TextEditingController txtCtrlr1 = TextEditingController();
+  final TextEditingController txtCtrlr2 = TextEditingController();
+  final TextEditingController txtCtrlr3 = TextEditingController();
+  final TextEditingController txtCtrlr4 = TextEditingController();
 
   String publishType = "";
 
   @override
   void dispose() {
     txtCtrlr1.dispose();
+    txtCtrlr2.dispose();
+    txtCtrlr3.dispose();
+    txtCtrlr4.dispose();
     super.dispose();
   }
 
   void clearPublishForm() {
     txtCtrlr1.clear();
+    txtCtrlr2.clear();
+    txtCtrlr3.clear();
+    txtCtrlr4.clear();
     setState(() {
       publishType = "";
     });
@@ -52,6 +62,13 @@ class _BotPublishingPopUpState extends State<BotPublishingPopUp> {
             telegramToken: txtCtrlr1.text,
           ));
         case PublishType.slack:
+          await publishToSlack((
+            botId: botId,
+            botToken: txtCtrlr1.text,
+            clientId: txtCtrlr2.text,
+            clientSecret: txtCtrlr3.text,
+            signingSecret: txtCtrlr4.text,
+          ));
           break;
       }
     }
@@ -126,6 +143,47 @@ class _BotPublishingPopUpState extends State<BotPublishingPopUp> {
                     fontSz: 14,
                     validateFunc: Validatorless.required(
                       "Telegram Bot Token is required",
+                    ),
+                    formKey: publishBotFormKey,
+                  ),
+                ] else if (publishType == "slack") ...[
+                  InputHeader(title: "Bot Token", isRequired: true),
+                  InputField(
+                    controller: txtCtrlr1,
+                    placeholder: "Slack User Bot Token",
+                    fontSz: 14,
+                    validateFunc: Validatorless.required(
+                      "Slack Bot Token is required",
+                    ),
+                    formKey: publishBotFormKey,
+                  ),
+                  InputHeader(title: "Client ID", isRequired: true),
+                  InputField(
+                    controller: txtCtrlr2,
+                    placeholder: "Slack Client ID",
+                    fontSz: 14,
+                    validateFunc: Validatorless.required(
+                      "Slack Client ID is required",
+                    ),
+                    formKey: publishBotFormKey,
+                  ),
+                  InputHeader(title: "Client Secret", isRequired: true),
+                  InputField(
+                    controller: txtCtrlr3,
+                    placeholder: "Slack Client Secret",
+                    fontSz: 14,
+                    validateFunc: Validatorless.required(
+                      "Slack Client Secret is required",
+                    ),
+                    formKey: publishBotFormKey,
+                  ),
+                  InputHeader(title: "Signing Secret", isRequired: true),
+                  InputField(
+                    controller: txtCtrlr4,
+                    placeholder: "Slack Signing Secret",
+                    fontSz: 14,
+                    validateFunc: Validatorless.required(
+                      "Slack Signing Secret is required",
                     ),
                     formKey: publishBotFormKey,
                   ),
