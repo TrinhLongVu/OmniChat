@@ -19,10 +19,28 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   String email = "example@example.com";
   bool loggingOut = false;
+  final ValueNotifier<bool> subscribing = ValueNotifier(false);
 
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<void> onSubscribe() async {
+    subscribing.value = true;
+    if (context.read<UserProvider>().subscriptionPlan == "Starter") {
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.info,
+        text: "You're already on a starter plan! Enjoy using our app",
+      );
+    }
+    String? subscribeUri = await subscribe();
+    subscribing.value = false;
+    if (subscribeUri == null) return;
+    setState(() {
+      launchUrl(Uri.parse(subscribeUri), mode: LaunchMode.inAppBrowserView);
+    });
   }
 
   @override
@@ -37,9 +55,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Stack(
                   alignment: Alignment.center,
                   children: [
-                    Icon(Icons.account_circle_rounded, size: 200),
+                    IconButton(
+                      icon: Icon(
+                        Icons.account_circle_rounded,
+                        color: Colors.black,
+                        size: 200,
+                      ),
+                      onPressed: () {
+                        context.read<UserProvider>().setUser();
+                      },
+                    ),
                     Positioned(
-                      bottom: 0,
+                      bottom: 5,
                       child: Container(
                         padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
@@ -77,29 +104,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Wrap(
                   runSpacing: 20,
                   children: [
-                    ProfileBtn(
-                      icon: Icons.stars_rounded,
-                      title: "Subscription Plans",
-                      onNavi: () async {
-                        if (context.read<UserProvider>().subscriptionPlan ==
-                            "Starter") {
-                          QuickAlert.show(
-                            context: context,
-                            type: QuickAlertType.info,
-                            text:
-                                "You're already on a starter plan! Enjoy using our app",
-                          );
-                        }
-                        String? subscribeUri = await subscribe();
-                        if (subscribeUri == null) return;
-                        setState(() {
-                          launchUrl(
-                            Uri.parse(subscribeUri),
-                            mode: LaunchMode.inAppBrowserView,
-                          );
-                        });
+                    ValueListenableBuilder<bool>(
+                      valueListenable: subscribing,
+                      builder: (context, subscribing, _) {
+                        return subscribing
+                            ? Center(
+                              child: Lottie.asset(
+                                "assets/anims/loading.json",
+                                width: 100,
+                                height: 60,
+                              ),
+                            )
+                            : ProfileBtn(
+                              icon: Icons.stars_rounded,
+                              title: "Subscription Plans",
+                              onNavi: () => onSubscribe(),
+                            );
                       },
                     ),
+
                     ProfileBtn(
                       icon: Icons.lock_reset,
                       title: "Reset Password",
