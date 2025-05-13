@@ -73,6 +73,7 @@ class _KnowledgeImportPopUpState extends State<KnowledgeImportPopUp> {
                               (knowledge) => KnowledgeRect(
                                 knowledge: knowledge,
                                 imported: true,
+                                importing: true,
                               ),
                             )
                             .toList(),

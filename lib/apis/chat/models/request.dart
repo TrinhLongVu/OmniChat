@@ -4,6 +4,6 @@ import 'dart:ui';
 typedef GetConvoHistoryRequest = ({String convoId});
 // Send Message
 typedef SendMessageRequest =
-    ({String convoId, String msgContent, VoidCallback onError});
+    ({String convoId, String msgContent, bool official, VoidCallback onError});
 // Get Chat Threads
 typedef GetConvosRequest = ({String assistantId});

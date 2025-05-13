@@ -1,21 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:omni_chat/apis/knowledge/controllers/get_list.dart';
+import 'package:omni_chat/apis/knowledge/controllers/get_units.dart';
 import 'package:omni_chat/apis/knowledge/models/response.dart';
 import 'package:omni_chat/models/knowledge.dart';
+import 'package:omni_chat/models/knowledge_unit.dart';
 
 class KnowledgeProvider extends ChangeNotifier {
-  bool loadingList = false;
   List<Knowledge> knowledgeList;
-  bool botLoading = false;
-  Knowledge currentKnowledge = Knowledge.placeholder();
+  bool loadingList = false;
   String query = "";
 
-  KnowledgeProvider({this.knowledgeList = const []});
+  Knowledge currentKnowledge = Knowledge.placeholder();
+  List<KnowledgeUnit> currentKnowledgeUnits;
+  bool knowledgeLoading = false;
+
+  KnowledgeProvider({
+    this.knowledgeList = const [],
+    this.currentKnowledgeUnits = const [],
+  });
 
   Future<void> getListFromApi() async {
     GetKnowledgeListResponse? res = await getKnowledgeList((query: query));
     if (res != null) {
       knowledgeList = res.data;
+    }
+  }
+
+  Future<void> getKnowledgeUnitsFromApi(Knowledge knowledge) async {
+    GetKnowledgeUnitsResponse? res = await getKnowledgeUnits((
+      id: currentKnowledge.id,
+    ));
+    if (res != null) {
+      currentKnowledgeUnits = res.data;
     }
   }
 
@@ -37,8 +53,17 @@ class KnowledgeProvider extends ChangeNotifier {
     reloadList();
   }
 
-  void setCurrentKnowledge(Knowledge knowledge) {
+  void reloadKnowledgeUnits() async {
+    await getKnowledgeUnitsFromApi(currentKnowledge);
+    notifyListeners();
+  }
+
+  void setCurrentKnowledge(Knowledge knowledge) async {
+    knowledgeLoading = true;
+    notifyListeners();
     currentKnowledge = knowledge;
+    await getKnowledgeUnitsFromApi(knowledge);
+    knowledgeLoading = false;
     notifyListeners();
   }
 }

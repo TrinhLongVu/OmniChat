@@ -31,16 +31,6 @@ class ConvoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> initConvoList() async {
-    GetConvosResponse? convosResponse = await getConversations((
-      assistantId: "gemini-1.5-flash-latest",
-    ));
-    if (convosResponse != null) {
-      convoList = convosResponse.items;
-    }
-    notifyListeners();
-  }
-
   Future<void> loadConvoList() async {
     GetConvosResponse? convosResponse = await getConversations((
       assistantId: "gemini-1.5-flash-latest",
@@ -99,6 +89,15 @@ class ConvoProvider extends ChangeNotifier {
 
   void askChat(String message) {
     currentConvoHistoryList.add(ConvoHistoryItem(query: message));
+    notifyListeners();
+  }
+
+  void chatAnswer(String answerStr) {
+    String query = currentConvoHistoryList.last.query;
+    currentConvoHistoryList.removeLast();
+    currentConvoHistoryList.add(
+      ConvoHistoryItem(query: query, answer: answerStr),
+    );
     notifyListeners();
   }
 

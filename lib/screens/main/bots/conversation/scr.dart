@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:omni_chat/apis/bot/controllers/chat.dart';
 import 'package:omni_chat/apis/chat/controllers/send_msg.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/prompt.dart';
 import 'package:omni_chat/providers/bot.dart';
 import 'package:omni_chat/providers/convo.dart';
 import 'package:omni_chat/providers/prompt.dart';
+import 'package:omni_chat/services/ad_mob.dart';
 import 'package:omni_chat/widgets/button/fit_ico_btn.dart';
 import 'package:omni_chat/widgets/popup/agent_change.dart';
+import 'package:omni_chat/widgets/rectangle/chat_box.dart';
 import 'package:omni_chat/widgets/rectangle/convo_box.dart';
-import 'package:omni_chat/screens/main/bots/conversation/prompt_modal.dart';
 import 'package:omni_chat/screens/main/bots/conversation/thread_drawer.dart';
 import 'package:omni_chat/widgets/text/info_field.dart';
 import 'package:omni_chat/widgets/popup/prompt_info.dart';
@@ -43,6 +43,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
   @override
   void initState() {
     super.initState();
+    AdMobService().showInterstitialAdIfAllowed();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ConvoProvider>().changeCurrentConvo("");
+      context.read<ConvoProvider>().clearCurrentConvo();
+    });
     if (widget.id != null) {
       isOfficial = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -54,20 +59,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
             });
           },
         );
-        context.read<BotProvider>().clearCurrentBotConvo();
       });
     } else {
       setState(() {
         botName = "Omni Chat Bot";
       });
     }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<PromptProvider>().loadSlashList();
-      context.read<ConvoProvider>().getCurrentToken();
-      if (widget.id == null) {
-        context.read<ConvoProvider>().initConvoList();
-      }
-    });
     focusNod.addListener(scrollToBottom);
   }
 
@@ -109,14 +106,27 @@ class _ConversationScreenState extends State<ConversationScreen> {
     }
   }
 
-  Future<void> sendConvoMessage() async {
-    if (context.read<ConvoProvider>().currentToken <= 0) return;
-    bool newThread = false;
-    var promptToSend = context.read<ConvoProvider>().currentPrompt;
-    var msgContentToSend = msgCtrlr.text;
-    if (promptToSend.content.isNotEmpty) {
-      msgContentToSend = "${promptToSend.content}\n${msgCtrlr.text}";
+  Future<void> onSendMessage() async {
+    if (isOfficial) {
+      if (context.read<ConvoProvider>().currentToken <= 0) {
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.error,
+          text: "You are out of tokens.",
+        );
+        return;
+      }
+    } else {
+      if (context.read<ConvoProvider>().currentToken <= 4) {
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.error,
+          text: "You need at least 5 tokens to send a message.",
+        );
+        return;
+      }
     }
+    bool newThread = false;
     if (context.read<ConvoProvider>().currentConvoId.isEmpty) {
       newThread = true;
       context.read<ConvoProvider>().setCurrentConvoId(
@@ -124,11 +134,17 @@ class _ConversationScreenState extends State<ConversationScreen> {
       );
       context.read<ConvoProvider>().clearCurrentConvo();
     }
+    var promptToSend = context.read<ConvoProvider>().currentPrompt;
+    var msgContentToSend = msgCtrlr.text;
+    if (promptToSend.content.isNotEmpty) {
+      msgContentToSend = "${promptToSend.content}\n${msgCtrlr.text}";
+    }
     msgCtrlr.clear();
     FocusManager.instance.primaryFocus?.unfocus();
     context.read<ConvoProvider>().askChat(msgContentToSend);
     context.read<ConvoProvider>().clearPrompt();
     await sendMessage((
+      official: isOfficial,
       convoId: newThread ? "" : context.read<ConvoProvider>().currentConvoId,
       msgContent: msgContentToSend,
       onError: () {
@@ -145,20 +161,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
         );
       },
     ));
-  }
-
-  Future<void> sendMessageToBot() async {
-    if (context.read<ConvoProvider>().currentToken <= 0) return;
-    var promptToSend = context.read<ConvoProvider>().currentPrompt;
-    var msgContentToSend = msgCtrlr.text;
-    if (promptToSend.content.isNotEmpty) {
-      msgContentToSend = "${promptToSend.content}\n${msgCtrlr.text}";
-    }
-    msgCtrlr.clear();
-    FocusManager.instance.primaryFocus?.unfocus();
-    context.read<BotProvider>().askBot(msgContentToSend);
-    context.read<ConvoProvider>().clearPrompt();
-    await chatWithBot((botId: widget.id!, msgContent: msgContentToSend));
   }
 
   @override
@@ -228,123 +230,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   child: Column(
                     children: [
                       SizedBox(height: viewport.height * .03),
-                      isOfficial
-                          ? context.watch<ConvoProvider>().currentConvoId == ""
-                              ? Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.all(15),
-                                decoration: BoxDecoration(),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  spacing: 15,
-                                  children: [
-                                    Icon(
-                                      OctIcons.copilot,
-                                      size: 150,
-                                      color: omniMilk,
-                                    ),
-                                    Text(
-                                      "Start a new conversation by typing your message below",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: omniMilk,
-                                      ),
-                                    ),
-                                    Text(
-                                      "Or",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: omniMilk,
-                                      ),
-                                    ),
-                                    RichText(
-                                      textAlign: TextAlign.center,
-                                      text: TextSpan(
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color: omniMilk,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily:
-                                              GoogleFonts.poppins().fontFamily,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                            text:
-                                                'Select a thread from the drawer  ',
-                                          ),
-                                          WidgetSpan(
-                                            alignment:
-                                                PlaceholderAlignment.middle,
-                                            child: FitIconBtn(
-                                              onTap: () {
-                                                context
-                                                    .read<ConvoProvider>()
-                                                    .loadConvoList();
-                                                _scaffoldKey.currentState!
-                                                    .openEndDrawer();
-                                              },
-                                              icon:
-                                                  BoxIcons
-                                                      .bxs_message_alt_detail,
-                                              iconColor: omniMilk,
-                                            ),
-                                          ),
-                                          TextSpan(
-                                            text:
-                                                '  to continue your conversation',
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                              : context
-                                  .watch<ConvoProvider>()
-                                  .currentConvoHistoryList
-                                  .isEmpty
-                              ? Column(
-                                spacing: 10,
-                                children: List.generate(
-                                  4,
-                                  (index) => ShimmerConvoBox(
-                                    isBot: index % 2 == 0 ? false : true,
-                                  ),
-                                ),
-                              )
-                              : Column(
-                                spacing: 10,
-                                children:
-                                    context
-                                        .watch<ConvoProvider>()
-                                        .currentConvoHistoryList
-                                        .map((convo) {
-                                          return Column(
-                                            spacing: 10,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              ConvoBox(
-                                                message: convo.query,
-                                                isBot: false,
-                                              ),
-                                              ConvoBox(
-                                                message: convo.answer,
-                                                isBot: true,
-                                              ),
-                                            ],
-                                          );
-                                        })
-                                        .toList(),
-                              )
-                          : context
-                              .watch<BotProvider>()
-                              .currentBotConvoHistoryList
-                              .isEmpty
+                      context.watch<ConvoProvider>().currentConvoId == ""
                           ? Container(
                             width: double.infinity,
                             padding: EdgeInsets.all(15),
@@ -361,7 +247,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                   color: omniMilk,
                                 ),
                                 Text(
-                                  "Start chatting with your bot by typing your message below",
+                                  "Start a new conversation by typing your message below",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 18,
@@ -369,15 +255,77 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                     color: omniMilk,
                                   ),
                                 ),
+                                if (isOfficial) ...[
+                                  Text(
+                                    "Or",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: omniMilk,
+                                    ),
+                                  ),
+                                  RichText(
+                                    textAlign: TextAlign.center,
+                                    text: TextSpan(
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: omniMilk,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily:
+                                            GoogleFonts.poppins().fontFamily,
+                                      ),
+                                      children: [
+                                        TextSpan(
+                                          text:
+                                              'Select a thread from the drawer  ',
+                                        ),
+                                        WidgetSpan(
+                                          alignment:
+                                              PlaceholderAlignment.middle,
+                                          child: FitIconBtn(
+                                            onTap: () {
+                                              context
+                                                  .read<ConvoProvider>()
+                                                  .loadConvoList();
+                                              _scaffoldKey.currentState!
+                                                  .openEndDrawer();
+                                            },
+                                            icon:
+                                                BoxIcons.bxs_message_alt_detail,
+                                            iconColor: omniMilk,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text:
+                                              '  to continue your conversation',
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ],
+                            ),
+                          )
+                          : context
+                              .watch<ConvoProvider>()
+                              .currentConvoHistoryList
+                              .isEmpty
+                          ? Column(
+                            spacing: 10,
+                            children: List.generate(
+                              4,
+                              (index) => ShimmerConvoBox(
+                                isBot: index % 2 == 0 ? false : true,
+                              ),
                             ),
                           )
                           : Column(
                             spacing: 10,
                             children:
                                 context
-                                    .watch<BotProvider>()
-                                    .currentBotConvoHistoryList
+                                    .watch<ConvoProvider>()
+                                    .currentConvoHistoryList
                                     .map((convo) {
                                       return Column(
                                         spacing: 10,
@@ -514,124 +462,25 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 left: 15,
                 right: 15,
                 bottom: 15,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withValues(alpha: .5),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      TextField(
-                        controller: msgCtrlr,
-                        focusNode: focusNod,
-                        textInputAction: TextInputAction.newline,
-                        style: TextStyle(fontSize: 14),
-                        minLines: 1,
-                        maxLines: 3,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          hintText:
-                              context.watch<ConvoProvider>().currentPrompt.id !=
-                                      ""
-                                  ? "Asking with promt activated"
-                                  : "Ask me anthing or type '/' to use a prompt",
-                          hintStyle: TextStyle(color: Colors.grey),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        onChanged:
-                            (value) => {
-                              if (msgCtrlr.text == "/")
-                                {
-                                  setState(() {
-                                    showPromptTooltip = true;
-                                  }),
-                                }
-                              else
-                                {
-                                  setState(() {
-                                    showPromptTooltip = false;
-                                  }),
-                                },
-                            },
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                spacing: 10,
-                                children: [
-                                  Row(
-                                    spacing: 4,
-                                    children: [
-                                      Icon(
-                                        Icons.token_rounded,
-                                        color: omniDarkBlue,
-                                      ),
-                                      Text(
-                                        "${context.watch<ConvoProvider>().currentToken}",
-                                      ),
-                                    ],
-                                  ),
-                                  FitIconBtn(
-                                    icon: FontAwesome.envelope_open_text_solid,
-                                    onTap: () {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        builder: (context) {
-                                          return PromptModal();
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Row(
-                              spacing: 10,
-                              children: [
-                                FitIconBtn(onTap: () {}, icon: Icons.photo),
-                                FitIconBtn(
-                                  icon: Icons.send,
-                                  iconColor:
-                                      msgCtrlr.text.isEmpty
-                                          ? Colors.grey
-                                          : omniDarkBlue,
-                                  onTap: () async {
-                                    if (msgCtrlr.text.isNotEmpty) {
-                                      if (isOfficial) {
-                                        await sendConvoMessage();
-                                      } else {
-                                        await sendMessageToBot();
-                                      }
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                child: ChatBox(
+                  ctrlr: msgCtrlr,
+                  focusNode: focusNod,
+                  onType: (value) {
+                    if (msgCtrlr.text == "/") {
+                      setState(() {
+                        showPromptTooltip = true;
+                      });
+                    } else {
+                      setState(() {
+                        showPromptTooltip = false;
+                      });
+                    }
+                  },
+                  onSendMessage: () async {
+                    if (msgCtrlr.text.isNotEmpty) {
+                      await onSendMessage();
+                    }
+                  },
                 ),
               ),
               showPromptTooltip

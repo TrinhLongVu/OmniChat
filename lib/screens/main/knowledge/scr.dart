@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/knowledge.dart';
 import 'package:omni_chat/providers/knowledge.dart';
+import 'package:omni_chat/widgets/button/fit_ico_btn.dart';
 import 'package:omni_chat/widgets/rectangle/knowledge_rect.dart';
 import 'package:omni_chat/widgets/rectangle/search_box.dart';
 import 'package:provider/provider.dart';
@@ -67,7 +69,7 @@ class _KnowledgeLibraryScreenState extends State<KnowledgeLibraryScreen> {
               scrollDirection: Axis.vertical,
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  minHeight: MediaQuery.of(context).size.height,
+                  minHeight: MediaQuery.of(context).size.height * 0.75,
                 ),
                 child:
                     context.watch<KnowledgeProvider>().loadingList
@@ -78,6 +80,51 @@ class _KnowledgeLibraryScreenState extends State<KnowledgeLibraryScreen> {
                               knowledge: Knowledge.placeholder(),
                               shimmerizing: true,
                             ),
+                          ),
+                        )
+                        : context
+                            .watch<KnowledgeProvider>()
+                            .knowledgeList
+                            .isEmpty
+                        ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "No knowledges found",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              RichText(
+                                textAlign: TextAlign.center,
+                                text: TextSpan(
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily:
+                                        GoogleFonts.poppins().fontFamily,
+                                  ),
+                                  children: [
+                                    TextSpan(text: 'Create one '),
+                                    WidgetSpan(
+                                      alignment: PlaceholderAlignment.middle,
+                                      child: FitIconBtn(
+                                        onTap: () => context.push("/bots/new"),
+                                        icon: Icons.add_circle_outline,
+                                        iconColor: omniDarkBlue,
+                                        iconSize: 30,
+                                      ),
+                                    ),
+                                    TextSpan(text: '  now'),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         )
                         : Column(

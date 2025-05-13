@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/knowledge/controllers/create.dart';
 import 'package:omni_chat/apis/knowledge/controllers/delete.dart';
-import 'package:omni_chat/apis/knowledge/controllers/get_units.dart';
 import 'package:omni_chat/apis/knowledge/controllers/update.dart';
 import 'package:omni_chat/constants/color.dart';
 import 'package:omni_chat/models/knowledge.dart';
@@ -11,6 +10,7 @@ import 'package:omni_chat/providers/knowledge.dart';
 import 'package:omni_chat/widgets/button/common_btn.dart';
 import 'package:omni_chat/widgets/button/ico_txt_btn.dart';
 import 'package:omni_chat/widgets/popup/knowledge_unit_upload.dart';
+import 'package:omni_chat/widgets/rectangle/knowledge_unit_rect.dart';
 import 'package:omni_chat/widgets/text/info_field.dart';
 import 'package:omni_chat/widgets/text/input_field.dart';
 import 'package:omni_chat/widgets/text/input_header.dart';
@@ -46,7 +46,6 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
       descriptionCtrlr = TextEditingController();
     } else {
       screenState = "info";
-      loadKnowledgeUnits();
       nameCtrlr = TextEditingController(
         text: context.read<KnowledgeProvider>().currentKnowledge.name,
       );
@@ -61,10 +60,6 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
     nameCtrlr.dispose();
     descriptionCtrlr.dispose();
     super.dispose();
-  }
-
-  Future<void> loadKnowledgeUnits() async {
-    await getKnowledgeUnits((id: widget.id!));
   }
 
   Future<void> onCreateKnowledge() async {
@@ -156,6 +151,10 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
                                         .currentKnowledge
                                         .name,
                                 fontSz: 16,
+                                shimmerizing:
+                                    context
+                                        .watch<KnowledgeProvider>()
+                                        .knowledgeLoading,
                               )
                               : InputField(
                                 controller: nameCtrlr,
@@ -175,71 +174,109 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
                                         .description,
                                 fontSz: 16,
                                 lineNum: 5,
+                                shimmerizing:
+                                    context
+                                        .watch<KnowledgeProvider>()
+                                        .knowledgeLoading,
                               )
                               : InputField(
                                 controller: descriptionCtrlr,
                                 placeholder:
-                                    "Everything about this knowledge base",
+                                    "Description about this knowledge base",
                                 minLns: 3,
                                 maxLns: 5,
                               ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              InputHeader(title: "Knowledge Units"),
-                              TextButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder:
-                                        (context) => KnowledgeUnitUploadPopUp(),
-                                  );
-                                },
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  spacing: 10,
-                                  children: [
-                                    Text(
-                                      "Upload",
-                                      style: TextStyle(color: omniDarkCyan),
-                                    ),
-                                    Icon(Icons.upload, color: omniDarkBlue),
-                                  ],
+                          if (screenState == "info" &&
+                              !context
+                                  .watch<KnowledgeProvider>()
+                                  .knowledgeLoading) ...[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                InputHeader(title: "Knowledge Units"),
+                                TextButton(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder:
+                                          (context) =>
+                                              KnowledgeUnitUploadPopUp(),
+                                    );
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    spacing: 10,
+                                    children: [
+                                      Text(
+                                        "Upload",
+                                        style: TextStyle(color: omniDarkCyan),
+                                      ),
+                                      Icon(Icons.upload, color: omniDarkBlue),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
+                            Consumer<KnowledgeProvider>(
+                              builder: (context, provider, _) {
+                                final knowledgeUnits =
+                                    provider.currentKnowledgeUnits;
+
+                                if (knowledgeUnits.isEmpty) {
+                                  return const Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      "No Uploaded Knowledge Units Yet",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return Column(
+                                  spacing: 10,
+                                  children:
+                                      knowledgeUnits
+                                          .map(
+                                            (unit) =>
+                                                KnowledgeUnitRect(unit: unit),
+                                          )
+                                          .toList(),
+                                );
+                              },
+                            ),
+                          ],
                         ],
                       ),
                     ],
                   ),
                 ),
               ),
-              Positioned(
-                right: 20,
-                left: 20,
-                bottom: 20,
-                child: ValueListenableBuilder<bool>(
-                  valueListenable: loading,
-                  builder: (context, loading, _) {
-                    return loading
-                        ? Lottie.asset(
+              if (!context.watch<KnowledgeProvider>().knowledgeLoading)
+                Positioned(
+                  right: 20,
+                  left: 20,
+                  bottom: 20,
+                  child: ValueListenableBuilder<bool>(
+                    valueListenable: loading,
+                    builder: (context, isLoading, _) {
+                      if (isLoading) {
+                        return Lottie.asset(
                           "assets/anims/loading.json",
                           width: 120,
                           height: 80,
-                        )
-                        : (screenState == "info")
-                        ? Row(
-                          spacing: 10,
+                        );
+                      }
+
+                      if (screenState == "info") {
+                        return Row(
                           children: [
                             IcoTxtBtn(
                               title: "Edit",
-                              onTap: () {
-                                setState(() {
-                                  screenState = "edit";
-                                });
-                              },
+                              onTap: () => setState(() => screenState = "edit"),
                             ),
+                            const SizedBox(width: 10),
                             IcoTxtBtn(
                               title: "Delete",
                               bgColor: Colors.red,
@@ -258,42 +295,36 @@ class _KnowledgeInfoScreenState extends State<KnowledgeInfoScreen> {
                               },
                             ),
                           ],
-                        )
-                        : CommonBtn(
-                          title: "Save",
-                          onTap: () async {
-                            if (screenState == "create") {
-                              if (editKnowledgeFormKey.currentState!
-                                  .validate()) {
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                await onCreateKnowledge();
-                              }
-                            } else if (screenState == "edit") {
-                              if (editKnowledgeFormKey.currentState!
-                                  .validate()) {
-                                QuickAlert.show(
-                                  context: context,
-                                  type: QuickAlertType.confirm,
-                                  text:
-                                      "Are you sure you want to save changes?",
-                                  onCancelBtnTap: () => context.pop(),
-                                  onConfirmBtnTap: () async {
-                                    FocusManager.instance.primaryFocus
-                                        ?.unfocus();
-                                    context.pop();
-                                    await onUpdateKnowledge();
-                                    setState(() {
-                                      screenState = "info";
-                                    });
-                                  },
-                                );
-                              }
-                            }
-                          },
                         );
-                  },
+                      }
+                      return CommonBtn(
+                        title: "Save",
+                        onTap: () async {
+                          if (!editKnowledgeFormKey.currentState!.validate()) {
+                            return;
+                          }
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          if (screenState == "create") {
+                            await onCreateKnowledge();
+                          } else if (screenState == "edit") {
+                            QuickAlert.show(
+                              context: context,
+                              type: QuickAlertType.confirm,
+                              text: "Are you sure you want to save changes?",
+                              onCancelBtnTap: () => context.pop(),
+                              onConfirmBtnTap: () async {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                context.pop();
+                                await onUpdateKnowledge();
+                                setState(() => screenState = "info");
+                              },
+                            );
+                          }
+                        },
+                      );
+                    },
+                  ),
                 ),
-              ),
             ],
           ),
         ),

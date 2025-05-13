@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:omni_chat/apis/auth/controllers/logout.dart';
+import 'package:omni_chat/apis/auth/controllers/subscribe.dart';
 import 'package:omni_chat/providers/user.dart';
 import 'package:omni_chat/widgets/button/profile_btn.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -16,10 +19,28 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   String email = "example@example.com";
   bool loggingOut = false;
+  final ValueNotifier<bool> subscribing = ValueNotifier(false);
 
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<void> onSubscribe() async {
+    subscribing.value = true;
+    if (context.read<UserProvider>().subscriptionPlan == "Starter") {
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.info,
+        text: "You're already on a starter plan! Enjoy using our app",
+      );
+    }
+    String? subscribeUri = await subscribe();
+    subscribing.value = false;
+    if (subscribeUri == null) return;
+    setState(() {
+      launchUrl(Uri.parse(subscribeUri), mode: LaunchMode.inAppBrowserView);
+    });
   }
 
   @override
@@ -34,13 +55,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Stack(
                   alignment: Alignment.center,
                   children: [
-                    Icon(Icons.account_circle_rounded, size: 200),
+                    IconButton(
+                      icon: Icon(
+                        Icons.account_circle_rounded,
+                        color: Colors.black,
+                        size: 200,
+                      ),
+                      onPressed: () {
+                        context.read<UserProvider>().setUser();
+                      },
+                    ),
                     Positioned(
-                      bottom: 0,
+                      bottom: 5,
                       child: Container(
                         padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Colors.grey,
+                          color:
+                              context.watch<UserProvider>().subscriptionPlan ==
+                                      "Starter"
+                                  ? Colors.orange
+                                  : Colors.grey,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
@@ -70,13 +104,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Wrap(
                   runSpacing: 20,
                   children: [
-                    ProfileBtn(
-                      icon: Icons.stars_rounded,
-                      title: "Subscription Plans",
-                      onNavi: () {
-                        context.go("/me/sub-plan");
+                    ValueListenableBuilder<bool>(
+                      valueListenable: subscribing,
+                      builder: (context, subscribing, _) {
+                        return subscribing
+                            ? Center(
+                              child: Lottie.asset(
+                                "assets/anims/loading.json",
+                                width: 100,
+                                height: 60,
+                              ),
+                            )
+                            : ProfileBtn(
+                              icon: Icons.stars_rounded,
+                              title: "Subscription Plans",
+                              onNavi: () => onSubscribe(),
+                            );
                       },
                     ),
+
                     ProfileBtn(
                       icon: Icons.lock_reset,
                       title: "Reset Password",

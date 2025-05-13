@@ -18,9 +18,21 @@ typedef UpdateKnowledgeRequest =
 typedef DeleteKnowledgeRequest = ({String id, VoidCallback onError});
 // Get Knowledge Units
 typedef GetKnowledgeUnitsRequest = ({String id});
-// Upload Web To Knowledge
-typedef UploadWebToKnowledgeRequest =
-    ({String id, String unitName, String webUrl});
+// Delete Knowledge Units
+typedef DeleteKnowledgeUnitRequest = ({String knowledgeId, String unitId});
+// Upload File To Knowledge
+typedef UploadFileToKnowledgeRequest =
+    ({String id, String fileName, String filePath, VoidCallback onError});
 // Upload Slack To Knowledge
 typedef UploadSlackToKnowledgeRequest =
-    ({String id, String unitName, String slackWorkspace, String slackBotToken});
+    ({String id, String unitName, String slackBotToken, VoidCallback onError});
+// Upload Confluence To Knowledge
+typedef UploadConfluenceToKnowledgeRequest =
+    ({
+      String id,
+      String unitName,
+      String wikiUrl,
+      String username,
+      String confluenceToken,
+      VoidCallback onError,
+    });

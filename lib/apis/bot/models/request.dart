@@ -23,6 +23,8 @@ typedef UpdateBotRequest =
     });
 // Delete Bot
 typedef DeleteBotRequest = ({String id, VoidCallback onError});
+// Chat Preview with Bot
+typedef AskRequest = ({String botId, String msgContent});
 // Chat with Bot
 typedef ChatRequest = ({String botId, String msgContent});
 // Get Bot Threads
@@ -33,3 +35,26 @@ typedef ImportKnowledgeRequest = ({String botId, String knowledgeId});
 typedef UnimportKnowledgeRequest = ({String botId, String knowledgeId});
 // Get Imported Knowledges
 typedef GetImportedKnowledgeListRequest = ({String botId});
+// Publish Bot
+// To Telegram
+typedef PublishToTelegramRequest =
+    ({String botId, String telegramToken, VoidCallback onError});
+// To Slack
+typedef PublishToSlackRequest =
+    ({
+      String botId,
+      String botToken,
+      String clientId,
+      String clientSecret,
+      String signingSecret,
+      VoidCallback onError,
+    });
+// To Messenger
+typedef PublishToMessengerRequest =
+    ({
+      String botId,
+      String botToken,
+      String pageId,
+      String appSecret,
+      VoidCallback onError,
+    });

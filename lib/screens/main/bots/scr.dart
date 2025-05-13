@@ -170,7 +170,7 @@ class _BotListScreenState extends State<BotListScreen> {
                   minHeight:
                       context.watch<BotProvider>().botList.isEmpty
                           ? 400
-                          : MediaQuery.of(context).size.height,
+                          : MediaQuery.of(context).size.height * 0.5,
                 ),
                 child:
                     context.watch<BotProvider>().loadingList
